@@ -25,3 +25,4 @@ yarn-error.log*
 #this is the data 
 /db
 data.csv
+/dist

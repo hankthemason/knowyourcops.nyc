@@ -6,11 +6,7 @@ const neatCsv = require('neat-csv');
 const csv = fs.readFileSync('data.csv');
 const DB_PATH = './db/ccrb.db';
 //const hi = require('./hello')
-const React = require('react')
-const ReactDOM = require('react-dom')
-const babel = require("@babel/core").transform("code", {
-  presets: ["@babel/preset-react"],
-});
+
 const sqlite = require('sqlite');
 
 //hi.hello();
