@@ -27,7 +27,7 @@ let db;
       driver: sqlite3.Database
     })
     console.log('it opened')
-    await initializeDB(db);
+    //await initializeDB(db);
 
 
 
@@ -351,13 +351,31 @@ app.get('/command_units', async (req, res) => {
 		const result = await db.all(`
 			SELECT 
 				command_units.unit_id, 
-				Count(*) as num_allegations 
+				Count(*) as num_allegations,
+				COUNT(DISTINCT complaints.id) as num_complaints
 			FROM 
 				command_units 
-			INNER JOIN 
-				allegations 
-			ON 
-				command_units.unit_id = allegations.cop_command_unit
+				INNER JOIN allegations ON command_units.unit_id = allegations.cop_command_unit
+					INNER JOIN complaints ON complaints.id = allegations.complaint_id
+			GROUP BY 
+				command_units.unit_id;
+		`)
+		res.json(result);
+	} catch(error) {
+		console.error(error);
+	}
+});
+
+app.get('/complaints', async (req, res) => {
+	try {
+		const result = await db.all(`
+			SELECT 
+				command_units.unit_id, 
+				COUNT(DISTINCT complaints.id) as num_complaints
+			FROM 
+				command_units 
+				INNER JOIN allegations ON command_units.unit_id = allegations.cop_command_unit
+					INNER JOIN complaints ON complaints.id = allegations.complaint_id
 			GROUP BY 
 				command_units.unit_id;
 		`)
