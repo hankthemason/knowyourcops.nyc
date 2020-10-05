@@ -44,4 +44,10 @@ export class Precincts {
 		}
 
 	}
+
+	async read() {
+		
+	}
+
+
 }
