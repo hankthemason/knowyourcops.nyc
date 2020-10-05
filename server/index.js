@@ -22,20 +22,59 @@ const models = new Models(DB_PATH);
 		res.json(await models.cops.read());
 	})
 
-	//PRECINCTS END POINT
-	app.get('/precincts', async (req, res) => {
-		res.json(await models.precincts.read());
-	})
-
-	//COMMAND_UNITS END POINT
-	app.get('/command_units', async (req, res) => {
-		res.json(await models.command_units.read());
-	})
-
 	app.listen(port, () => {
 		console.log(`Example app listening at http://localhost:${port}`)
 	})
 })();
+
+/*
+adapter file
+write a function that reads in .csv file and then parse the data and write things to the database
+try to figure out insert statements to get the data into the database
+check out:
+-node sqlite 3 api
+-tutorials (node sqlite 3 insert data)
+
+THEN
+start writing endpoints that test querying the data, e.g. a '/cop?id=666'
+*/
+
+// Endpoints OR routes
+// Given this address, how does the program respond to requests?
+// app.get('/', (req, res) => {
+// 	res.send('Hello World!')
+// })
+
+
+// app.get('/cops/id=:id', (req, res) => {
+// 	db.get(`SELECT first_name, last_name FROM cops WHERE id=?`, [req.params.id], (err, row)=> {
+// 		if (err) {
+// 			console.log(err.message)
+// 			return err.message
+// 		}
+// 		if (row) {
+// 			let name = (`${row.first_name} ${row.last_name}`);
+// 			res.send(name);
+// 		} else {
+// 			res.send('sorry! all out of cops!')
+// 		}
+// 	})
+// })
+
+
+
+
+//this subselect query works but takes way too long
+/*app.get('/cops', (req, res) => {
+	db.all(`SELECT id, (SELECT count(cop) FROM complaints WHERE complaints.cop = cops.id) num_allegations FROM cops`, (err, row) => {
+		if (err) {
+			console.log(err);
+		}
+		res.json(row)
+	})
+})*/
+
+
 
 //COMMAND_UNITS END POINT
 // app.get('/command_units', async (req, res) => {
@@ -83,6 +122,11 @@ const models = new Models(DB_PATH);
 // 	})
 // })
 
+// /*app.get('/cops', (req, res) => {
+// 	db.all(`SELECT * FROM cops`, (err, row) => { 
+// 		res.json(row)
+// 	})
+// })*/
 
 // app.get('/bye', (req, res) => {
 // 	res.send('Goodbye World!')
