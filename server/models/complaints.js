@@ -23,6 +23,12 @@ export class Complaints {
 	async create(complaint) {
 		//populate 'complaints' table
 		try {
+			let month_received = complaint.month_received;
+			month_received = month_received.length < 2 ? month_received.padStart(2, '0') : month_received
+
+			let month_closed = complaint.month_closed;
+			month_closed = month_closed.length < 2 ? month_closed.padStart(2, '0') : month_closed
+			
 			await this.db.run(`
 				INSERT INTO 
 					complaints(
@@ -38,8 +44,8 @@ export class Complaints {
 						complainant_age_incident)
 				VALUES(
 					'${complaint.complaint_id}', 
-					'${complaint.month_received} ${complaint.year_received}', 
-					'${complaint.month_closed} ${complaint.year_closed}',
+					'${month_received}-${complaint.year_received}', 
+					'${month_closed}-${complaint.year_closed}',
 					'${complaint.precinct}', 
 					'${complaint.contact_reason}', 
 					'${complaint.outcome_description}',
