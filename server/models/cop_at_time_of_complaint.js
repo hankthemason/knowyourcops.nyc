@@ -29,8 +29,8 @@ export class CopAtTimeOfComplaint {
 				INSERT INTO 
 					cop_at_time_of_complaint(
 						id, 
-						cop_id INTEGER NOT NULL, 
-						complaint_id INTEGER NOT NULL, 
+						cop_id, 
+						complaint_id, 
 						rank, 
 						assignment, 
 						age)

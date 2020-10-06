@@ -44,8 +44,8 @@ export class Complaints {
 						complainant_age_incident)
 				VALUES(
 					'${complaint.complaint_id}', 
-					'${month_received}-${complaint.year_received}', 
-					'${month_closed}-${complaint.year_closed}',
+					'01-${month_received}-${complaint.year_received}', 
+					'01-${month_closed}-${complaint.year_closed}',
 					'${complaint.precinct}', 
 					'${complaint.contact_reason}', 
 					'${complaint.outcome_description}',
