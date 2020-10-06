@@ -5,19 +5,19 @@ export class Allegations {
 
 	async init() {
 		await this.db.run(`CREATE TABLE IF NOT EXISTS allegations (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				cop INTEGER,
-				cop_command_unit TEXT,
-				precinct INTEGER,
-				complaint_id INTEGER,
-				fado_type TEXT,
-				description TEXT,
-				FOREIGN KEY(cop) REFERENCES cops(id),
-				FOREIGN KEY(cop_command_unit) REFERENCES command_units(unit_id),
-				FOREIGN KEY(precinct) REFERENCES precincts(id),
-				FOREIGN KEY(complaint_id) REFERENCES complaints(id)
-				);`
-			)
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			cop INTEGER,
+			cop_command_unit TEXT,
+			precinct INTEGER,
+			complaint_id INTEGER,
+			fado_type TEXT,
+			description TEXT,
+			FOREIGN KEY(cop) REFERENCES cops(id),
+			FOREIGN KEY(cop_command_unit) REFERENCES command_units(unit_id),
+			FOREIGN KEY(precinct) REFERENCES precincts(id),
+			FOREIGN KEY(complaint_id) REFERENCES complaints(id)
+			);`
+		)
 	}
 
 	async create(allegation) {
@@ -34,5 +34,23 @@ export class Allegations {
 				throw error.message
 			}
 		}		
+	}
+
+	async read() {
+		try {
+			//right now it's being limited just to ensure that the page
+			//loads correctly
+			const result = await this.db.all(`
+				SELECT 
+					*
+				FROM 
+					allegations
+				LIMIT 
+					100
+				`)
+		 	return result
+		} catch (error) {
+			console.error(error)
+		}
 	}
 }

@@ -17,9 +17,29 @@ const models = new Models(DB_PATH);
 
 	if (!dbMade) await models.readCSV(csv);
 
-	//COPS END POINT
+	//END POINTS
+	app.get('/command_units', async (req, res) => {
+		res.json(await models.commandUnits.read());
+	})
+
+	app.get('/precincts', async (req, res) => {
+		res.json(await models.precincts.read())
+	})
+
+	app.get('/allegations', async (req, res) => {
+		res.json(await models.allegations.read());
+	})
+
+	app.get('/complaints', async(req, res) => {
+		res.json(await models.complaints.read())
+	})
+
 	app.get('/cops', async (req, res) => {
 		res.json(await models.cops.read());
+	})
+
+	app.get('/cop_at_time_of_complaint', async (req, res) => {
+		res.json(await models.copAtTimeOfComplaint.read())
 	})
 
 	app.listen(port, () => {

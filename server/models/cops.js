@@ -21,20 +21,37 @@ export class Cops {
 
 	async create(cop) {
 		//populate 'cops' table
-			try {
-				await this.db.run(`INSERT INTO cops(id, first_name, last_name, assignment, shield_no,
-					rank, ethnicity, gender, precinct)
-					VALUES('${cop.unique_mos_id}', '${cop.first_name}', '${cop.last_name}', '${cop.command_now}',
-					'${cop.shield_no}', '${cop.rank_abbrev_now}', '${cop.mos_ethnicity}',
-					'${cop.mos_gender}', '${cop.precinct}')`)
-					} catch(error) {
-						if (error && !error.message.match(/SQLITE_CONSTRAINT:.*/)) {
-							console.log(error.message)
-							console.log('error in populating cops')
-							console.log(cop)
-							throw error.message
-						}
-					}		
+		try {
+			await this.db.run(`
+				INSERT INTO 
+					cops(
+						id, 
+						first_name, 
+						last_name, 
+						assignment, 
+						shield_no,
+						rank, 
+						ethnicity, 
+						gender, 
+						precinct)
+				VALUES(
+					'${cop.unique_mos_id}', 
+					'${cop.first_name}', 
+					'${cop.last_name}', 
+					'${cop.command_now}',
+					'${cop.shield_no}', 
+					'${cop.rank_abbrev_now}', 
+					'${cop.mos_ethnicity}',
+					'${cop.mos_gender}', 
+					'${cop.precinct}')`)
+			} catch(error) {
+				if (error && !error.message.match(/SQLITE_CONSTRAINT:.*/)) {
+					console.log(error.message)
+					console.log('error in populating cops')
+					console.log(cop)
+					throw error.message
+			}
+		}		
 	}
 
 	async read() {

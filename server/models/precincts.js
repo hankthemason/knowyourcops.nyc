@@ -18,21 +18,21 @@ export class Precincts {
 			}
 		
 		//step 1: look at command_at_incident and parse an int (precinct) from it (if it exists)
-					let command = precinct.command_at_incident;
-					const match = command.match(/(.*) (?:PCT)?(?:DET)?$/);
-					
-					const precinct_id = match && match[1] ? parseInt(match[1]) || null : null;
-					//step 2: check precinct table to see if a corresponding row exists yet; 
-					//				if not, we need to make that row in the precincts table
-					
-					if (precinct_id) {
-						await this.db.run(`
-							INSERT OR IGNORE INTO
-								precincts(id)
-							VALUES
-								(${precinct_id})
-						`)
-					}
+		let command = precinct.command_at_incident;
+		const match = command.match(/(.*) (?:PCT)?(?:DET)?$/);
+		
+		const precinct_id = match && match[1] ? parseInt(match[1]) || null : null;
+		//step 2: check precinct table to see if a corresponding row exists yet; 
+		//				if not, we need to make that row in the precincts table
+		
+		if (precinct_id) {
+			await this.db.run(`
+				INSERT OR IGNORE INTO
+					precincts(id)
+				VALUES
+					(${precinct_id})
+			`)
+		}
 
 		} catch(error) {
 			if (error && !error.message.match(/SQLITE_CONSTRAINT:.*/)) {
@@ -42,6 +42,19 @@ export class Precincts {
 				throw error.message
 			}
 		}
-
 	}
+
+	async read() {
+		try {
+			const result = await this.db.all(`
+				SELECT 
+					*
+				FROM
+					precincts`)
+			return result
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
 }
