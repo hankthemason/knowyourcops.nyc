@@ -23,7 +23,7 @@ export class Precincts {
 		
 		const precinct_id = match && match[1] ? parseInt(match[1]) || null : null;
 		//step 2: check precinct table to see if a corresponding row exists yet; 
-		//				if not, we need to make that row in the precincts table
+		//if not, we need to make that row in the precincts table
 		
 		if (precinct_id) {
 			await this.db.run(`

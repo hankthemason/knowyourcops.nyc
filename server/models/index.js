@@ -27,16 +27,32 @@ export class Models {
 		this.commandUnits = new CommandUnits(db);
 		this.allegations = new Allegations(db);
 		this.copAtTimeOfComplaint = new CopAtTimeOfComplaint(db);
-		
+
 		await this.precincts.init();
 		await this.cops.init();
 		await this.complaints.init();
 		await this.commandUnits.init();
 		await this.allegations.init();
 		await this.copAtTimeOfComplaint.init();
+
 	}
 
-	async readCSV(csvPath) {
+	async isDbPopulated() {
+		return (await this.cops.readAll()).length > 0 ? true : false
+	}
+
+	async populate(csvPath, commandAbbrevCsvPath) {
+		if(await this.isDbPopulated()) return
+
+		console.log('db being populated...')
+
+		await this.populateFromCsv(csvPath);
+		await this.cops.augment(commandAbbrevCsvPath);
+
+		console.log('db finished populating')
+	}
+
+	async populateFromCsv(csvPath) {
 		const csv = fs.readFileSync(csvPath);
 		const results = await neatCsv(csv);
 		for (const result of results) {
@@ -46,21 +62,6 @@ export class Models {
 			await	this.commandUnits.create(result)
 			await	this.allegations.create(result)
 			await	this.copAtTimeOfComplaint.create(result)
-		}
-	}
-
-	async addToCops(commandCsvPath) {
-		await this.cops.addCommandUnitFullColumn();
-		const csv = fs.readFileSync(commandCsvPath);
-		const commandCsv = await neatCsv(csv);
-		const results = await this.cops.getCommand();
-
-		for (const result of results) {
-			const cmdUnitFull = commandCsv.find(
-				e => e.Abbreviation === result.command_unit)
-			if (cmdUnitFull != undefined) {
-				this.cops.updateCommandUnitFullColumn(result.id, cmdUnitFull['Command Name'])
-			}
 		}
 	}
 }

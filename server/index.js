@@ -5,8 +5,6 @@ const csv = 'ccrb_data/data.csv';
 const DB_PATH = './db/ccrb.db';
 const commandCsv = 'ccrb_data/command_abrevs.csv'
 
-const dbMade = true;
-
 const port = 3001
 
 let db;
@@ -16,8 +14,7 @@ const models = new Models(DB_PATH);
 	const app = express()
 	await models.init();
 
-	if (!dbMade) await models.readCSV(csv);
-	if (!dbMade) await models.addToCops(commandCsv);
+	await models.populate(csv, commandCsv);
 
 	app.get('/', async (req, res) => {
 		res.send('hello')

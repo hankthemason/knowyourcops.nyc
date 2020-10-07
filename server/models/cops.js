@@ -1,3 +1,6 @@
+import neatCsv from 'neat-csv';
+import fs from 'fs';
+
 export class Cops {
 	constructor(db) {
 		this.db = db;
@@ -96,6 +99,21 @@ export class Cops {
 			return result
 		} catch(error) {
 			console.log(error);
+		}
+	}
+
+	async augment(csvPath) {
+		await this.addCommandUnitFullColumn();
+		const csv = fs.readFileSync(csvPath);
+		const commandCsv = await neatCsv(csv);
+		const results = await this.getCommand();
+
+		for (const result of results) {
+			const cmdUnitFull = commandCsv.find(
+				e => e.Abbreviation === result.command_unit)
+			if (cmdUnitFull != undefined) {
+				this.updateCommandUnitFullColumn(result.id, cmdUnitFull['Command Name'])
+			}
 		}
 	}
 
