@@ -4,10 +4,11 @@ import './App.css';
 import { CopsTable } from './cops';
 
 function App() {
+  console.log('hi')
   const [cop, setCop] = useState(null);
 
   useEffect(() => {
-    fetch("/cops/id=666")
+    fetch("/cops")
     .then(result => result.text())
     .then(copName => setCop(copName))
   }, [])

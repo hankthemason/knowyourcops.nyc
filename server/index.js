@@ -17,6 +17,10 @@ const models = new Models(DB_PATH);
 
 	if (!dbMade) await models.readCSV(csv);
 
+	app.get('/', async (req, res) => {
+		res.send('hello')
+	})
+
 	//END POINTS
 	app.get('/command_units', async (req, res) => {
 		res.json(await models.commandUnits.read());
