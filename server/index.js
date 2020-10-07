@@ -4,7 +4,7 @@ import { Models } from './models'
 const csv = 'data.csv';
 const DB_PATH = './db/ccrb.db';
 
-const dbMade = true;
+const dbMade = false;
 
 const port = 3001
 

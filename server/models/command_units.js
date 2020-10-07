@@ -25,7 +25,16 @@ export class CommandUnits {
 
 		//populate 'command_units' table
 		try {
-			await this.db.run(`INSERT INTO command_units(id, unit_id, precinct) VALUES (NULL, '${command_unit.command_at_incident}', '${precinct_id}')`)
+			await this.db.run(`
+				INSERT INTO 
+					command_units(
+						id, 
+						unit_id, 
+						precinct) 
+				VALUES(
+					NULL, 
+					'${command_unit.command_at_incident}', 
+					'${precinct_id}')`)
 		} catch(error) {
 			if (error && !error.message.match(/SQLITE_CONSTRAINT:.*/)) {
 				console.log(error.message)
