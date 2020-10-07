@@ -1,10 +1,11 @@
 import express from 'express'
 import { Models } from './models'
 
-const csv = 'data.csv';
+const csv = 'ccrb_data/data.csv';
 const DB_PATH = './db/ccrb.db';
+const commandCsv = 'ccrb_data/command_abrevs.csv'
 
-const dbMade = false;
+const dbMade = true;
 
 const port = 3001
 
@@ -16,6 +17,7 @@ const models = new Models(DB_PATH);
 	await models.init();
 
 	if (!dbMade) await models.readCSV(csv);
+	if (!dbMade) await models.addToCops(commandCsv);
 
 	app.get('/', async (req, res) => {
 		res.send('hello')
@@ -39,7 +41,11 @@ const models = new Models(DB_PATH);
 	})
 
 	app.get('/cops', async (req, res) => {
-		res.json(await models.cops.read());
+		res.json(await models.cops.readAll());
+	})
+
+	app.get('/cops/id=:id', async (req, res) => {
+		res.json(await models.cops.readOne(req.params.id))
 	})
 
 	app.get('/cop_at_time_of_complaint', async (req, res) => {

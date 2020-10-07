@@ -48,4 +48,19 @@ export class Models {
 			await	this.copAtTimeOfComplaint.create(result)
 		}
 	}
+
+	async addToCops(commandCsvPath) {
+		await this.cops.addCommandUnitFullColumn();
+		const csv = fs.readFileSync(commandCsvPath);
+		const commandCsv = await neatCsv(csv);
+		const results = await this.cops.getCommand();
+
+		for (const result of results) {
+			const cmdUnitFull = commandCsv.find(
+				e => e.Abbreviation === result.command_unit)
+			if (cmdUnitFull != undefined) {
+				this.cops.updateCommandUnitFullColumn(result.id, cmdUnitFull['Command Name'])
+			}
+		}
+	}
 }

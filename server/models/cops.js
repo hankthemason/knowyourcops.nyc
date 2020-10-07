@@ -23,9 +23,8 @@ export class Cops {
 	async create(cop) {
 
 		let command = cop.command_now;
-		console.log(command)
 		let match = command.match(/(.*) (?:PCT)?(?:DET)?$/);
-		console.log(match)
+		
 		const precinct_id = match && match[1] ? parseInt(match[1]) || null : null;
 		//populate 'cops' table
 		try {
@@ -61,7 +60,7 @@ export class Cops {
 		}		
 	}
 
-	async read() {
+	async readAll() {
 		try {
 		//db.all(`SELECT cops.*, Count(allegations.complaint) as num_allegations FROM cops INNER JOIN complaints ON cops.id = complaints.cop INNER JOIN allegations ON allegations.complaint = complaints.id GROUP BY cops.id`, (err, row) => {
 		const result = await this.db.all(`
@@ -83,5 +82,45 @@ export class Cops {
 		} catch(error) {
 			console.error(error);
 		}
+	}
+
+	async readOne(id) {
+		try {
+			const result = await this.db.get(`
+				SELECT 
+					*
+				FROM 
+					cops
+				WHERE
+					id = ${id}`)
+			return result
+		} catch(error) {
+			console.log(error);
+		}
+	}
+
+	async getCommand() {
+		const results = await this.db.all(`
+			SELECT *
+			FROM cops`)
+		return results;
+	}
+
+	async addCommandUnitFullColumn() {
+		this.db.run(`
+			ALTER TABLE
+				cops
+			ADD COLUMN 
+				command_unit_full TEXT`)
+	}
+
+	async updateCommandUnitFullColumn(id, cmdUnitFull) {
+		this.db.run(`
+			UPDATE 
+				cops 
+			SET
+				command_unit_full = '${cmdUnitFull}'
+			WHERE
+				id = ${id}`)
 	}
 }

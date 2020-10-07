@@ -28,7 +28,7 @@ export const CopsTable = (props) => {
 								{`${entry.first_name} ${entry.last_name}`}
 							</td>
 							<td>
-								{`Precinct: ${entry.precinct}`}
+								{`${entry.command_unit_full ? entry.command_unit_full : entry.command_unit }`}
 							</td>
 							<td>
 								{`Allegations: ${entry.num_allegations}`}

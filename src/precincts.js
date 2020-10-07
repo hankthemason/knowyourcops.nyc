@@ -12,5 +12,8 @@ export const PrecinctsTable = (props) => {
 	console.log(precincts);
 
 	return (
+		<div>
+			hi
+		</div>
 	)
 }

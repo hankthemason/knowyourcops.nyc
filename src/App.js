@@ -4,7 +4,6 @@ import './App.css';
 import { CopsTable } from './cops';
 
 function App() {
-  console.log('hi')
   const [cop, setCop] = useState(null);
 
   useEffect(() => {
