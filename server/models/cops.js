@@ -1,5 +1,6 @@
 import neatCsv from 'neat-csv';
 import fs from 'fs';
+import { reduce } from 'lodash';
 
 export class Cops {
 	constructor(db) {
@@ -78,10 +79,16 @@ export class Cops {
 				cops.id = allegations.cop 
 			GROUP BY 
 				cops.id 
-			ORDER BY 
-				num_allegations DESC;
 		`)
-			return result
+			console.log('begin reduce')
+			const test = reduce(result, (accumulator, value) => {
+				return {
+					...accumulator, [value.id]: value
+				}
+			}, {})
+			console.log('end reduce')
+			console.log(result.length)
+			return test
 		} catch(error) {
 			console.error(error);
 		}

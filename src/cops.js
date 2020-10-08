@@ -1,17 +1,14 @@
 import React, {useState, useEffect} from 'react';
+import {
+	BrowserRouter as Router,
+	Switch,
+	Route,
+	Link
+} from 'react-router-dom'
+import { values } from 'lodash';
 
 export const CopsTable = (props) => {
-
-	const [cops, setCops] = useState([]);
-
-	useEffect(() => {
-		fetch("/cops")
-		.then(result => result.json())
-		//this sets 'cops' equal to the copList returned above
-		.then(copList => setCops(copList))
-	})
-
-	console.log(cops);
+	const { cops } = props;
 
 	return (
 		<div>
@@ -22,10 +19,10 @@ export const CopsTable = (props) => {
 					</tr>
 				</thead>
 				<tbody>
-					{cops.map(entry => (
+					{values(cops).map(entry => (
 						<tr>
 							<td>
-								{`${entry.first_name} ${entry.last_name}`}
+								<Link to={`/cop/${entry.id}`}>{`${entry.first_name} ${entry.last_name}`}</Link>
 							</td>
 							<td>
 								{`${entry.command_unit_full ? entry.command_unit_full : entry.command_unit }`}
@@ -43,7 +40,7 @@ export const CopsTable = (props) => {
 			</table>
 
 
-			{cops.map(entry => (
+			{values(cops).map(entry => (
 				<div>
 					{`${entry.first_name} ${entry.last_name}`}
 					<a href="/precincts">

@@ -2,33 +2,34 @@ import React, {useState, useEffect} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { CopsTable } from './cops';
+import { CopPage } from './cop';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from 'react-router-dom'
 
 function App() {
-  const [cop, setCop] = useState(null);
+  const [cops, setCops] = useState(null);
 
   useEffect(() => {
     fetch("/cops")
-    .then(result => result.text())
-    .then(copName => setCop(copName))
+    .then(result => result.json())
+    .then(cops => setCops(cops))
   }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        {<CopsTable />}
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {cop}
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/cop/:id">
+          {cops ? <CopPage cops={cops} /> : null}
+        </Route>
+        <Route path="/cops">
+          {cops ? <CopsTable cops={cops} /> : null}
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 

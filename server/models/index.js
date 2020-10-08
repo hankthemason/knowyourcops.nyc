@@ -8,6 +8,7 @@ import { Complaints } from './complaints'
 import { CommandUnits } from './command_units'
 import { Allegations } from './allegations'
 import { CopAtTimeOfComplaint } from './cop_at_time_of_complaint'
+import { keys } from 'lodash';
 
 export class Models {
 	constructor(dbPath) {
@@ -38,7 +39,7 @@ export class Models {
 	}
 
 	async isDbPopulated() {
-		return (await this.cops.readAll()).length > 0 ? true : false
+		return keys(await this.cops.readAll()).length > 0 ? true : false
 	}
 
 	async populate(csvPath, commandAbbrevCsvPath) {

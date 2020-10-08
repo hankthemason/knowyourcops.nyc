@@ -1,17 +1,17 @@
 import React, {useState, useEffect} from 'react';
+import { useParams } from 'react-router-dom';
 
 export const CopPage = (props) => {
+	const { cops } = props;
 
-	//is 'cop's initial state an empty object?
-	const [cop, setCop] = useState({});
+	const {id} = useParams();
 
-	useEffect(() => {
-		fetch("/cops/id=:id")
-		.then(result => result.json())
-		//this sets the 'cop' equal to the cop returned above
-		.then(cop => setCop(cop))
-	})
-
-	console.log(cop);
-
+	console.log(cops)
+	
+	const name = cops[id].first_name;
+	return (
+		<div>
+			{id}, {name}
+		</div>
+	)
 }
