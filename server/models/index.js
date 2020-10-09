@@ -47,8 +47,8 @@ export class Models {
 
 		console.log('db being populated...')
 
-		await this.populateFromCsv(csvPath);
-		await this.cops.augment(commandAbbrevCsvPath);
+		//await this.populateFromCsv(csvPath);
+		//await this.cops.augment(commandAbbrevCsvPath);
 
 		console.log('db finished populating')
 	}

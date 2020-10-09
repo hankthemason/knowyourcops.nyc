@@ -1,6 +1,7 @@
 import neatCsv from 'neat-csv';
 import fs from 'fs';
 import { reduce } from 'lodash';
+import update from 'immutability-helper';
 
 export class Cops {
 	constructor(db) {
@@ -81,14 +82,19 @@ export class Cops {
 				cops.id 
 		`)
 			console.log('begin reduce')
-			const test = reduce(result, (accumulator, value) => {
-				return {
-					...accumulator, [value.id]: value
-				}
+			// const test = reduce(result, (accumulator, value) => {
+			// 	return {
+			// 		...accumulator, [value.id]: value
+			// 	}
+			// }, {})
+			const copsReduced = reduce(result, (accumulator, value) => {
+				let tempKey = value.id;
+				accumulator[tempKey] = value;
+				return accumulator
 			}, {})
 			console.log('end reduce')
-			console.log(result.length)
-			return test
+			return copsReduced
+
 		} catch(error) {
 			console.error(error);
 		}

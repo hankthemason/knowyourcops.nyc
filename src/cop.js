@@ -5,13 +5,12 @@ export const CopPage = (props) => {
 	const { cops } = props;
 
 	const {id} = useParams();
-
-	console.log(cops)
 	
 	const name = cops[id].first_name;
+	const allegations = cops[id].num_allegations;
 	return (
 		<div>
-			{id}, {name}
+			{id}, {name}, allegations: {allegations}
 		</div>
 	)
 }
