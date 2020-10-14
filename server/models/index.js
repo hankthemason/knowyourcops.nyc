@@ -39,7 +39,7 @@ export class Models {
 	}
 
 	async isDbPopulated() {
-		return keys(await this.cops.readAll()).length > 0 ? true : false
+		return keys(await this.precincts.read()).length > 0 ? true : false
 	}
 
 	async populate(csvPath, commandAbbrevCsvPath) {
@@ -47,8 +47,8 @@ export class Models {
 
 		console.log('db being populated...')
 
-		//await this.populateFromCsv(csvPath);
-		//await this.cops.augment(commandAbbrevCsvPath);
+		await this.populateFromCsv(csvPath);
+		await this.cops.augment(commandAbbrevCsvPath);
 
 		console.log('db finished populating')
 	}

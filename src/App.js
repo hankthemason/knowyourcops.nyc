@@ -26,7 +26,10 @@ function App() {
           {cops ? <CopPage cops={cops} /> : null}
         </Route>
         <Route path="/cops">
-          {cops ? <CopsTable cops={cops}/> : null}
+          {cops ? <CopsTable cops={cops} /> : null}
+        </Route>
+        <Route path="/allegations">
+          {}
         </Route>
       </Switch>
     </Router>

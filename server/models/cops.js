@@ -65,28 +65,34 @@ export class Cops {
 		}		
 	}
 
-	async readAll() {
+	async read() {
 		try {
-		//db.all(`SELECT cops.*, Count(allegations.complaint) as num_allegations FROM cops INNER JOIN complaints ON cops.id = complaints.cop INNER JOIN allegations ON allegations.complaint = complaints.id GROUP BY cops.id`, (err, row) => {
 		const result = await this.db.all(`
 			SELECT 
-				cops.*, 
-				Count(*) as num_allegations 
+				cops.*,
+				CASE 
+						WHEN COUNT(*) > 9
+						THEN (
+						ROUND(COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(*) * 100.0, 2))
+						END substantiated_percentage, 
+				Count(*) as num_allegations,
+				COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
+				Count(DISTINCT complaints.id) AS num_complaints
 			FROM 
 				cops 
 			INNER JOIN 
 				allegations 
 			ON 
-				cops.id = allegations.cop 
+				cops.id = allegations.cop
+				INNER JOIN
+					complaints
+				ON 
+					complaints.id = allegations.complaint_id 
 			GROUP BY 
 				cops.id 
 		`)
 			console.log('begin reduce')
-			// const test = reduce(result, (accumulator, value) => {
-			// 	return {
-			// 		...accumulator, [value.id]: value
-			// 	}
-			// }, {})
+
 			const copsReduced = reduce(result, (accumulator, value) => {
 				let tempKey = value.id;
 				accumulator[tempKey] = value;
@@ -99,6 +105,60 @@ export class Cops {
 			console.error(error);
 		}
 	}
+
+	async getSubstantiatedPercentage() {
+		try {
+			const result = await this.db.all(`
+				SELECT
+					cops.*,
+					CASE 
+						WHEN COUNT(*) > 9
+						THEN (
+						COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(*) * 100.0)
+						END substantiated_percentage,
+					COUNT(*) AS num_allegations
+				FROM 
+					cops
+				INNER JOIN
+					allegations
+				ON
+					cops.id = allegations.cop
+				GROUP BY 
+					cops.id
+				ORDER BY
+					substantiated_percentage DESC
+				`)
+			return result
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	// async getSubstantiatedPercentage() {
+	// 	try {
+	// 		const result = await this.db.all(`
+	// 			SELECT
+	// 				cops.*,
+	// 				COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(*) * 100.0 AS substantiated_percentage,
+	// 				COUNT(*) AS num_allegations
+	// 			FROM 
+	// 				cops
+	// 			INNER JOIN
+	// 				allegations
+	// 			ON
+	// 				cops.id = allegations.cop
+	// 			GROUP BY 
+	// 				cops.id
+	// 			HAVING
+	// 				COUNT(*) > 9
+	// 			ORDER BY
+	// 				substantiated_percentage DESC
+	// 			`)
+	// 		return result
+	// 	} catch (error) {
+	// 		console.error(error)
+	// 	}
+	// }
 
 	async readOne(id) {
 		try {

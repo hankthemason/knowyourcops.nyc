@@ -12,6 +12,7 @@ export class Allegations {
 			complaint_id INTEGER,
 			fado_type TEXT,
 			description TEXT,
+			board_disposition TEXT,
 			FOREIGN KEY(cop) REFERENCES cops(id),
 			FOREIGN KEY(cop_command_unit) REFERENCES command_units(unit_id),
 			FOREIGN KEY(precinct) REFERENCES precincts(id),
@@ -23,9 +24,26 @@ export class Allegations {
 	async create(allegation) {
 		//populate 'allegations' table
 		try {
-			await this.db.run(`INSERT INTO allegations(id, cop, cop_command_unit, precinct, complaint_id, fado_type, description)
-				VALUES (NULL, '${allegation.unique_mos_id}', '${allegation.command_at_incident}','${allegation.precinct}', '${allegation.complaint_id}', 
-				'${allegation.fado_type}', '${allegation.allegation}')`)
+			await this.db.run(`
+				INSERT INTO 
+					allegations(
+						id, 
+						cop, 
+						cop_command_unit, 
+						precinct, 
+						complaint_id, 
+						fado_type, 
+						description,
+						board_disposition)
+				VALUES(
+					NULL, 
+					'${allegation.unique_mos_id}', 
+					'${allegation.command_at_incident}',
+					'${allegation.precinct}', 
+					'${allegation.complaint_id}', 
+					'${allegation.fado_type}', 
+					'${allegation.allegation}',
+					'${allegation.board_disposition}')`)
 		} catch(error) {
 			if (error && !error.message.match(/SQLITE_CONSTRAINT:.*/)) {
 				console.log(error.message)
@@ -49,6 +67,25 @@ export class Allegations {
 					100
 				`)
 		 	return result
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	async getSubstantiated(id) {
+		try {
+			console.log('id: ' + id)
+			const result = await this.db.all(`
+				SELECT 
+					COUNT(*) AS count
+				FROM 
+					allegations
+				WHERE 
+					cop = '${id}'
+				AND 
+					board_disposition LIKE 'Substantiated%'
+				`)
+			return result
 		} catch (error) {
 			console.error(error)
 		}

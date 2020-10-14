@@ -11,7 +11,6 @@ export class Complaints {
 			precinct INTEGER,
 			contact_reason TEXT,
 			outcome_description TEXT,
-			board_disposition TEXT,
 			complainant_ethnicity TEXT,
 			complainant_gender TEXT,
 			complainant_age_incident INTEGER,
@@ -37,8 +36,7 @@ export class Complaints {
 						date_closed, 
 						precinct, 
 						contact_reason, 
-						outcome_description, 
-						board_disposition, 
+						outcome_description,  
 						complainant_ethnicity,
 						complainant_gender, 
 						complainant_age_incident)
@@ -49,7 +47,6 @@ export class Complaints {
 					'${complaint.precinct}', 
 					'${complaint.contact_reason}', 
 					'${complaint.outcome_description}',
-					'${complaint.board_disposition}', 
 					'${complaint.complainant_ethnicity}', 
 					'${complaint.complainant_gender}',
 					'${complaint.complainant_age_incident}')`)
@@ -80,8 +77,6 @@ export class Complaints {
 					complaints.id
 				ORDER BY
 					num_allegations_on_complaint DESC
-				LIMIT
-					100
 			`)
 			return result
 		} catch (error) {
