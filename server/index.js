@@ -57,8 +57,8 @@ const models = new Models(DB_PATH);
 		res.json(await models.copAtTimeOfComplaint.read())
 	})
 
-	app.get('/cop_at_time_of_complaint', async (req, res) => {
-		res.json(await models.copAtTimeOfComplaint.read())
+	app.get('/cop_complaints/id=:id', async (req, res) => {
+		res.json(await models.cops.getComplaints(req.params.id))
 	})
 
 	app.listen(port, () => {

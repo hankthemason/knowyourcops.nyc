@@ -10,73 +10,33 @@ import { values, orderBy } from 'lodash';
 import { Button } from './components/button';
 import { DropDown } from './components/dropdown';
 import { Pagination } from './components/pagination';
+import { useViewConfig } from './context/viewConfig';
 
 export const CopsTable = props => {
+
+	const { config } = useViewConfig()
+	
+	const { orderDirection, 
+					toggleOrderDirection, 
+					currentPage, 
+					setCurrentPage, 
+					orderByOption, 
+					setOrderByOption,
+					orderOptions,
+					itemsPerPage,
+					setItemsPerPage,
+					pageSizeOptions } = config
+
 	//cops is an object of 'cop' objects with their id's as keys
 	const { cops } = props
-	
-	//different categories by which to order the CopsTable
-	const orderOptions = [
-		{
-			id: 0,
-			title: 'Number of Allegations',
-			value: 'num_allegations'
-		},
-		{
-			id: 1,
-			title: 'Name',
-			value: 'last_name'
-		},
-		{
-			id: 2,
-			title: 'Command Unit',
-			value: 'command_unit_full'
-		},
-		{
-			id: 3,
-			title: 'Number of Substantiated Allegations',
-			value: 'num_substantiated'
-		}
-	]
 
-	const pageSizeOptions = [
-		{id: 0,
-		 value: 10
-		},
-		{id: 1,
-		 value: 25
-		},
-		{id: 2,
-		 value: 50
-		},
-		{id: 3,
-		 value: 100
-		}
-	]
-
-	//which of the orderOptions is selected
-	const [orderOptionsState, setOrderOptionsState] = useState(orderOptions[0])
+	let sliceBegin = (currentPage - 1) * itemsPerPage.value;
+	let sliceEnd = sliceBegin + itemsPerPage.value;
 	
-	//whether the table is ordered ascending(true) or descending(false)
-	const [orderDir, setOrderDir] = useState(false);
-
-	//store the table's pagination state
-	const [currentPage, setCurrentPage] = useState(1);
-	const [itemsPerPage, setItemsPerPage] = useState(10)
-	//let itemsPerPage = 10;
-	let sliceBegin = (currentPage - 1) * itemsPerPage;
-	let sliceEnd = sliceBegin + itemsPerPage;
-	
-	
-	let copsTableSorted = orderBy(cops, orderOptionsState.value, orderDir ? 'asc' : 'desc');
-	let orderDirDisplay = orderDir ? 'desc' : 'asc'
-
-	function orderDirHandler() {
-		setOrderDir(!orderDir)
-	}
+	let copsTableSorted = orderBy(cops, orderByOption.value, orderDirection.toLowerCase());
 
 	function orderHandler(v) {
-		setOrderOptionsState(orderOptions[v])
+		setOrderByOption(orderOptions[v])
 	}
 
 	function currentPageHandler(v) {
@@ -84,13 +44,13 @@ export const CopsTable = props => {
 	}
 
 	function handlePageSizeChange(v) {
-    setItemsPerPage(pageSizeOptions[v].value);
+    setItemsPerPage(pageSizeOptions[v]);
   };
 
 	return (
 		<div>
-			<Button display={orderDirDisplay} handler={orderDirHandler}/>
-			<DropDown options={orderOptions} handler={orderHandler}/>
+			<Button display={orderDirection === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrderDirection}/>
+			<DropDown options={orderOptions} handler={orderHandler} value={orderByOption.id}/>
 			<table>
 				<caption>Cops Table</caption>
 				<thead>
@@ -128,13 +88,15 @@ export const CopsTable = props => {
 			<div className="">
         {"Items per Page: "}
         <DropDown 
+        	id="itemsPerPageDropdown"
         	options={pageSizeOptions}
-        	handler={handlePageSizeChange} 
+        	handler={handlePageSizeChange}
+        	value={itemsPerPage.id}
         />
       </div>
 			<Pagination 
 				data={values(copsTableSorted)} 
-				itemsPerPage={itemsPerPage}
+				itemsPerPage={itemsPerPage.value}
 				handler={currentPageHandler}
 			/>
 		</div>

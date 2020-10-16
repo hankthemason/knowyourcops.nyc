@@ -1,7 +1,12 @@
 import React, {useState} from 'react';
-import ReactPaginate from 'react-paginate'
+import ReactPaginate from 'react-paginate';
+import { useViewConfig } from '../context/viewConfig';
 
 export const Pagination = props => {
+	const { config } = useViewConfig();
+
+	let currentPage = config.currentPage
+
 	const numPages = Math.ceil(props.data.length / props.itemsPerPage);
 	
 	let numbers = [];
@@ -30,7 +35,8 @@ export const Pagination = props => {
         onPageChange={handleChange}
         containerClassName={"pagination"}
         subContainerClassName={"pages pagination"}
-        activeClassName={"active"}/>
+        activeClassName={"active"}
+        forcePage={currentPage-1}/>
 		</div>
 	)
 }

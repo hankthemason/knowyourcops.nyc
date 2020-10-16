@@ -75,9 +75,9 @@ export class Cops {
 						THEN (
 						ROUND(COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(*) * 100.0, 2))
 						END substantiated_percentage, 
-				Count(*) as num_allegations,
+				COUNT(*) AS num_allegations,
 				COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
-				Count(DISTINCT complaints.id) AS num_complaints
+				COUNT(DISTINCT complaints.id) AS num_complaints
 			FROM 
 				cops 
 			INNER JOIN 
@@ -104,6 +104,68 @@ export class Cops {
 		} catch(error) {
 			console.error(error);
 		}
+	}
+
+	//to get the complaints on a cop, we need to do 2 joins
+	async getComplaints(id) {
+		try {
+			const result = await this.db.all(`
+				SELECT
+					COUNT(CASE WHEN complainant_ethnicity LIKE '%BLACK%' THEN 1 END) AS black,
+					COUNT(CASE WHEN complainant_ethnicity LIKE '%HISPANIC%' THEN 1 END) AS hispanic,
+					COUNT(CASE WHEN complainant_ethnicity LIKE '%WHITE%' THEN 1 END) AS white,
+					COUNT(CASE WHEN complainant_ethnicity LIKE '%ASIAN%' THEN 1 END) AS asian,
+					COUNT(CASE WHEN complainant_ethnicity LIKE '' THEN 1 END) AS ethnicity_unknown,
+					COUNT(CASE WHEN complainant_gender LIKE '%MALE%' THEN 1 END) AS male,
+					COUNT(CASE WHEN complainant_gender LIKE '%FEMALE%' THEN 1 END) AS female,
+					COUNT(CASE WHEN complainant_gender LIKE '' THEN 1 END) AS gender_unknown
+				FROM
+					(
+						SELECT
+							com.id,
+							com.complainant_ethnicity,
+							com.complainant_gender
+						FROM
+							cops
+						INNER JOIN
+							allegations
+						ON
+							allegations.cop = cops.id
+							INNER JOIN
+								complaints com
+							ON
+								com.id = allegations.complaint_id
+						WHERE
+							cops.id = '${id}'
+						GROUP BY 
+							com.id
+					)
+				`)
+			// const result = await this.db.all(`
+			// 	SELECT
+			// 		COUNT(CASE WHEN com.complainant_ethnicity LIKE '%BLACK%' THEN 1 END) AS black,
+			// 		COUNT(CASE WHEN com.complainant_ethnicity LIKE '%HISPANIC%' THEN 1 END) AS hispanic,
+			// 		COUNT(CASE WHEN com.complainant_ethnicity LIKE '%WHITE%' THEN 1 END) AS white,
+			// 		COUNT(CASE WHEN com.complainant_ethnicity LIKE '%ASIAN%' THEN 1 END) AS asian,
+			// 		COUNT(CASE WHEN com.complainant_ethnicity LIKE '' THEN 1 END) AS unknown
+			// 	FROM
+			// 		cops
+			// 	INNER JOIN
+			// 		allegations
+			// 	ON
+			// 		allegations.cop = cops.id
+			// 		INNER JOIN
+			// 			complaints com
+			// 		ON
+			// 			com.id = allegations.complaint_id
+			// 	WHERE
+			// 		cops.id = '${id}'
+			// 	`)
+			return result
+		} catch (error) {
+			console.error(error)
+		}
+
 	}
 
 	async getSubstantiatedPercentage() {

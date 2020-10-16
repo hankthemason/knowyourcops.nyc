@@ -56,15 +56,16 @@ export class Allegations {
 
 	async read() {
 		try {
-			//right now it's being limited just to ensure that the page
-			//loads correctly
 			const result = await this.db.all(`
 				SELECT 
-					*
+					allegations.*, 
+					complaints.complainant_ethnicity
 				FROM 
 					allegations
-				LIMIT 
-					100
+				INNER JOIN
+					complaints
+				ON
+					allegations.complaint_id = complaints.id
 				`)
 		 	return result
 		} catch (error) {
