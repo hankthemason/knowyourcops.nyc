@@ -49,16 +49,20 @@ const models = new Models(DB_PATH);
 		res.json(await models.cops.readOne(req.params.id))
 	})
 
-	app.get('/substantiated_percentage', async (req, res) => {
-		res.json(await models.cops.getSubstantiatedPercentage())
+	app.get('/substantiated_percentage/id=:id', async (req, res) => {
+		res.json(await models.cops.getSubstantiatedPercentage(req.params.id))
 	})
 
 	app.get('/cop_at_time_of_complaint', async (req, res) => {
 		res.json(await models.copAtTimeOfComplaint.read())
 	})
 
-	app.get('/cop_complaints/id=:id', async (req, res) => {
-		res.json(await models.cops.getComplaints(req.params.id))
+	app.get('/cop_complaints/complainant_info/id=:id', async (req, res) => {
+		res.json(await models.cops.getComplaintsComplainants(req.params.id))
+	})
+
+	app.get('/cop_complaints/locations/id=:id', async (req, res) => {
+		res.json(await models.cops.getComplaintsLocations(req.params.id))
 	})
 
 	app.listen(port, () => {

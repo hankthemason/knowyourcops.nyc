@@ -14,7 +14,7 @@ import {
 function App() {
   const [cops, setCops] = useState(null);
   const [allegations, setAllegations] = useState(null);
-
+  
   useEffect(() => {
     fetch("/cops")
     .then(result => result.json())

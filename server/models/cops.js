@@ -107,7 +107,7 @@ export class Cops {
 	}
 
 	//to get the complaints on a cop, we need to do 2 joins
-	async getComplaints(id) {
+	async getComplaintsComplainants(id) {
 		try {
 			const result = await this.db.all(`
 				SELECT
@@ -165,10 +165,41 @@ export class Cops {
 		} catch (error) {
 			console.error(error)
 		}
-
 	}
 
-	async getSubstantiatedPercentage() {
+	async getComplaintsLocations(id) {
+		try {
+			const result = await this.db.all(`
+				SELECT
+					precinct,
+					COUNT(*) as count
+				FROM
+				(SELECT 
+					com.precinct
+				FROM
+					cops c
+				INNER JOIN
+					allegations a
+				ON
+					c.id = a.cop
+					INNER JOIN
+						complaints com
+					ON 
+						com.id = a.complaint_id
+				WHERE
+					c.id = '${id}'
+				GROUP BY
+					com.id)
+				GROUP BY
+					precinct
+				`)
+			return result
+		} catch(error) {
+			console.error(error)
+		}
+	}
+
+	async getSubstantiatedPercentage(id) {
 		try {
 			const result = await this.db.all(`
 				SELECT
@@ -185,6 +216,8 @@ export class Cops {
 					allegations
 				ON
 					cops.id = allegations.cop
+				WHERE
+					cops.id = '${id}'
 				GROUP BY 
 					cops.id
 				ORDER BY
@@ -226,11 +259,27 @@ export class Cops {
 		try {
 			const result = await this.db.get(`
 				SELECT 
-					*
+					cops.*,
+					CASE 
+						WHEN COUNT(*) > 9
+						THEN (
+						ROUND(COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(*) * 100.0, 2))
+						END substantiated_percentage, 
+					COUNT(*) AS num_allegations,
+					COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
+					COUNT(DISTINCT complaints.id) AS num_complaints
 				FROM 
 					cops
+				INNER JOIN 
+					allegations 
+				ON 
+					cops.id = allegations.cop
+					INNER JOIN
+						complaints
+					ON 
+						complaints.id = allegations.complaint_id 
 				WHERE
-					id = ${id}`)
+					cops.id = ${id}`)
 			return result
 		} catch(error) {
 			console.log(error);
