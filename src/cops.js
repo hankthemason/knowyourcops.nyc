@@ -62,8 +62,6 @@ export const CopsTable = props => {
 		}
   }
 
-  console.log(cops)
-
 	return (
 		<div>
 			<Button display={orderDirection === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrderDirection}/>

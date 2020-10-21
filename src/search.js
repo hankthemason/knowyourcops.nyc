@@ -17,7 +17,7 @@ export const Search = props => {
 	  		return e.last_name.toLowerCase() === v.toLowerCase() ||
 	  			e.first_name.toLowerCase() === v.toLowerCase();
 	  	})
-	  	//stops infinite loop if there are no search results
+	  	//stops infinite loop if there are no results
 	  	if (filterResults.length === 0) {
 	  		return
 	  	}

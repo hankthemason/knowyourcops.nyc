@@ -81,7 +81,9 @@ export const ViewConfigProvider = (props) => {
 	}, [config])
 
 
-	return <ViewConfigContext.Provider value={{config}}>
-					{props.children}
-				 </ViewConfigContext.Provider> 
+	return (
+		<ViewConfigContext.Provider value={{config}}>
+			{props.children}
+		</ViewConfigContext.Provider> 
+	)
 }
