@@ -4,7 +4,8 @@ import './App.css';
 import { CopsTable } from './cops';
 import { CopPage } from './cop';
 import { Search } from './search';
-import { ViewConfigProvider } from './context/viewConfig'
+import { ViewConfigProvider } from './context/viewConfig';
+import { CopsProvider } from './context/copsContext';
 import {
   BrowserRouter as Router,
   Switch,
@@ -33,22 +34,24 @@ function App() {
 
   return (
     <ViewConfigProvider>
-      <Router>
-        <Switch>
-          <Route path="/cop/:id">
-            {cops ? <CopPage cops={cops} /> : null}
-          </Route>
-          <Route path="/cops">
-            {cops ? <CopsTable cops={cops} setSearchResults={setSearchResults}/> : null}
-          </Route>
-          <Route path="/allegations">
-            {}
-          </Route>
-          <Route path="/search" >
-            <Search results={searchResults} setSearchResults={setSearchResults} cops={cops}/>
-          </Route>
-        </Switch>
-      </Router>
+      <CopsProvider>
+        <Router>
+          <Switch>
+            <Route path="/cop/:id">
+              {cops ? <CopPage cops={cops} /> : null}
+            </Route>
+            <Route path="/cops">
+              {cops ? <CopsTable cops={cops} setSearchResults={setSearchResults}/> : null}
+            </Route>
+            <Route path="/allegations">
+              {}
+            </Route>
+            <Route path="/search" >
+              <Search results={searchResults} setSearchResults={setSearchResults} cops={cops}/>
+            </Route>
+          </Switch>
+        </Router>
+      </CopsProvider>
     </ViewConfigProvider>
   );
 }

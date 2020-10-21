@@ -10,11 +10,14 @@ import {
 import { values, orderBy, filter } from 'lodash';
 import { Button } from './components/button';
 import { DropDown } from './components/dropdown';
-import { Pagination } from './components/pagination';
+import { useCops } from './context/copsContext';
 import { useViewConfig } from './context/viewConfig';
 import { SearchBar } from './components/searchBar';
+import { Pagination } from './components/pagination';
 
 export const CopsTable = props => {
+
+	const { copss } = useCops()
 
 	const { config } = useViewConfig()
 	
