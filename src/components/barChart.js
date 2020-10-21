@@ -3,19 +3,8 @@ import Chartjs from 'chart.js';
 import { Bar } from 'react-chartjs-2'
 import { keys, values } from 'lodash'
 
-const chartConfig = {
-  type: 'bar',
-  data: {
-    // ...
-  },
-  options: {
-    // ...
-  }
-};
-
 export const BarChart = (props) => {
   const {data, title} = props;
-  chartConfig.data = {...data}
 
   let chartLabels = keys(data)
   let chartData = values(data)
@@ -25,14 +14,14 @@ export const BarChart = (props) => {
   const [barData, setBarData] = useState({
     labels: [...chartLabels],
     datasets: [
-        {
-            label: '',
-            data: [...chartData],
-            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-            borderWidth: 3
-        }
+      {
+        label: '',
+        data: [...chartData],
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        borderWidth: 3
+      }
     ]
-});
+  });
   //set options
   const [barOptions, setBarOptions] = useState({
     options: {

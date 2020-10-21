@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import { CopsTable } from './cops';
 import { CopPage } from './cop';
+import { Search } from './search';
 import { ViewConfigProvider } from './context/viewConfig'
 import {
   BrowserRouter as Router,
@@ -27,6 +28,9 @@ function App() {
     .then(allegations => setAllegations(allegations))
   }, [])
 
+  //temporary example
+  const [searchResults, setSearchResults] = useState([]);
+
   return (
     <ViewConfigProvider>
       <Router>
@@ -35,10 +39,13 @@ function App() {
             {cops ? <CopPage cops={cops} /> : null}
           </Route>
           <Route path="/cops">
-            {cops ? <CopsTable cops={cops} /> : null}
+            {cops ? <CopsTable cops={cops} setSearchResults={setSearchResults}/> : null}
           </Route>
           <Route path="/allegations">
             {}
+          </Route>
+          <Route path="/search" >
+            <Search results={searchResults} setSearchResults={setSearchResults} cops={cops}/>
           </Route>
         </Switch>
       </Router>

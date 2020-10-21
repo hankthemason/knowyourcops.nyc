@@ -6,8 +6,8 @@ export class Complaints {
 	async init() {
 		await this.db.run(`CREATE TABLE IF NOT EXISTS complaints (
 			id INTEGER PRIMARY KEY,
-			date_received TEXT,
-			date_closed TEXT,
+			date_received DATE,
+			date_closed DATE,
 			precinct INTEGER,
 			contact_reason TEXT,
 			outcome_description TEXT,
@@ -42,8 +42,8 @@ export class Complaints {
 						complainant_age_incident)
 				VALUES(
 					'${complaint.complaint_id}', 
-					'01-${month_received}-${complaint.year_received}', 
-					'01-${month_closed}-${complaint.year_closed}',
+					'${complaint.year_received}-${month_received}-01', 
+					'${complaint.year_closed}-${month_closed}-01',
 					'${complaint.precinct}', 
 					'${complaint.contact_reason}', 
 					'${complaint.outcome_description}',

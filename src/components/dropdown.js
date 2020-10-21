@@ -6,7 +6,6 @@ export const DropDown = (props) => {
   function onSelectChange(event) {
     props.handler(event.target.value) 
   }
-  console.log(props.id, props.value)
 	
   return (
     <select onChange={onSelectChange} value={props.value}>

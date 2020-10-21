@@ -3,14 +3,16 @@ import {
 	BrowserRouter as Router,
 	Switch,
 	Route,
-	Link
+	Link, 
+	useHistory
 } from 'react-router-dom'
 //the 'values' method returns an array(keys are arbitrary/autoincremented)
-import { values, orderBy } from 'lodash';
+import { values, orderBy, filter } from 'lodash';
 import { Button } from './components/button';
 import { DropDown } from './components/dropdown';
 import { Pagination } from './components/pagination';
 import { useViewConfig } from './context/viewConfig';
+import { SearchBar } from './components/searchBar';
 
 export const CopsTable = props => {
 
@@ -28,7 +30,7 @@ export const CopsTable = props => {
 					pageSizeOptions } = config
 
 	//cops is an object of 'cop' objects with their id's as keys
-	const { cops } = props
+	const { cops, setSearchResults } = props
 
 	let sliceBegin = (currentPage - 1) * itemsPerPage.value;
 	let sliceEnd = sliceBegin + itemsPerPage.value;
@@ -47,10 +49,26 @@ export const CopsTable = props => {
     setItemsPerPage(pageSizeOptions[v]);
   };
 
+  let history = useHistory()
+
+  function search(v) {
+  	let results = filter(cops, function(e) {
+  		return e.last_name.toLowerCase() === v.toLowerCase() ||
+  			e.first_name.toLowerCase() === v.toLowerCase();
+  	})
+  	if (results) {
+  		setSearchResults(results);
+	  	history.push(`/search?keyword=${v}`);
+		}
+  }
+
+  console.log(cops)
+
 	return (
 		<div>
 			<Button display={orderDirection === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrderDirection}/>
 			<DropDown options={orderOptions} handler={orderHandler} value={orderByOption.id}/>
+			<SearchBar handler={search}/> 
 			<table>
 				<caption>Cops Table</caption>
 				<thead>
