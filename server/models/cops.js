@@ -67,7 +67,6 @@ export class Cops {
 
 	async read(orderBy, order, page, pageSize) {
 		try {
-		console.log(orderBy)
 		const result = await this.db.all(`
 			SELECT
 				*,

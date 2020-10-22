@@ -82,7 +82,7 @@ export const CopsTable = props => {
 	return (
 		<div>
 			<Button display={order === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
-			<DropDown options={oo} handler={orderByHandler} value={oo.id}/>
+			<DropDown options={oo} handler={orderByHandler} value={orderBy.id}/>
 			<SearchBar handler={search}/> 
 			<table>
 				<caption>Cops Table</caption>

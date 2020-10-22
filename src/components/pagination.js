@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import ReactPaginate from 'react-paginate';
-import { useViewConfig } from '../context/viewConfig';
+import { useCops } from '../context/copsContext';
 
 export const Pagination = props => {
-	const { config } = useViewConfig();
+	const { copsConfig } = useCops();
 
-	let currentPage = config.currentPage
+	let currentPage = copsConfig.page
 
 	const numPages = Math.ceil(props.data / props.itemsPerPage);
 
@@ -36,7 +36,7 @@ export const Pagination = props => {
         containerClassName={"pagination"}
         subContainerClassName={"pages pagination"}
         activeClassName={"active"}
-        //forcePage={currentPage}
+        forcePage={currentPage-1}
         />
 		</div>
 	)

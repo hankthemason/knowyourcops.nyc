@@ -80,9 +80,26 @@ export const CopsProvider = (props) => {
     fetch(`/cops/orderBy=${orderBy.value}/order=${order}/page=${page}/pageSize=${pageSize.value}`)
     .then(result => result.json())
     .then(cops => setCops(cops))
-  }, [page, pageSize.value, orderBy, order])
+  }, [page, pageSize, orderBy, order])
 
 	const copsConfig = { cops, total, page, setPage, pageSize, setPageSize, pso, orderBy, setOrderBy, oo, order, setOrder, toggleOrder }
+
+	const copsViewConfig = { total, page, setPage, pageSize, setPageSize, pso, orderBy, setOrderBy, oo, order, setOrder, toggleOrder }
+
+	// useEffect(() => {
+	// 	const loadedViewConfig = window.sessionStorage.getItem('viewConfig')
+	// 	if (loadedViewConfig) {
+	// 		const viewConfig = JSON.parse(loadedViewConfig)
+	// 		setOrder(viewConfig.order)
+	// 		setPage(viewConfig.page)
+	// 		setOrderBy(viewConfig.orderBy)
+	// 		setPageSize(viewConfig.pageSize)
+	// 	}
+	// }, [])
+
+	// useEffect(() => {
+	// 	window.sessionStorage.setItem('copsConfig', JSON.stringify(copsViewConfig))
+	// }, [copsViewConfig])
 
 	return (
 		<CopsContext.Provider value={{copsConfig}}>
