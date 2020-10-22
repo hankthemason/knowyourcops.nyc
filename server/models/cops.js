@@ -65,7 +65,83 @@ export class Cops {
 		}		
 	}
 
-	async read() {
+	async read(orderBy, order, page, pageSize) {
+		try {
+		console.log(orderBy)
+		const result = await this.db.all(`
+			SELECT
+				*,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(black_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_black_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(hispanic_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_hispanic_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(asian_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_asian_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(white_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_white_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(ethnicity_unknown_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_ethnicity_unknown_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(male_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_male_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(female_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_female_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(gender_unknown_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_gender_unknown_complainants
+			FROM (
+			SELECT 
+				cops.*,
+				CASE 
+					WHEN COUNT(*) > 9
+					THEN (
+					ROUND(COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(*) * 100.0, 2))
+				END substantiated_percentage, 
+				COUNT(*) AS num_allegations,
+				COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%black%' THEN complaint_id END) AS black_complainants,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%hispanic%' THEN complaint_id END) AS hispanic_complainants,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%asian%' THEN complaint_id END) AS asian_complainants,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%white%' THEN complaint_id END) AS white_complainants,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '' THEN complaint_id END) AS ethnicity_unknown_complainants,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE 'male%' THEN complaint_id END) AS male_complainants,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '%female%' THEN complaint_id END) AS female_complainants,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '' THEN complaint_id END) AS gender_unknown_complainants,
+				COUNT(DISTINCT complaints.id) AS num_complaints
+			FROM 
+				cops 
+			INNER JOIN 
+				allegations 
+			ON 
+				cops.id = allegations.cop
+				INNER JOIN
+					complaints
+				ON 
+					complaints.id = allegations.complaint_id 
+			GROUP BY
+				cops.id
+			)
+			ORDER BY
+				${orderBy} ${order}
+			LIMIT 
+				${pageSize}
+			OFFSET
+				${pageSize} * (${page} - 1)
+		`)
+			// console.log('begin reduce')
+
+			// const copsReduced = reduce(result, (accumulator, value) => {
+			// 	let tempKey = value.id;
+			// 	accumulator[tempKey] = value;
+			// 	return accumulator
+			// }, {})
+			// console.log('end reduce')
+			return result
+
+		} catch(error) {
+			console.error(error);
+		}
+	}
+
+	async readd() {
 		try {
 		const result = await this.db.all(`
 			SELECT
@@ -115,21 +191,40 @@ export class Cops {
 					complaints
 				ON 
 					complaints.id = allegations.complaint_id 
-			GROUP BY 
+			GROUP BY
 				cops.id)
+			ORDER BY
+				num_allegations DESC
+			LIMIT 
+				10
 		`)
-			console.log('begin reduce')
+		
+			const map = result.reduce((map, item) => map.set(item.id, item), new Map());
+			map.forEach((item, index) => console.log(index, item))
 
-			const copsReduced = reduce(result, (accumulator, value) => {
-				let tempKey = value.id;
-				accumulator[tempKey] = value;
-				return accumulator
-			}, {})
-			console.log('end reduce')
-			return copsReduced
+			console.log(map)
+			return result[1]
+
 
 		} catch(error) {
 			console.error(error);
+		}
+	}
+
+	//this is to get the total # of rows in order to 
+	//populate the pagination component
+	async total() {
+		try {
+			const result = await this.db.all(`
+				SELECT
+					COUNT(*) AS rows
+				FROM
+					cops 
+
+				`)
+			return result
+		} catch (error) {
+			console.error(error)
 		}
 	}
 

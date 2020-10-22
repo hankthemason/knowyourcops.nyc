@@ -7,8 +7,8 @@ export const Pagination = props => {
 
 	let currentPage = config.currentPage
 
-	const numPages = Math.ceil(props.data.length / props.itemsPerPage);
-	
+	const numPages = Math.ceil(props.data / props.itemsPerPage);
+
 	let numbers = [];
 	for (var i = 0; i<numPages; i++) {
 		numbers.push(i)
@@ -36,7 +36,8 @@ export const Pagination = props => {
         containerClassName={"pagination"}
         subContainerClassName={"pages pagination"}
         activeClassName={"active"}
-        forcePage={currentPage-1}/>
+        //forcePage={currentPage}
+        />
 		</div>
 	)
 }

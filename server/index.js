@@ -41,8 +41,17 @@ const models = new Models(DB_PATH);
 		res.json(await models.complaints.read())
 	})
 
+	//probably can delet this
 	app.get('/cops', async (req, res) => {
-		res.json(await models.cops.read());
+		res.json(await models.cops.readd());
+	})
+
+	app.get('/total_rows', async (req, res) => {
+		res.json(await models.cops.total());
+	})
+
+	app.get('/cops/orderBy=:orderBy/order=:order/page=:page/pageSize=:pageSize', async (req, res) => {
+		res.json(await models.cops.read(req.params.orderBy, req.params.order, req.params.page, req.params.pageSize));
 	})
 
 	app.get('/cops/id=:id', async (req, res) => {

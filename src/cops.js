@@ -17,39 +17,53 @@ import { Pagination } from './components/pagination';
 
 export const CopsTable = props => {
 
-	const { copss } = useCops()
+	const { copsConfig } = useCops()
 
-	const { config } = useViewConfig()
+	const { cops, 
+					total, 
+					page,
+					setPage,
+					pageSize, 
+					setPageSize, 
+					pso,
+					orderBy,
+					setOrderBy,
+					oo,
+					order, 
+					setOrder,
+					toggleOrder } = copsConfig
+
+	// const { config } = useViewConfig()
 	
-	const { orderDirection, 
-					toggleOrderDirection, 
-					currentPage, 
-					setCurrentPage, 
-					orderByOption, 
-					setOrderByOption,
-					orderOptions,
-					itemsPerPage,
-					setItemsPerPage,
-					pageSizeOptions } = config
+	// const { orderDirection, 
+	// 				toggleOrderDirection, 
+	// 				currentPage, 
+	// 				setCurrentPage, 
+	// 				orderByOption, 
+	// 				setOrderByOption,
+	// 				orderOptions,
+	// 				itemsPerPage,
+	// 				setItemsPerPage,
+	// 				pageSizeOptions } = config
 
 	//cops is an object of 'cop' objects with their id's as keys
-	const { cops, setSearchResults } = props
-
-	let sliceBegin = (currentPage - 1) * itemsPerPage.value;
-	let sliceEnd = sliceBegin + itemsPerPage.value;
+	const { setSearchResults } = props
 	
-	let copsTableSorted = orderBy(cops, orderByOption.value, orderDirection.toLowerCase());
+	let copsTableSorted = cops
 
-	function orderHandler(v) {
-		setOrderByOption(orderOptions[v])
+	//good
+	function orderByHandler(v) {
+		setOrderBy(oo[v])
 	}
 
+	//good
 	function currentPageHandler(v) {
-		setCurrentPage(v+1)
+		setPage(v+1)
 	}
 
+	//good
 	function handlePageSizeChange(v) {
-    setItemsPerPage(pageSizeOptions[v]);
+    setPageSize(pso[v]);
   };
 
   let history = useHistory()
@@ -67,8 +81,8 @@ export const CopsTable = props => {
 
 	return (
 		<div>
-			<Button display={orderDirection === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrderDirection}/>
-			<DropDown options={orderOptions} handler={orderHandler} value={orderByOption.id}/>
+			<Button display={order === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
+			<DropDown options={oo} handler={orderByHandler} value={oo.id}/>
 			<SearchBar handler={search}/> 
 			<table>
 				<caption>Cops Table</caption>
@@ -82,7 +96,7 @@ export const CopsTable = props => {
 					</tr>
 				</thead>
 				<tbody>
-					{values(copsTableSorted).slice(sliceBegin, sliceEnd).map(entry => (
+					{values(copsTableSorted).map(entry => (
 						<tr>
 							<td>
 								<Link to={`/cop/${entry.id}`}>{`${entry.first_name} ${entry.last_name}`}</Link>
@@ -108,14 +122,14 @@ export const CopsTable = props => {
         {"Items per Page: "}
         <DropDown 
         	id="itemsPerPageDropdown"
-        	options={pageSizeOptions}
+        	options={pso}
         	handler={handlePageSizeChange}
-        	value={itemsPerPage.id}
+        	value={pageSize.id}
         />
       </div>
 			<Pagination 
-				data={values(copsTableSorted)} 
-				itemsPerPage={itemsPerPage.value}
+				data={total} 
+				itemsPerPage={pageSize.value}
 				handler={currentPageHandler}
 			/>
 		</div>

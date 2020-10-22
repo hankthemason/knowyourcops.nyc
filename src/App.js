@@ -14,14 +14,7 @@ import {
 } from 'react-router-dom'
 
 function App() {
-  const [cops, setCops] = useState(null);
   const [allegations, setAllegations] = useState(null);
-  
-  useEffect(() => {
-    fetch("/cops")
-    .then(result => result.json())
-    .then(cops => setCops(cops))
-  }, [])
 
   useEffect(() => {
     fetch("/allegations")
@@ -38,16 +31,16 @@ function App() {
         <Router>
           <Switch>
             <Route path="/cop/:id">
-              {cops ? <CopPage cops={cops} /> : null}
+              <CopPage />
             </Route>
             <Route path="/cops">
-              {cops ? <CopsTable cops={cops} setSearchResults={setSearchResults}/> : null}
+              <CopsTable setSearchResults={setSearchResults}/>
             </Route>
             <Route path="/allegations">
               {}
             </Route>
             <Route path="/search" >
-              <Search results={searchResults} setSearchResults={setSearchResults} cops={cops}/>
+              <Search results={searchResults} setSearchResults={setSearchResults} />
             </Route>
           </Switch>
         </Router>
