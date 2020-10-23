@@ -15,7 +15,7 @@ export const CopsProvider = (props) => {
 
 	const [cops, setCops] = useState(null);
 
-	const [page, setPage] = useState(1);
+	const [page, setPage] = useState(null);
 
 	//make sure to use .value to access the actual value of pageSize
 	const pso = [
@@ -33,7 +33,7 @@ export const CopsProvider = (props) => {
 		}
 	]
 
-	const [pageSize, setPageSize] = useState(pso[0]);
+	const [pageSize, setPageSize] = useState(null);
 
 	const oo = [
 		{
@@ -58,9 +58,9 @@ export const CopsProvider = (props) => {
 		}
 	]
 
-	const [orderBy, setOrderBy] = useState(oo[0])
+	const [orderBy, setOrderBy] = useState(null)
 
-	const [order, setOrder] = useState('DESC')
+	const [order, setOrder] = useState(null)
 
 	const toggleOrder = () => {
 		setOrder(order === 'ASC' ? 'DESC' : 'ASC')
@@ -77,33 +77,40 @@ export const CopsProvider = (props) => {
 	}, [])
 
 	useEffect(() => {
-    fetch(`/cops/orderBy=${orderBy.value}/order=${order}/page=${page}/pageSize=${pageSize.value}`)
-    .then(result => result.json())
-    .then(cops => setCops(cops))
+		if (order && page && orderBy && pageSize) {
+		  fetch(`/cops/orderBy=${orderBy.value}/order=${order}/page=${page}/pageSize=${pageSize.value}`)
+		  .then(result => result.json())
+		  .then(cops => setCops(cops))
+		}
   }, [page, pageSize, orderBy, order])
 
 	const copsConfig = { cops, total, page, setPage, pageSize, setPageSize, pso, orderBy, setOrderBy, oo, order, setOrder, toggleOrder }
 
 	const copsViewConfig = { total, page, setPage, pageSize, setPageSize, pso, orderBy, setOrderBy, oo, order, setOrder, toggleOrder }
 
-	// useEffect(() => {
-	// 	const loadedViewConfig = window.sessionStorage.getItem('viewConfig')
-	// 	if (loadedViewConfig) {
-	// 		const viewConfig = JSON.parse(loadedViewConfig)
-	// 		setOrder(viewConfig.order)
-	// 		setPage(viewConfig.page)
-	// 		setOrderBy(viewConfig.orderBy)
-	// 		setPageSize(viewConfig.pageSize)
-	// 	}
-	// }, [])
+	useEffect(() => {
+		const loadedCopsViewConfig = window.sessionStorage.getItem('copsViewConfig')
+		if (loadedCopsViewConfig) {
+			const viewConfig = JSON.parse(loadedCopsViewConfig)
+			setOrder(viewConfig.order)
+			setPage(viewConfig.page)
+			setOrderBy(viewConfig.orderBy)
+			setPageSize(viewConfig.pageSize)
+		} else {
+			setOrder('DESC')
+			setPage(1)
+			setOrderBy(oo[0])
+			setPageSize(pso[0])
+		}
+	}, [])
 
-	// useEffect(() => {
-	// 	window.sessionStorage.setItem('copsConfig', JSON.stringify(copsViewConfig))
-	// }, [copsViewConfig])
+	useEffect(() => {
+		window.sessionStorage.setItem('copsViewConfig', JSON.stringify(copsViewConfig))
+	}, [copsViewConfig])
 
 	return (
 		<CopsContext.Provider value={{copsConfig}}>
-			{props.children}
+			{ cops && order ? props.children : null}
 		</CopsContext.Provider>
 	)
 }

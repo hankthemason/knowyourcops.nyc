@@ -65,20 +65,20 @@ export const ViewConfigProvider = (props) => {
 	//compile view state into config object
 	const config = { orderDirection, toggleOrderDirection, currentPage, setCurrentPage, orderByOption, setOrderByOption, orderOptions, itemsPerPage, setItemsPerPage, pageSizeOptions  }
 	
-	useEffect(() => {
-		const loadedViewConfig = window.sessionStorage.getItem('viewConfig')
-		if (loadedViewConfig) {
-			const viewConfig = JSON.parse(loadedViewConfig)
-			setOrderDirection(viewConfig.orderDirection)
-			setCurrentPage(viewConfig.currentPage)
-			setOrderByOption(viewConfig.orderByOption)
-			setItemsPerPage(viewConfig.itemsPerPage)
-		}
-	}, [])
+	// useEffect(() => {
+	// 	const loadedViewConfig = window.sessionStorage.getItem('viewConfig')
+	// 	if (loadedViewConfig) {
+	// 		const viewConfig = JSON.parse(loadedViewConfig)
+	// 		setOrderDirection(viewConfig.orderDirection)
+	// 		setCurrentPage(viewConfig.currentPage)
+	// 		setOrderByOption(viewConfig.orderByOption)
+	// 		setItemsPerPage(viewConfig.itemsPerPage)
+	// 	}
+	// }, [])
 
-	useEffect(() => {
-		window.sessionStorage.setItem('viewConfig', JSON.stringify(config))
-	}, [config])
+	// useEffect(() => {
+	// 	window.sessionStorage.setItem('viewConfig', JSON.stringify(config))
+	// }, [config])
 
 
 	return (
