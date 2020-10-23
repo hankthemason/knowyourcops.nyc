@@ -1,14 +1,27 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { filter } from 'lodash';
+import { useCops } from './context/copsContext';
 import { useLocation, Link } from 'react-router-dom';
 
 export const Search = props => {
-	const {results, setSearchResults, cops} = props
+	const { results, setSearchResults } = props
+	const { copsConfig } = useCops();
+	const { cops } = copsConfig;
+
+	const [searchRes, setSearchRes] = useState([])
 
 	let keyword = useLocation().search.match(/\?keyword=(.*)/)
 	if (keyword.length === 2) {
 		keyword = keyword[1]
 	}
+
+	useEffect(() => {
+    fetch(`/search?searchquery=${keyword}`)
+    .then(result => result.json())
+    .then(searchRes => setSearchRes(searchRes))
+  }, [])
+
+  console.log(searchRes)
 
 	let v = keyword
 	useEffect(() => {

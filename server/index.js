@@ -1,5 +1,6 @@
 import express from 'express'
 import { Models } from './models'
+import { Search } from './search'
 
 const csv = 'ccrb_data/data.csv';
 const DB_PATH = './db/ccrb.db';
@@ -10,9 +11,13 @@ const port = 3001
 let db;
 
 const models = new Models(DB_PATH);
+const search = new Search(DB_PATH);
+
 (async () => {
 	const app = express()
 	await models.init();
+
+	await search.init()
 
 	await models.populate(csv, commandCsv);
 
@@ -21,6 +26,16 @@ const models = new Models(DB_PATH);
 	})
 
 	//END POINTS
+	app.get('/search', async (req, res) => {
+		
+		//Holds value of the query param 'searchquery' 
+    const searchQuery = req.query.searchquery;
+
+    if (searchQuery != null) {
+    	res.json(await search.search(searchQuery))
+    }
+	})
+
 	app.get('/command_units', async (req, res) => {
 		res.json(await models.commandUnits.read());
 	})

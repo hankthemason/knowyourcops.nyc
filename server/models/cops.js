@@ -320,36 +320,16 @@ export class Cops {
 							allegations
 						ON
 							allegations.cop = cops.id
-							INNER JOIN
-								complaints com
-							ON
-								com.id = allegations.complaint_id
+						INNER JOIN
+							complaints com
+						ON
+							com.id = allegations.complaint_id
 						WHERE
 							cops.id = '${id}'
 						GROUP BY 
 							com.id
 					)
 				`)
-			// const result = await this.db.all(`
-			// 	SELECT
-			// 		COUNT(CASE WHEN com.complainant_ethnicity LIKE '%BLACK%' THEN 1 END) AS black,
-			// 		COUNT(CASE WHEN com.complainant_ethnicity LIKE '%HISPANIC%' THEN 1 END) AS hispanic,
-			// 		COUNT(CASE WHEN com.complainant_ethnicity LIKE '%WHITE%' THEN 1 END) AS white,
-			// 		COUNT(CASE WHEN com.complainant_ethnicity LIKE '%ASIAN%' THEN 1 END) AS asian,
-			// 		COUNT(CASE WHEN com.complainant_ethnicity LIKE '' THEN 1 END) AS unknown
-			// 	FROM
-			// 		cops
-			// 	INNER JOIN
-			// 		allegations
-			// 	ON
-			// 		allegations.cop = cops.id
-			// 		INNER JOIN
-			// 			complaints com
-			// 		ON
-			// 			com.id = allegations.complaint_id
-			// 	WHERE
-			// 		cops.id = '${id}'
-			// 	`)
 			return result
 		} catch (error) {
 			console.error(error)
@@ -424,46 +404,6 @@ export class Cops {
 		}
 	}
 
-	// async getEthnicityAndGenderPercentages() {
-	// 	try {
-	// 		const result = await this.db.all(`
-	// 			SELECT
-	// 				cop_id,
-	// 				COUNT(DISTINCT complaint_id) AS complaints,
-	// 				COUNT(CASE WHEN complainant_ethnicity LIKE '%BLACK%' THEN 1 END) AS black,
-	// 				COUNT(CASE WHEN complainant_ethnicity LIKE '%HISPANIC%' THEN 1 END) AS hispanic,
-	// 				COUNT(CASE WHEN complainant_ethnicity LIKE '%WHITE%' THEN 1 END) AS white,
-	// 				COUNT(CASE WHEN complainant_ethnicity LIKE '%ASIAN%' THEN 1 END) AS asian,
-	// 				COUNT(CASE WHEN complainant_ethnicity LIKE '' THEN 1 END) AS ethnicity_unknown,
-	// 				COUNT(CASE WHEN complainant_gender LIKE 'MALE%' THEN 1 END) AS male,
-	// 				COUNT(CASE WHEN complainant_gender LIKE '%FEMALE%' THEN 1 END) AS female,
-	// 				COUNT(CASE WHEN complainant_gender LIKE '' THEN 1 END) AS gender_unknown
-	// 			FROM
-	// 			(SELECT
-	// 				cops.id as cop_id,
-	// 				c.id as complaint_id,
-	// 				c.complainant_ethnicity,
-	// 				c.complainant_gender
-	// 			FROM 
-	// 				cops
-	// 			INNER JOIN
-	// 				allegations a
-	// 			ON
-	// 				a.cop = cops.id
-	// 				INNER JOIN
-	// 					complaints c
-	// 				ON
-	// 					c.id = a.complaint_id
-	// 			)
-	// 			GROUP BY
-	// 				cop_id
-	// 			`)
-	// 		return result
-	// 	} catch (error) {
-	// 		console.error(error)
-	// 	}
-	// }
-
 	async getComplaintsLocations(id) {
 		try {
 			const result = await this.db.all(`
@@ -525,32 +465,6 @@ export class Cops {
 			console.error(error)
 		}
 	}
-
-	// async getSubstantiatedPercentage() {
-	// 	try {
-	// 		const result = await this.db.all(`
-	// 			SELECT
-	// 				cops.*,
-	// 				COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(*) * 100.0 AS substantiated_percentage,
-	// 				COUNT(*) AS num_allegations
-	// 			FROM 
-	// 				cops
-	// 			INNER JOIN
-	// 				allegations
-	// 			ON
-	// 				cops.id = allegations.cop
-	// 			GROUP BY 
-	// 				cops.id
-	// 			HAVING
-	// 				COUNT(*) > 9
-	// 			ORDER BY
-	// 				substantiated_percentage DESC
-	// 			`)
-	// 		return result
-	// 	} catch (error) {
-	// 		console.error(error)
-	// 	}
-	// }
 
 	async readOne(id) {
 		try {

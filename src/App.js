@@ -4,7 +4,6 @@ import './App.css';
 import { CopsTable } from './cops';
 import { CopPage } from './cop';
 import { Search } from './search';
-import { ViewConfigProvider } from './context/viewConfig';
 import { CopsProvider } from './context/copsContext';
 import {
   BrowserRouter as Router,
@@ -26,26 +25,24 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
 
   return (
-    <ViewConfigProvider>
-      <CopsProvider>
-        <Router>
-          <Switch>
-            <Route path="/cop/:id">
-              <CopPage />
-            </Route>
-            <Route path="/cops">
-              <CopsTable setSearchResults={setSearchResults}/>
-            </Route>
-            <Route path="/allegations">
-              {}
-            </Route>
-            <Route path="/search" >
-              <Search results={searchResults} setSearchResults={setSearchResults} />
-            </Route>
-          </Switch>
-        </Router>
-      </CopsProvider>
-    </ViewConfigProvider>
+    <CopsProvider>
+      <Router>
+        <Switch>
+          <Route path="/cop/:id">
+            <CopPage />
+          </Route>
+          <Route path="/cops">
+            <CopsTable setSearchResults={setSearchResults}/>
+          </Route>
+          <Route path="/allegations">
+            {}
+          </Route>
+          <Route path="/search" >
+            <Search results={searchResults} setSearchResults={setSearchResults} />
+          </Route>
+        </Switch>
+      </Router>
+    </CopsProvider>
   );
 }
 

@@ -1,5 +1,4 @@
 import React, { useContext, createContext, useState, useEffect } from 'react';
-import { useViewConfig } from './viewConfig';
 
 const CopsContext = createContext();
 
@@ -18,7 +17,7 @@ export const CopsProvider = (props) => {
 	const [page, setPage] = useState(null);
 
 	//make sure to use .value to access the actual value of pageSize
-	const pso = [
+	const pageSizeOptions = [
 		{id: 0,
 		 value: 10
 		},
@@ -35,7 +34,7 @@ export const CopsProvider = (props) => {
 
 	const [pageSize, setPageSize] = useState(null);
 
-	const oo = [
+	const orderByOptions = [
 		{
 			id: 0,
 			title: 'Number of Allegations',
@@ -84,9 +83,9 @@ export const CopsProvider = (props) => {
 		}
   }, [page, pageSize, orderBy, order])
 
-	const copsConfig = { cops, total, page, setPage, pageSize, setPageSize, pso, orderBy, setOrderBy, oo, order, setOrder, toggleOrder }
+	const copsConfig = { cops, total, page, setPage, pageSize, setPageSize, pageSizeOptions, orderBy, setOrderBy, orderByOptions, order, setOrder, toggleOrder }
 
-	const copsViewConfig = { total, page, setPage, pageSize, setPageSize, pso, orderBy, setOrderBy, oo, order, setOrder, toggleOrder }
+	const copsViewConfig = { total, page, setPage, pageSize, setPageSize, pageSizeOptions, orderBy, setOrderBy, orderByOptions, order, setOrder, toggleOrder }
 
 	useEffect(() => {
 		const loadedCopsViewConfig = window.sessionStorage.getItem('copsViewConfig')
@@ -99,8 +98,8 @@ export const CopsProvider = (props) => {
 		} else {
 			setOrder('DESC')
 			setPage(1)
-			setOrderBy(oo[0])
-			setPageSize(pso[0])
+			setOrderBy(orderByOptions[0])
+			setPageSize(pageSizeOptions[0])
 		}
 	}, [])
 

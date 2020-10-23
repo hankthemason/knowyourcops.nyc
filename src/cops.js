@@ -11,7 +11,6 @@ import { values, orderBy, filter } from 'lodash';
 import { Button } from './components/button';
 import { DropDown } from './components/dropdown';
 import { useCops } from './context/copsContext';
-import { useViewConfig } from './context/viewConfig';
 import { SearchBar } from './components/searchBar';
 import { Pagination } from './components/pagination';
 
@@ -25,26 +24,13 @@ export const CopsTable = props => {
 					setPage,
 					pageSize, 
 					setPageSize, 
-					pso,
+					pageSizeOptions,
 					orderBy,
 					setOrderBy,
-					oo,
+					orderByOptions,
 					order, 
 					setOrder,
 					toggleOrder } = copsConfig
-
-	// const { config } = useViewConfig()
-	
-	// const { orderDirection, 
-	// 				toggleOrderDirection, 
-	// 				currentPage, 
-	// 				setCurrentPage, 
-	// 				orderByOption, 
-	// 				setOrderByOption,
-	// 				orderOptions,
-	// 				itemsPerPage,
-	// 				setItemsPerPage,
-	// 				pageSizeOptions } = config
 
 	//cops is an object of 'cop' objects with their id's as keys
 	const { setSearchResults } = props
@@ -53,7 +39,7 @@ export const CopsTable = props => {
 
 	//good
 	function orderByHandler(v) {
-		setOrderBy(oo[v])
+		setOrderBy(orderByOptions[v])
 	}
 
 	//good
@@ -63,12 +49,14 @@ export const CopsTable = props => {
 
 	//good
 	function handlePageSizeChange(v) {
-    setPageSize(pso[v]);
+    setPageSize(pageSizeOptions[v]);
   };
 
   let history = useHistory()
 
   function search(v) {
+  	console.log(v)
+  	
   	let results = filter(cops, function(e) {
   		return e.last_name.toLowerCase() === v.toLowerCase() ||
   			e.first_name.toLowerCase() === v.toLowerCase();
@@ -82,7 +70,7 @@ export const CopsTable = props => {
 	return (
 		<div>
 			<Button display={order === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
-			<DropDown options={oo} handler={orderByHandler} value={orderBy.id}/>
+			<DropDown options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>
 			<SearchBar handler={search}/> 
 			<table>
 				<caption>Cops Table</caption>
@@ -122,7 +110,7 @@ export const CopsTable = props => {
         {"Items per Page: "}
         <DropDown 
         	id="itemsPerPageDropdown"
-        	options={pso}
+        	options={pageSizeOptions}
         	handler={handlePageSizeChange}
         	value={pageSize.id}
         />
