@@ -72,4 +72,19 @@ export class CommandUnits {
 			console.error(error);
 		}
 	}
+
+	async search(searchQuery) {
+		try {
+			return await this.db.all(`
+				SELECT
+					*
+				FROM
+					command_units
+				WHERE
+					command_units.unit_id LIKE '%${searchQuery}%'
+				`)
+		} catch(error) {
+			console.error(error)
+		}
+	}		
 }

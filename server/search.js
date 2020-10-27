@@ -1,34 +1,15 @@
-import { open } from 'sqlite'
-import sqlite3 from 'sqlite3'
-
 export class Search {
-	constructor(dbPath) {
-		this.dbPath = dbPath;
-		this.db;
-	}
-
-	async init() {
-		const db = await open({
-			filename: this.dbPath,
-			driver: sqlite3.Database
-		})
-		this.db = db
+	constructor(models) {
+		this.models = models
 	}
 
 	async search(searchQuery) {
-		
 		try {
-			const result = await this.db.all(`
-				SELECT 
-					*
-				FROM 
-					COPS
-				WHERE
-					last_name LIKE '%${searchQuery}%'
-				OR
-					first_name LIKE '%${searchQuery}%'
-				`)
-			return result
+			return {
+				cops: await this.models.cops.search(searchQuery),
+				commandUnits: await this.models.commandUnits.search(searchQuery)
+			}
+			
 		} catch(error) {
 			console.error(error)
 		}

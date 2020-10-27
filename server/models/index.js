@@ -65,4 +65,15 @@ export class Models {
 			await	this.copAtTimeOfComplaint.create(result)
 		}
 	}
+
+	async getAllegationTypes(csvPath) {
+		const csv = fs.readFileSync(csvPath);
+		const results = await neatCsv(csv);
+		let allegationTypes = []
+		for (const result of results) {
+			allegationTypes.push(result.['Allegation type'])
+		}
+		console.log(allegationTypes)
+		return allegationTypes;
+	}
 }

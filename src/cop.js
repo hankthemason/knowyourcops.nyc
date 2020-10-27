@@ -1,5 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react'; 
 import { useParams } from 'react-router-dom';
+import { CopComplaintsTable } from './copComplaints'
 import { BarChart } from './components/barChart'
 import { LineChart } from './components/lineChart'
 import { pick, values, reduce } from 'lodash';
@@ -9,7 +10,7 @@ export const CopPage = (props) => {
 
 	const {id} = useParams();
 
-	const [copComplaints, setCopComplaints] = useState(null);
+	const [copComplaintsComplainantInfo, setCopComplaintsComplainantInfo] = useState(null);
 
 	const [cop, setCop] = useState(null);
 
@@ -17,10 +18,12 @@ export const CopPage = (props) => {
 
 	const [complaintsDates, setComplaintsDates] = useState(null);
 
+  const [complaintsWithAllegations, setComplaintsWithAllegations] = useState(null);
+
 	useEffect(() => {
     fetch(`/cop_complaints/complainant_info/id=${id}`)
     .then(result => result.json())
-    .then(copComplaints => setCopComplaints(copComplaints))
+    .then(copComplaintsComplainantInfo => setCopComplaintsComplainantInfo(copComplaintsComplainantInfo))
   }, [])
 
 	useEffect(() => {
@@ -39,6 +42,12 @@ export const CopPage = (props) => {
     fetch(`/cop_complaints/years/id=${id}`)
     .then(result => result.json())
     .then(complaintsDates => setComplaintsDates(complaintsDates))
+  }, [])
+
+  useEffect(() => {
+    fetch(`/cop_complaints/allegations/id=${id}`)
+    .then(result => result.json())
+    .then(complaintsWithAllegations => setComplaintsWithAllegations(complaintsWithAllegations))
   }, [])
 
   let complaintsDatesFull = [];
@@ -85,8 +94,8 @@ export const CopPage = (props) => {
 
   let raceData;
 
-  if (copComplaints) {
-  	raceData = pick(copComplaints[0], ['black', 'hispanic', 'asian', 'white', 'ethnicity_unknown'])
+  if (copComplaintsComplainantInfo) {
+  	raceData = pick(copComplaintsComplainantInfo[0], ['black', 'hispanic', 'asian', 'white', 'ethnicity_unknown'])
   }
 
   // if (copComplaints) {
@@ -97,8 +106,8 @@ export const CopPage = (props) => {
 
   let genderData;
 
-  if (copComplaints) {
-  	genderData = pick(copComplaints[0], ['male', 'female', 'gender_unknown'])
+  if (copComplaintsComplainantInfo) {
+  	genderData = pick(copComplaintsComplainantInfo[0], ['male', 'female', 'gender_unknown'])
   }
 
   const complaintsLocationsReduced = reduce(complaintsLocations, (accumulator, value) => {
@@ -110,6 +119,58 @@ export const CopPage = (props) => {
 	const complaintsDatesReduced = reduce(complaintsDatesFull, (accumulator, value, key) => {
 		return {...accumulator, [value.year]: value.count}
 	}, {})
+  
+  //rather than make a separate API call for allegations,
+  //derive them from complaints
+  let allegations;
+  let allegationsByFado = {}
+  let allegationsByDescription = {}
+
+  if (complaintsWithAllegations) {
+    allegations = complaintsWithAllegations.slice()
+    //console.log(complaintsWithAllegations)
+    allegations = reduce(allegations, (accumulator, value) => {
+      let key;
+      let val;
+      value.allegations.forEach(e => {
+        key = e.allegation_id
+        val = e;
+        accumulator.[key]= val;
+      })
+      return accumulator
+    }, {})
+
+    let fadoTypes = ['Abuse of Authority', 'Discourtesy', 'Force', 'Offensive Language']
+
+    for (const fadoType of fadoTypes) {
+      allegationsByFado.[fadoType] = 0
+    }
+
+    let allegationDescriptions = [];
+
+    console.log(allegations)
+
+    for (const [key, value] of Object.entries(allegations)) {
+      let fadoType = allegations.[key].fado_type;
+      let allegationDescription = allegations.[key].description;
+      if (allegationsByFado.hasOwnProperty(fadoType)) {
+        allegationsByFado.[fadoType] += 1;
+      }
+      if (!allegationDescriptions.includes(allegationDescription)) {
+        console.log(allegationDescription)
+        allegationDescriptions.push(allegationDescription)
+        allegationsByDescription.[allegationDescription] = 1
+      }
+
+      if (allegationsByDescription.hasOwnProperty(allegationDescription)) {
+        allegationsByDescription.[allegationDescription] += 1;
+      }
+
+    }   
+  }  
+
+
+
 
 	return (
 		<div>
@@ -128,6 +189,12 @@ export const CopPage = (props) => {
 			<BarChart data={complaintsLocationsReduced} title='Allegations by location'/> : null}
 			{complaintsDates ?
 			<LineChart data={complaintsDatesReduced} title='Complaints by year'/>: null}
+      {complaintsWithAllegations ? (
+      <div>
+      <BarChart data={allegationsByFado} title='Allegations by FADO type' />
+      <BarChart data={allegationsByDescription} title='Allegations by description' />
+      <CopComplaintsTable data={complaintsWithAllegations} />
+      </div>): null}
 		</div>
 	)
 }

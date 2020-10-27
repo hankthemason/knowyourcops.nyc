@@ -100,7 +100,7 @@ export class Cops {
 				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%hispanic%' THEN complaint_id END) AS hispanic_complainants,
 				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%asian%' THEN complaint_id END) AS asian_complainants,
 				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%white%' THEN complaint_id END) AS white_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '' THEN complaint_id END) AS ethnicity_unknown_complainants,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '' OR complainant_ethnicity LIKE 'Other Race' THEN complaint_id END) AS ethnicity_unknown_complainants,
 				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE 'male%' THEN complaint_id END) AS male_complainants,
 				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '%female%' THEN complaint_id END) AS female_complainants,
 				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '' THEN complaint_id END) AS gender_unknown_complainants,
@@ -140,76 +140,6 @@ export class Cops {
 		}
 	}
 
-	async readd() {
-		try {
-		const result = await this.db.all(`
-			SELECT
-				*,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(black_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_black_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(hispanic_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_hispanic_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(asian_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_asian_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(white_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_white_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(ethnicity_unknown_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_ethnicity_unknown_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(male_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_male_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(female_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_female_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(gender_unknown_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_gender_unknown_complainants
-			FROM (
-			SELECT 
-				cops.*,
-				CASE 
-					WHEN COUNT(*) > 9
-					THEN (
-					ROUND(COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(*) * 100.0, 2))
-				END substantiated_percentage, 
-				COUNT(*) AS num_allegations,
-				COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%black%' THEN complaint_id END) AS black_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%hispanic%' THEN complaint_id END) AS hispanic_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%asian%' THEN complaint_id END) AS asian_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%white%' THEN complaint_id END) AS white_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '' THEN complaint_id END) AS ethnicity_unknown_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE 'male%' THEN complaint_id END) AS male_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '%female%' THEN complaint_id END) AS female_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '' THEN complaint_id END) AS gender_unknown_complainants,
-				COUNT(DISTINCT complaints.id) AS num_complaints
-			FROM 
-				cops 
-			INNER JOIN 
-				allegations 
-			ON 
-				cops.id = allegations.cop
-				INNER JOIN
-					complaints
-				ON 
-					complaints.id = allegations.complaint_id 
-			GROUP BY
-				cops.id)
-			ORDER BY
-				num_allegations DESC
-			LIMIT 
-				10
-		`)
-		
-			const map = result.reduce((map, item) => map.set(item.id, item), new Map());
-			map.forEach((item, index) => console.log(index, item))
-
-			console.log(map)
-			return result[1]
-
-
-		} catch(error) {
-			console.error(error);
-		}
-	}
-
 	//this is to get the total # of rows in order to 
 	//populate the pagination component
 	async total() {
@@ -227,15 +157,16 @@ export class Cops {
 		}
 	}
 
-	async getComplaints(id) {
+	async getComplaintsPerDate(id) {
 		try {
 			const result = await this.db.all(`
 				SELECT
+					*,
 					DATE(date_received) as date_received,
 					COUNT(*) as count
 				FROM
-					(SELECT 
-						com.date_received
+					(SELECT
+						com.*
 					FROM
 						cops c
 					INNER JOIN
@@ -255,6 +186,51 @@ export class Cops {
 			`)
 			return result
 		} catch(error) {
+			console.error(error)
+		}
+	}
+
+	async getComplaints(id) {
+		try {
+			const result = await this.db.all(`
+				SELECT
+					complaints.*,
+					COUNT(CASE WHEN a.complaint_id = complaints.id THEN 1 END) AS num_allegations_on_complaint,
+					JSON_GROUP_ARRAY(JSON_OBJECT('allegation_id',
+																				a.id,
+																				'complaint_id',
+																				a.complaint_id,
+																				'cop_command_unit', 
+																				a.cop_command_unit,
+																				'precinct',
+																				a.precinct,
+																				'fado_type',
+																				a.fado_type,
+																				'description',
+																				a.description,
+																				'board_disposition',
+																				a.board_disposition)) as allegations
+				FROM
+					cops
+				JOIN
+				 allegations a
+				ON
+					a.cop = cops.id
+				JOIN
+					complaints
+				ON
+					complaints.id = a.complaint_id
+				WHERE
+					cops.id = '${id}'
+				GROUP BY
+					complaints.id
+			`)
+			//the allegations propery is not correctly formatted as a JSON object
+			result.map(e => {
+				e.allegations = JSON.parse(e.allegations)
+			})
+			return result
+		} catch (error) {
 			console.error(error)
 		}
 	}
@@ -304,7 +280,7 @@ export class Cops {
 					COUNT(CASE WHEN complainant_ethnicity LIKE '%HISPANIC%' THEN 1 END) AS hispanic,
 					COUNT(CASE WHEN complainant_ethnicity LIKE '%WHITE%' THEN 1 END) AS white,
 					COUNT(CASE WHEN complainant_ethnicity LIKE '%ASIAN%' THEN 1 END) AS asian,
-					COUNT(CASE WHEN complainant_ethnicity LIKE '' THEN 1 END) AS ethnicity_unknown,
+					COUNT(CASE WHEN complainant_ethnicity LIKE '' OR complainant_ethnicity LIKE 'other race' THEN 1 END) AS ethnicity_unknown,
 					COUNT(CASE WHEN complainant_gender LIKE 'MALE%' THEN 1 END) AS male,
 					COUNT(CASE WHEN complainant_gender LIKE '%FEMALE%' THEN 1 END) AS female,
 					COUNT(CASE WHEN complainant_gender LIKE '' THEN 1 END) AS gender_unknown
@@ -496,6 +472,23 @@ export class Cops {
 			console.log(error);
 		}
 	}
+
+	async search(searchQuery) {
+		try {
+			return await this.db.all(`
+					SELECT 
+						*
+					FROM 
+						cops
+					WHERE
+						last_name LIKE '%${searchQuery}%'
+					OR
+						first_name LIKE '%${searchQuery}%'
+			`)
+		} catch(error) {
+			console.error(error)
+		}
+	}		
 
 	async augment(csvPath) {
 		await this.addCommandUnitFullColumn();

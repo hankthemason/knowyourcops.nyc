@@ -55,16 +55,14 @@ export const CopsTable = props => {
   let history = useHistory()
 
   function search(v) {
-  	console.log(v)
-  	
-  	let results = filter(cops, function(e) {
-  		return e.last_name.toLowerCase() === v.toLowerCase() ||
-  			e.first_name.toLowerCase() === v.toLowerCase();
-  	})
-  	if (results) {
-  		setSearchResults(results);
-	  	history.push(`/search?keyword=${v}`);
-		}
+  	// let results = filter(cops, function(e) {
+  	// 	return e.last_name.toLowerCase() === v.toLowerCase() ||
+  	// 		e.first_name.toLowerCase() === v.toLowerCase();
+  	// })
+  	//if (results) {
+  		//setSearchResults(results);
+	  	history.push(`/search?searchquery=${v}`);
+		//}
   }
 
 	return (

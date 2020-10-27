@@ -1,25 +1,32 @@
 import express from 'express'
+import { CsvHelper } from './csvHelper'
 import { Models } from './models'
 import { Search } from './search'
 
 const csv = 'ccrb_data/data.csv';
 const DB_PATH = './db/ccrb.db';
 const commandCsv = 'ccrb_data/command_abrevs.csv'
+const allegationTypesCsv = 'ccrb_data/FADO-Table 1.csv'
 
 const port = 3001
 
 let db;
 
 const models = new Models(DB_PATH);
-const search = new Search(DB_PATH);
 
 (async () => {
 	const app = express()
 	await models.init();
 
-	await search.init()
-
 	await models.populate(csv, commandCsv);
+
+	const helper = new CsvHelper()
+
+	const allegationTypes = await helper.getAllegationTypes(allegationTypesCsv)
+	console.log(allegationTypes)
+	
+
+	const search = new Search(models)
 
 	app.get('/', async (req, res) => {
 		res.send('hello')
@@ -27,7 +34,6 @@ const search = new Search(DB_PATH);
 
 	//END POINTS
 	app.get('/search', async (req, res) => {
-		
 		//Holds value of the query param 'searchquery' 
     const searchQuery = req.query.searchquery;
 
@@ -54,11 +60,6 @@ const search = new Search(DB_PATH);
 
 	app.get('/complaints', async(req, res) => {
 		res.json(await models.complaints.read())
-	})
-
-	//probably can delet this
-	app.get('/cops', async (req, res) => {
-		res.json(await models.cops.readd());
 	})
 
 	app.get('/total_rows', async (req, res) => {
@@ -99,6 +100,16 @@ const search = new Search(DB_PATH);
 
 	app.get('/cop_complaints/years/id=:id', async (req, res) => {
 		res.json(await models.cops.getComplaintsByYear(req.params.id))
+	})
+
+	//this returns all complaints with their associated allegations
+	//nested inside of JSON objects
+	app.get('/cop_complaints/allegations/id=:id', async (req, res) => {
+		res.json(await models.cops.getComplaints(req.params.id))
+	})
+
+	app.get('/cop_complaintss/allegations/id=:id', async (req, res) => {
+		res.json(await models.cops.getComplaintss(req.params.id))
 	})
 
 	app.listen(port, () => {
