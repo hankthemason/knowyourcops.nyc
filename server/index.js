@@ -23,9 +23,7 @@ const models = new Models(DB_PATH);
 	const helper = new CsvHelper()
 
 	const allegationTypes = await helper.getAllegationTypes(allegationTypesCsv)
-	console.log(allegationTypes)
 	
-
 	const search = new Search(models)
 
 	app.get('/', async (req, res) => {
@@ -106,10 +104,6 @@ const models = new Models(DB_PATH);
 	//nested inside of JSON objects
 	app.get('/cop_complaints/allegations/id=:id', async (req, res) => {
 		res.json(await models.cops.getComplaints(req.params.id))
-	})
-
-	app.get('/cop_complaintss/allegations/id=:id', async (req, res) => {
-		res.json(await models.cops.getComplaintss(req.params.id))
 	})
 
 	app.listen(port, () => {

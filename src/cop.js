@@ -127,17 +127,10 @@ export const CopPage = (props) => {
   let allegationsByDescription = {}
 
   if (complaintsWithAllegations) {
-    allegations = complaintsWithAllegations.slice()
-    //console.log(complaintsWithAllegations)
-    allegations = reduce(allegations, (accumulator, value) => {
-      let key;
-      let val;
-      value.allegations.forEach(e => {
-        key = e.allegation_id
-        val = e;
-        accumulator.[key]= val;
-      })
-      return accumulator
+
+    let allegations = complaintsWithAllegations.reduce((acc, val) => acc.concat(val.allegations), [])
+    allegations = allegations.reduce((acc, value) => {
+      return {...acc, [value.allegation_id]: value}
     }, {})
 
     let fadoTypes = ['Abuse of Authority', 'Discourtesy', 'Force', 'Offensive Language']
@@ -148,8 +141,6 @@ export const CopPage = (props) => {
 
     let allegationDescriptions = [];
 
-    console.log(allegations)
-
     for (const [key, value] of Object.entries(allegations)) {
       let fadoType = allegations.[key].fado_type;
       let allegationDescription = allegations.[key].description;
@@ -157,7 +148,6 @@ export const CopPage = (props) => {
         allegationsByFado.[fadoType] += 1;
       }
       if (!allegationDescriptions.includes(allegationDescription)) {
-        console.log(allegationDescription)
         allegationDescriptions.push(allegationDescription)
         allegationsByDescription.[allegationDescription] = 1
       }
@@ -165,12 +155,26 @@ export const CopPage = (props) => {
       if (allegationsByDescription.hasOwnProperty(allegationDescription)) {
         allegationsByDescription.[allegationDescription] += 1;
       }
-
-    }   
+    }
+    console.log(allegations)   
   }  
 
 
 
+  const columns = [
+    {
+      Header: 'Date Received',
+      accessor: 'date_received',
+    },
+    {
+      Header: 'Date Closed',
+      accessor: 'date_closed',
+    },
+    {
+      Header: 'Location',
+      accessor: 'precinct',
+    }
+  ];
 
 	return (
 		<div>
@@ -191,9 +195,10 @@ export const CopPage = (props) => {
 			<LineChart data={complaintsDatesReduced} title='Complaints by year'/>: null}
       {complaintsWithAllegations ? (
       <div>
-      <BarChart data={allegationsByFado} title='Allegations by FADO type' />
-      <BarChart data={allegationsByDescription} title='Allegations by description' />
-      <CopComplaintsTable data={complaintsWithAllegations} />
+        <BarChart data={allegationsByFado} title='Allegations by FADO type' />
+        <BarChart data={allegationsByDescription} title='Allegations by description' />
+        <h2>Complaints received: </h2>
+        <CopComplaintsTable data={complaintsWithAllegations} columns={columns} />              
       </div>): null}
 		</div>
 	)
