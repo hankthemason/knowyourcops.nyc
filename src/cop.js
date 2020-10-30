@@ -127,8 +127,6 @@ export const CopPage = (props) => {
   let allegationsByDescription = {}
 
   if (complaintsWithAllegations) {
-    console.log(typeof(complaintsWithAllegations[0].date_received))
-
     let allegations = complaintsWithAllegations.reduce((acc, val) => acc.concat(val.allegations), [])
     allegations = allegations.reduce((acc, value) => {
       return {...acc, [value.allegation_id]: value}
@@ -160,11 +158,11 @@ export const CopPage = (props) => {
   }  
 
   const headCells = [
-    { id: 'date_received', label: 'Date Received' },
-    { id: 'date_closed', label: 'Date Closed' },
-    { id: 'precinct', label: 'Location(Precinct)' },
-    { id: 'num_allegations_on_complaint', label: 'Allegations on complaint' },
-    { id: 'complainant_details', label: 'Complainant details' },
+    { id: 'date_received', sortable: true, label: 'Date Received' },
+    { id: 'date_closed', sortable: true, label: 'Date Closed' },
+    { id: 'precinct', sortable: true, label: 'Location(Precinct)' },
+    { id: 'num_allegations_on_complaint', sortable: true, label: 'Allegations on complaint' },
+    { id: 'complainant_details', sortable: false, label: 'Complainant details' },
   ];
 
   const [copComplaintsOrder, setCopComplaintsOrder] = useState('asc')

@@ -161,15 +161,35 @@ export const CopComplaintsTable = props => {
 		return rows
 	}
 
-	const onRequestSort = (event, property) => {
-		const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-	}
+	// const onRequestSort = (event, property) => {
+	// 	const isAsc = orderBy === property && order === 'asc';
+ //    setOrder(isAsc ? 'desc' : 'asc');
+ //    setOrderBy(property);
+	// }
 
-	const createSortHandler = property => event => {
-    onRequestSort(event, property);
-  };
+	// const createSortHandler = (property, sortable) => event => {
+	// 	if (sortable) {
+	// 		onRequestSort(event, property)
+	// 	}
+ //  };
+
+ 	//this is a curried function
+ 	const createClickHandler = (property, sortable) => () => {
+ 		if (sortable) {
+ 			const isAsc = orderBy === property && order === 'asc';
+    	setOrder(isAsc ? 'desc' : 'asc');
+    	setOrderBy(property);
+ 		}	
+ 	}
+
+ 	//this is a closure function
+ 	// const clickHandler = (event) => {
+ 	// 	if (headCell.sortable) {
+ 	// 		const isAsc = orderBy === headCell.property && order === 'asc';
+	 //    setOrder(isAsc ? 'desc' : 'asc');
+	 //    setOrderBy(property);
+ 	// 	}
+ 	// }
 
   return (
     <TableContainer component={Paper}>
@@ -179,18 +199,27 @@ export const CopComplaintsTable = props => {
           	<TableCell>
           	</TableCell>
           	{headCells.map((headCell) => (
+          		headCell.sortable ? (
 		          <TableCell
 		            key={headCell.id}
 		            sortDirection={orderBy === headCell.id ? order : false}
+
 		          >
 		            <TableSortLabel
 		              active={orderBy === headCell.id}
 		              direction={orderBy === headCell.id ? order : 'asc'}
 		              //onClick needs to return a function ??
-		              onClick={createSortHandler(headCell.id)}
+		              //onClick={createSortHandler(headCell.id, headCell.sortable)}
+		              onClick={createClickHandler(headCell.id, headCell.sortable)}
 		            >
 		              {headCell.label}
 		            </TableSortLabel>
+		          </TableCell>
+		          ) : <TableCell
+		            key={headCell.id}
+		            sortDirection={orderBy === headCell.id ? order : false}
+		          >
+		          	{headCell.label}
 		          </TableCell>
 		        ))}
           </TableRow>
