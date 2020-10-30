@@ -4,6 +4,7 @@ import { CopComplaintsTable } from './copComplaints'
 import { BarChart } from './components/barChart'
 import { LineChart } from './components/lineChart'
 import { pick, values, reduce } from 'lodash';
+import { CopProvider } from './context/copContext'
 
 export const CopPage = (props) => {
 	const {cops} = props;

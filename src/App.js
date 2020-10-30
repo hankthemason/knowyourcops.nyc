@@ -5,6 +5,7 @@ import { CopsTable } from './cops';
 import { CopPage } from './cop';
 import { Search } from './search';
 import { CopsProvider } from './context/copsContext';
+import { CopProvider } from './context/copContext'
 import {
   BrowserRouter as Router,
   Switch,
@@ -29,7 +30,9 @@ function App() {
       <Router>
         <Switch>
           <Route path="/cop/:id">
-            <CopPage />
+            <CopProvider>
+              <CopPage />
+            </CopProvider>
           </Route>
           <Route path="/cops">
             <CopsTable setSearchResults={setSearchResults}/>
