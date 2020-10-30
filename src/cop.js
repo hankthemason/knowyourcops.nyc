@@ -127,6 +127,7 @@ export const CopPage = (props) => {
   let allegationsByDescription = {}
 
   if (complaintsWithAllegations) {
+    console.log(typeof(complaintsWithAllegations[0].date_received))
 
     let allegations = complaintsWithAllegations.reduce((acc, val) => acc.concat(val.allegations), [])
     allegations = allegations.reduce((acc, value) => {
@@ -155,26 +156,19 @@ export const CopPage = (props) => {
       if (allegationsByDescription.hasOwnProperty(allegationDescription)) {
         allegationsByDescription.[allegationDescription] += 1;
       }
-    }
-    console.log(allegations)   
+    } 
   }  
 
-
-
-  const columns = [
-    {
-      Header: 'Date Received',
-      accessor: 'date_received',
-    },
-    {
-      Header: 'Date Closed',
-      accessor: 'date_closed',
-    },
-    {
-      Header: 'Location',
-      accessor: 'precinct',
-    }
+  const headCells = [
+    { id: 'date_received', label: 'Date Received' },
+    { id: 'date_closed', label: 'Date Closed' },
+    { id: 'precinct', label: 'Location(Precinct)' },
+    { id: 'num_allegations_on_complaint', label: 'Allegations on complaint' },
+    { id: 'complainant_details', label: 'Complainant details' },
   ];
+
+  const [copComplaintsOrder, setCopComplaintsOrder] = useState('asc')
+  const [orderCopComplaintsBy, setOrderCopComplaintsBy] = useState('date_received')
 
 	return (
 		<div>
@@ -184,7 +178,6 @@ export const CopPage = (props) => {
 			<p> Number of complaints: {complaints} </p>
 			<p> Number of allegations substantiated: {allegationsSubstantiated} </p>
 			{percentageSubstantiated != null ? <p>Percentage of allegations substantiated: {percentageSubstantiated} </p> : null}
-
 			{raceData ? 
 			<BarChart data={raceData} title='Allegations by complainant ethnicity'/> : null}
 			{genderData ?
@@ -198,7 +191,7 @@ export const CopPage = (props) => {
         <BarChart data={allegationsByFado} title='Allegations by FADO type' />
         <BarChart data={allegationsByDescription} title='Allegations by description' />
         <h2>Complaints received: </h2>
-        <CopComplaintsTable data={complaintsWithAllegations} columns={columns} />              
+        <CopComplaintsTable data={complaintsWithAllegations} headCells={headCells} />              
       </div>): null}
 		</div>
 	)

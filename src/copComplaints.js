@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,6 +11,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -34,8 +35,18 @@ export const CopComplaintsTable = props => {
 		'December'
 	]
 
-	const { data } = props
+	const [order, setOrder] = useState('asc')
+	const [orderBy, setOrderBy] = useState('date_received')
+
+	const { data, headCells } = props
 	let rows = data;
+
+	useEffect(() => {
+		rows.map(e => {
+			e.date_received = new Date(e.date_received)
+			e.date_closed = new Date(e.date_closed)
+		})
+	}, [])
 
 	const useStyles = makeStyles({
 		table: {
@@ -50,7 +61,7 @@ export const CopComplaintsTable = props => {
 	    },
 	  },
 	});
-
+	
 	const classes = useStyles();
 
 	function Row(props) {
@@ -140,21 +151,52 @@ export const CopComplaintsTable = props => {
 	//   }).isRequired,
 	// };
 
+	const sortFunction = (rows) => {
+		order === 'asc' ? 
+			rows.sort((a, b) => {
+				return a[orderBy] - b[orderBy]
+			}) : rows.sort((a, b) => {
+				return b[orderBy] - a[orderBy]
+			})
+		return rows
+	}
+
+	const onRequestSort = (event, property) => {
+		const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+	}
+
+	const createSortHandler = property => event => {
+    onRequestSort(event, property);
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} stylesaria-label="collapsible table">
         <TableHead>
           <TableRow>
-          	<TableCell />
-            <TableCell>Date Received</TableCell>
-            <TableCell align="right">Date Closed</TableCell>
-            <TableCell align="right">Location(Precinct)</TableCell>
-            <TableCell align="center">Allegations on complaint</TableCell>
-            <TableCell align="right">Complainant deatails</TableCell>
+          	<TableCell>
+          	</TableCell>
+          	{headCells.map((headCell) => (
+		          <TableCell
+		            key={headCell.id}
+		            sortDirection={orderBy === headCell.id ? order : false}
+		          >
+		            <TableSortLabel
+		              active={orderBy === headCell.id}
+		              direction={orderBy === headCell.id ? order : 'asc'}
+		              //onClick needs to return a function ??
+		              onClick={createSortHandler(headCell.id)}
+		            >
+		              {headCell.label}
+		            </TableSortLabel>
+		          </TableCell>
+		        ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {sortFunction(rows).map((row) => (
             <Row key={row.name} row={row} />
           ))}
         </TableBody>

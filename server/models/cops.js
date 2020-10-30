@@ -228,7 +228,10 @@ export class Cops {
 			//the allegations propery is not correctly formatted as a JSON object
 			result.map(e => {
 				e.allegations = JSON.parse(e.allegations)
+				e.date_received = new Date(e.date_received + ' 12:00:00 GMT-0400')
+				e.date_closed = new Date(e.date_closed + ' 12:00:00 GMT-0400')
 			})
+			console.log(typeof(result[0].date_received))
 			return result
 		} catch (error) {
 			console.error(error)
