@@ -71,21 +71,21 @@ export class Cops {
 			SELECT
 				*,
 				CASE WHEN num_complaints > 4 THEN
-				ROUND(black_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_black_complainants,
+				ROUND(black * 1.0 / num_complaints * 100.0, 2) END percentage_black_complainants,
 				CASE WHEN num_complaints > 4 THEN
-				ROUND(hispanic_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_hispanic_complainants,
+				ROUND(hispanic * 1.0 / num_complaints * 100.0, 2) END percentage_hispanic_complainants,
 				CASE WHEN num_complaints > 4 THEN
-				ROUND(asian_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_asian_complainants,
+				ROUND(asian * 1.0 / num_complaints * 100.0, 2) END percentage_asian_complainants,
 				CASE WHEN num_complaints > 4 THEN
-				ROUND(white_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_white_complainants,
+				ROUND(white * 1.0 / num_complaints * 100.0, 2) END percentage_white_complainants,
 				CASE WHEN num_complaints > 4 THEN
-				ROUND(ethnicity_unknown_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_ethnicity_unknown_complainants,
+				ROUND(ethnicity_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_ethnicity_unknown_complainants,
 				CASE WHEN num_complaints > 4 THEN
-				ROUND(male_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_male_complainants,
+				ROUND(male * 1.0 / num_complaints * 100.0, 2) END percentage_male_complainants,
 				CASE WHEN num_complaints > 4 THEN
-				ROUND(female_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_female_complainants,
+				ROUND(female * 1.0 / num_complaints * 100.0, 2) END percentage_female_complainants,
 				CASE WHEN num_complaints > 4 THEN
-				ROUND(gender_unknown_complainants * 1.0 / num_complaints * 100.0, 2) END percentage_gender_unknown_complainants
+				ROUND(gender_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_gender_unknown_complainants
 			FROM (
 			SELECT 
 				cops.*,
@@ -96,14 +96,14 @@ export class Cops {
 				END substantiated_percentage, 
 				COUNT(*) AS num_allegations,
 				COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%black%' THEN complaint_id END) AS black_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%hispanic%' THEN complaint_id END) AS hispanic_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%asian%' THEN complaint_id END) AS asian_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%white%' THEN complaint_id END) AS white_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '' OR complainant_ethnicity LIKE 'Other Race' THEN complaint_id END) AS ethnicity_unknown_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE 'male%' THEN complaint_id END) AS male_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '%female%' THEN complaint_id END) AS female_complainants,
-				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '' THEN complaint_id END) AS gender_unknown_complainants,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%black%' THEN complaint_id END) AS black,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%hispanic%' THEN complaint_id END) AS hispanic,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%asian%' THEN complaint_id END) AS asian,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%white%' THEN complaint_id END) AS white,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '' OR complainant_ethnicity LIKE 'Other Race' THEN complaint_id END) AS ethnicity_unknown,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE 'male%' THEN complaint_id END) AS male,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '%female%' THEN complaint_id END) AS female,
+				COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '' THEN complaint_id END) AS gender_unknown,
 				COUNT(DISTINCT complaints.id) AS num_complaints
 			FROM 
 				cops 

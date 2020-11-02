@@ -4,6 +4,7 @@ import React, { useContext,
 								useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useCops } from './copsContext';
+import { map, range, reduce } from 'lodash'
 
 const CopContext = createContext(); 
 
@@ -15,9 +16,40 @@ export const useCop = () => {
 	return ctx
 }
 
+const normalizeData = cop => {
+	let yearlyStats = cop.yearlyStats
+
+	if (yearlyStats.length === 1) {
+		yearlyStats.splice(0, 0, ({year: yearlyStats[0].year-1, count: 0}))
+		yearlyStats.push({year: yearlyStats[1].year+1, count: 0})
+	} 
+
+	const allYears = reduce(map(
+		yearlyStats ? range(yearlyStats[0].year, yearlyStats[yearlyStats.length-1].year+1) : [], 
+			year => {
+				const stat = yearlyStats.find(stat => stat.year === year)
+				return stat ? stat : {year, count: 0}
+			} 
+		), (accumulator, value) => {
+			return {...accumulator, [value.year]: value.count}
+		}, {}
+	)
+
+	let locationStats = cop.locationStats
+
+	locationStats = reduce(locationStats, (accumulator, value) => {
+		return {...accumulator, [value.precinct]: value.count}
+	}, {})
+
+	return {
+		...cop, 
+		yearlyStats: allYears,
+		locationStats: locationStats
+	}
+}
+
 export const CopProvider = (props) => {
-	const { id } = useParams()
-	console.log(id)
+	const { id } = useParams();
 	const { copsConfig } = useCops();
 
 	const incompleteCop = copsConfig.cops.find(obj => {
@@ -48,14 +80,13 @@ export const CopProvider = (props) => {
 		if (complaintsLocations === null || 
 			complaintsDates === null || 
 			complaintsWithAllegations === null) return
-		setCop({
+		setCop(normalizeData({
 			...incompleteCop, 
 			locationStats: complaintsLocations,
 			yearlyStats: complaintsDates,
 			complaintsWithAllegations: complaintsWithAllegations
-		})
+		}))
 	}, [complaintsLocations, complaintsDates, complaintsWithAllegations])
-
 
 	return (
 		<CopContext.Provider value={{cop}}>
