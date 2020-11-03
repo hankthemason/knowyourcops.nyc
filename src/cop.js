@@ -19,9 +19,6 @@ export const CopPage = (props) => {
   let assignment_abbrev = cop.command_unit
   let assignment_full = cop.command_unit_full
 
-
-  console.log(cop)
-
   let raceData;
 
 	raceData = pick(cop, ['black', 

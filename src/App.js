@@ -8,7 +8,9 @@ import { Search } from './search';
 import { CopsProvider } from './context/copsContext';
 import { CopProvider } from './context/copContext';
 import { ViewConfigProvider } from './context/viewConfigContext';
+import { CommandUnitPage } from './commandUnit' 
 import { CommandUnitsProvider } from './context/commandUnitsContext'
+import { CommandUnitProvider } from './context/commandUnitContext'
 import {
   BrowserRouter as Router,
   Switch,
@@ -40,11 +42,16 @@ function App() {
           <Route path="/cops">
             <CopsTable setSearchResults={setSearchResults}/>
           </Route>
-          <Route path="/command_units">
-            <CommandUnitsProvider>
+          <CommandUnitsProvider>
+            <Route path ="/command_unit/:id">
+              <CommandUnitProvider>
+                <CommandUnitPage />
+              </CommandUnitProvider>
+            </Route>
+            <Route path="/command_units">
               <CommandUnitsTable />
-            </CommandUnitsProvider>
-          </Route>
+            </Route>
+          </CommandUnitsProvider>
           <Route path="/search" >
             <Search results={searchResults} setSearchResults={setSearchResults} />
           </Route>
