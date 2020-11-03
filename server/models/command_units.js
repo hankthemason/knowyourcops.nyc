@@ -45,8 +45,23 @@ export class CommandUnits {
 		}
 	}
 
-	async read() {
+	async total() {
 		try {
+			const result = await this.db.all(`
+				SELECT
+					COUNT(*) AS rows
+				FROM
+					command_units
+				`)
+			return result
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	async read(orderBy, order, page, pageSize) {
+		try {
+			let offset = pageSize * (page-1)
 			const result = await this.db.all(`
 				SELECT
 					command_units.*,
@@ -64,9 +79,13 @@ export class CommandUnits {
 						complaints.id = allegations.complaint_id
 				GROUP BY 
 					command_units.unit_id
-				ORDER BY 
-					num_allegations DESC
-				`)
+				ORDER BY
+					${orderBy} ${order}
+				LIMIT
+					(?)
+				OFFSET
+					(?)
+			`, pageSize, offset)
 			return result
 		} catch(error) {
 			console.error(error);

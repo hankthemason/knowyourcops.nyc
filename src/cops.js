@@ -40,6 +40,7 @@ export const CopsTable = props => {
 	//good
 	function orderByHandler(v) {
 		setOrderBy(orderByOptions[v])
+		console.log(orderBy)
 	}
 
 	//good

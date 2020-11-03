@@ -46,8 +46,8 @@ const models = new Models(DB_PATH);
     }
 	})
 
-	app.get('/command_units', async (req, res) => {
-		res.json(await models.commandUnits.read());
+	app.get('/command_units/orderBy=:orderBy/order=:order/page=:page/pageSize=:pageSize', async (req, res) => {
+		res.json(await models.commandUnits.read(req.params.orderBy, req.params.order, req.params.page, req.params.pageSize));
 	})
 
 	app.get('/precincts', async (req, res) => {
@@ -66,8 +66,10 @@ const models = new Models(DB_PATH);
 		res.json(await models.complaints.read())
 	})
 
-	app.get('/total_rows', async (req, res) => {
-		res.json(await models.cops.total());
+	app.get('/total_rows/table=:table', async (req, res) => {
+		let table = req.params.table
+		console.log(table)
+		res.json(await models.[table].total());
 	})
 
 	app.get('/cops/orderBy=:orderBy/order=:order/page=:page/pageSize=:pageSize', async (req, res) => {

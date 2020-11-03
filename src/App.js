@@ -2,10 +2,12 @@ import React, {useState, useEffect} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { CopsTable } from './cops';
+import { CommandUnitsTable } from './commandUnits'
 import { CopPage } from './cop';
 import { Search } from './search';
 import { CopsProvider } from './context/copsContext';
-import { CopProvider } from './context/copContext'
+import { CopProvider } from './context/copContext';
+import { CommandUnitsProvider } from './context/commandUnitsContext'
 import {
   BrowserRouter as Router,
   Switch,
@@ -37,8 +39,10 @@ function App() {
           <Route path="/cops">
             <CopsTable setSearchResults={setSearchResults}/>
           </Route>
-          <Route path="/allegations">
-            {}
+          <Route path="/command_units">
+            <CommandUnitsProvider>
+              <CommandUnitsTable />
+            </CommandUnitsProvider>
           </Route>
           <Route path="/search" >
             <Search results={searchResults} setSearchResults={setSearchResults} />

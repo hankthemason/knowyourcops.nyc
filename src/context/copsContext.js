@@ -70,7 +70,7 @@ export const CopsProvider = (props) => {
 	const [total, setTotal] = useState(0)
 
 	useEffect(() => {
-		fetch(`/total_rows`)
+		fetch(`/total_rows/table=cops`)
 		.then(result => result.json())
 		.then(total => setTotal(total[0].rows))
 	}, [])

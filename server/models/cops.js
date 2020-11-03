@@ -152,7 +152,6 @@ export class Cops {
 					COUNT(*) AS rows
 				FROM
 					cops 
-
 				`)
 			return result
 		} catch (error) {
