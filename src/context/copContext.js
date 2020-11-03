@@ -1,7 +1,8 @@
-import React, { useContext, 
-								createContext, 
-								useState, 
-								useEffect } from 'react'
+import React, 
+			{ useContext, 
+				createContext, 
+				useState, 
+				useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useCops } from './copsContext';
 import { map, range, reduce } from 'lodash'

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from './components/button';
 import { DropDown } from './components/dropdown';
 import { SearchBar } from './components/searchBar';
@@ -50,22 +51,25 @@ export const CommandUnitsTable = props => {
 				</thead>
 				<tbody>
 					{commandUnits.map(entry => (
-						<tr>
-							<td>
-								{entry.command_unit_full != null ? entry.command_unit_full : entry.unit_id }
-							</td>
-							<td>
-								{entry.unit_id ? entry.unit_id : null}
-							</td>
-							<td>
-								{entry.precinct != 'null' ? entry.precinct : ''}
-							</td>
-							<td>
-								{entry.num_allegations}
-							</td>
-						</tr>
-						)
-					)}
+						entry.command_unit_full || entry.unit_id ? (
+							<tr>
+								<td>
+									<Link to={`/command_unit/${entry.id}`}>
+										{entry.command_unit_full != null ? entry.command_unit_full : entry.unit_id }
+									</Link>
+								</td>
+								<td>
+									{entry.unit_id ? entry.unit_id : null}
+								</td>
+								<td>
+									{entry.precinct != 'null' ? entry.precinct : ''}
+								</td>
+								<td>
+									{entry.num_allegations}
+								</td>
+							</tr>
+						) : null
+					))}
 				</tbody>
 			</table>
 		<div className="">
