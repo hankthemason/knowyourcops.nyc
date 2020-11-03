@@ -73,18 +73,41 @@ export class CommandUnits {
 		}
 	}
 
-	async search(searchQuery) {
+	async augment(commandAbbrevs)	{
 		try {
-			return await this.db.all(`
-				SELECT
-					*
-				FROM
-					command_units
-				WHERE
-					command_units.unit_id LIKE '%${searchQuery}%'
-				`)
-		} catch(error) {
+			await this.db.run(`
+			ALTER TABLE
+				command_units
+			ADD COLUMN
+				command_unit_full TEXT`)
+			const results = await this.db.all(`
+			SELECT
+				*
+			FROM 
+				command_units`)
+			for (const result of results) {
+				const cmdUnitFull = commandAbbrevs.find(
+					e => e.Abbreviation === result.unit_id)
+				if (cmdUnitFull != undefined) {
+					this.updateCommandUnitFullColumn(result.id, cmdUnitFull['Command Name'])
+				}
+			}
+		} catch (error) {
 			console.error(error)
 		}
-	}		
+	}
+
+	async updateCommandUnitFullColumn(id, cmdUnitFull) {
+		try {
+			this.db.run(`
+				UPDATE 
+					command_units
+				SET 
+					command_unit_full = '${cmdUnitFull}'
+				WHERE
+					id = ${id}`)
+		} catch (error) {
+			console.error(error)
+		}
+	}
 }

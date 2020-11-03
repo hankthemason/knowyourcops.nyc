@@ -16,7 +16,8 @@ export class Cops {
 				command_unit TEXT NOT NULL,
 				precinct INTEGER,
 				shield_no INTEGER NOT NULL,
-				rank TEXT NOT NULL,
+				rank_abbrev TEXT NOT NULL,
+				rank_full TEXT NOT NULL,
 				ethnicity TEXT,
 				gender TEXT,
 				FOREIGN KEY(command_unit) REFERENCES command_units(unit_id),
@@ -42,7 +43,8 @@ export class Cops {
 						command_unit,
 						precinct, 
 						shield_no,
-						rank, 
+						rank_abbrev,
+						rank_full,
 						ethnicity, 
 						gender )
 				VALUES(
@@ -52,7 +54,8 @@ export class Cops {
 					'${cop.command_now}',
 					'${precinct_id}',
 					'${cop.shield_no}', 
-					'${cop.rank_abbrev_now}', 
+					'${cop.rank_abbrev_now}',
+					'${cop.rank_now}',
 					'${cop.mos_ethnicity}',
 					'${cop.mos_gender}')`)
 		} catch(error) {
@@ -492,11 +495,11 @@ export class Cops {
 		}
 	}		
 
-	async augment(csvPath) {
+	async augment(csvPath, rankAbbrevs) {
 		await this.addCommandUnitFullColumn();
 		const csv = fs.readFileSync(csvPath);
 		const commandCsv = await neatCsv(csv);
-		const results = await this.getCommand();
+		const results = await this.getCopsToUpdate();
 
 		for (const result of results) {
 			const cmdUnitFull = commandCsv.find(
@@ -507,7 +510,7 @@ export class Cops {
 		}
 	}
 
-	async getCommand() {
+	async getCopsToUpdate() {
 		const results = await this.db.all(`
 			SELECT *
 			FROM cops`)

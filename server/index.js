@@ -7,6 +7,7 @@ const csv = 'ccrb_data/data.csv';
 const DB_PATH = './db/ccrb.db';
 const commandCsv = 'ccrb_data/command_abrevs.csv'
 const allegationTypesCsv = 'ccrb_data/FADO-Table 1.csv'
+const rankAbbrevsCsv = 'ccrb_data/Rank Abbrevs-Table 1.csv'
 
 const port = 3001
 
@@ -18,11 +19,16 @@ const models = new Models(DB_PATH);
 	const app = express()
 	await models.init();
 
-	await models.populate(csv, commandCsv);
-
 	const helper = new CsvHelper()
 
+	const commandAbbrevs = await helper.getCommandAbbrevs(commandCsv)
+
+	const rankAbbrevs = await helper.getRankAbbrevs(rankAbbrevsCsv)
+
+	await models.populate(csv, commandCsv, rankAbbrevs, commandAbbrevs);
+
 	const allegationTypes = await helper.getAllegationTypes(allegationTypesCsv)
+	
 	
 	const search = new Search(models)
 

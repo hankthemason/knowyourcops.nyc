@@ -42,14 +42,17 @@ export class Models {
 		return keys(await this.precincts.read()).length > 0 ? true : false
 	}
 
-	async populate(csvPath, commandAbbrevCsvPath) {
+	async populate(csvPath, commandAbbrevCsvPath, rankAbbrevs, commandAbbrevs) {
 		if(await this.isDbPopulated()) return
 
 		console.log('db being populated...')
 
 		await this.populateFromCsv(csvPath);
-		await this.cops.augment(commandAbbrevCsvPath);
+		await this.cops.augment(commandAbbrevCsvPath, rankAbbrevs);
+		await this.command_units.augment();
+		await this.commandUnits.augment(commandAbbrevs)
 
+		
 		console.log('db finished populating')
 	}
 

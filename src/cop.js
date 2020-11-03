@@ -15,7 +15,12 @@ export const CopPage = (props) => {
 	let allegationsSubstantiated = cop.num_substantiated
 	let percentageSubstantiated = cop.substantiated_percentage
 	let ethnicity = cop.ethnicity
-  
+  let rank = cop.rank_full
+  let assignment_abbrev = cop.command_unit
+  let assignment_full = cop.command_unit_full
+
+
+  console.log(cop)
 
   let raceData;
 
@@ -24,7 +29,6 @@ export const CopPage = (props) => {
                         'asian', 
                         'white', 
                         'ethnicity_unknown'])
-
 
   let genderData;
 
@@ -80,8 +84,6 @@ export const CopPage = (props) => {
   const [copComplaintsOrder, setCopComplaintsOrder] = useState('asc')
   const [orderCopComplaintsBy, setOrderCopComplaintsBy] = useState('date_received')
 
-  console.log(cop.yearlyStats)
-
 	return (
 		<div>
 			<p> Full name: {name}</p>
@@ -89,12 +91,15 @@ export const CopPage = (props) => {
 			<p> Number of allegations: {numAllegations} </p>
 			<p> Number of complaints: {complaints} </p>
 			<p> Number of allegations substantiated: {allegationsSubstantiated} </p>
+      <p> Rank: {rank} </p>
+      {assignment_full != null ? (
+        <p> Assignment: {assignment_full} </p> ):
+        <p> Assignment: {assignment_abbrev} </p> }
 			{percentageSubstantiated != null ? <p>Percentage of allegations substantiated: {percentageSubstantiated} </p> : null}
 			<BarChart data={raceData} title='Allegations by complainant ethnicity'/>
 			<BarChart data={genderData} title='Allegations by complainant gender'/> 
 			<BarChart data={cop.locationStats} title='Allegations by location'/>
 			<LineChart data={cop.yearlyStats} title='Complaints by year'/>
-      
       <div>
         <BarChart data={allegationsByFado} title='Allegations by FADO type' />
         <BarChart data={allegationsByDescription} title='Allegations by description' />
