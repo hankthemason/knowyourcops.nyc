@@ -7,6 +7,7 @@ import { CopPage } from './cop';
 import { Search } from './search';
 import { CopsProvider } from './context/copsContext';
 import { CopProvider } from './context/copContext';
+import { ViewConfigProvider } from './context/viewConfigContext';
 import { CommandUnitsProvider } from './context/commandUnitsContext'
 import {
   BrowserRouter as Router,

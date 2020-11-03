@@ -23,7 +23,6 @@ export const CommandUnitsTable = props => {
 
 	function orderByHandler(v) {
 		setOrderBy(orderByOptions[v])
-		console.log(orderBy)
 	}
 
 	function currentPageHandler(v) {

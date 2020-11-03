@@ -3,6 +3,7 @@ import React, { useContext,
 								useState, 
 								useEffect } from 'react';
 import { reduce } from 'lodash';
+import { useViewConfig } from './viewConfigContext'
 
 const CommandUnitsContext = createContext();
 
