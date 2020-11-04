@@ -16,6 +16,7 @@ export const useCommandUnits = () => {
 }
 
 export const CommandUnitsProvider = props => {
+	console.log('3')
 
 	const { viewConfig } = useViewConfig();
 	const { order, 
@@ -26,7 +27,13 @@ export const CommandUnitsProvider = props => {
 		orderBy,
 		setOrderBy,
 		pageSize,
-		setPageSize } = viewConfig
+		setPageSize,
+		innerContext,
+		setInnerContext } = viewConfig
+
+	useEffect(() => {
+		setInnerContext('commandUnits')
+	}, [])
 
 	const [commandUnits, setCommandUnits] = useState(null);
 

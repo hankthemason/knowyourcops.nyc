@@ -14,6 +14,8 @@ export const useViewConfig = () => {
 }
 
 export const ViewConfigProvider = props => {
+	console.log('1')
+	const [innerContext, setInnerContext] = useState()
 	const [order, setOrder] = useState('DESC')
 	const [page, setPage] = useState(1)
 
@@ -33,7 +35,16 @@ export const ViewConfigProvider = props => {
 		orderBy,
 		setOrderBy,
 		pageSize,
-		setPageSize }
+		setPageSize,
+		innerContext,
+		setInnerContext }
+
+	useEffect(() => {
+		console.log('innerContext changed');
+		setInnerContext(innerContext)
+	}, [innerContext])
+
+	console.log(innerContext)
 
 	useEffect(() => {
 		const loadedViewConfig = window.sessionStorage.getItem('viewConfig');

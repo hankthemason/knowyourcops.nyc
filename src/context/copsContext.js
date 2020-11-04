@@ -12,6 +12,7 @@ export const useCops = () => {
 }
 
 export const CopsProvider = (props) => {
+	console.log('2')
 
 	const { viewConfig } = useViewConfig();
 	const { order, 
@@ -22,7 +23,11 @@ export const CopsProvider = (props) => {
 		orderBy,
 		setOrderBy,
 		pageSize,
-		setPageSize } = viewConfig
+		setPageSize,
+		innerContext,
+		setInnerContext } = viewConfig
+
+	setInnerContext('cops')
 
 	const [cops, setCops] = useState(null)
 
