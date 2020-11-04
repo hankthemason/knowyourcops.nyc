@@ -68,7 +68,6 @@ const models = new Models(DB_PATH);
 
 	app.get('/total_rows/table=:table', async (req, res) => {
 		let table = req.params.table
-		console.log(table)
 		res.json(await models.[table].total());
 	})
 
