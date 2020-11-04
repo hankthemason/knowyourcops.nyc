@@ -21,48 +21,9 @@ export const ViewConfigProvider = props => {
 		setOrder(order === 'ASC' ? 'DESC' : 'ASC')
 	}
 
-	//make sure to use .value to access the actual value of pageSize
-	const pageSizeOptions = [
-		{id: 0,
-		 value: 10
-		},
-		{id: 1,
-		 value: 25
-		},
-		{id: 2,
-		 value: 50
-		},
-		{id: 3,
-		 value: 100
-		}
-	]
-	
-	const orderByOptions = [
-		{
-			id: 0,
-			title: 'Number of Allegations',
-			value: 'num_allegations'
-		},
-		{
-			id: 1,
-			title: 'Command Unit Name',
-			value: 'unit_id'
-		},
-		{
-			id: 2,
-			title: 'Associated Precinct',
-			value: 'precinct'
-		},
-		{
-			id: 3,
-			title: 'Number of Complaints',
-			value: 'num_complaints'
-		}
-	]
+	const [orderBy, setOrderBy] = useState(null)
 
-	const [orderBy, setOrderBy] = useState(orderByOptions[0])
-
-	const [pageSize, setPageSize] = useState(pageSizeOptions[0])
+	const [pageSize, setPageSize] = useState(null)
 
 	const viewConfig = { order, 
 		setOrder, 
@@ -71,10 +32,8 @@ export const ViewConfigProvider = props => {
 		setPage,
 		orderBy,
 		setOrderBy,
-		orderByOptions,
 		pageSize,
-		setPageSize,
-		pageSizeOptions }
+		setPageSize }
 
 	useEffect(() => {
 		const loadedViewConfig = window.sessionStorage.getItem('viewConfig');

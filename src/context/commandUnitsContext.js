@@ -25,15 +25,50 @@ export const CommandUnitsProvider = props => {
 		setPage,
 		orderBy,
 		setOrderBy,
-		orderByOptions,
 		pageSize,
-		setPageSize,
-		pageSizeOptions } = viewConfig
+		setPageSize } = viewConfig
 
 	const [commandUnits, setCommandUnits] = useState(null);
 
 	
-
+		//make sure to use .value to access the actual value of pageSize
+	const pageSizeOptions = [
+		{id: 0,
+		 value: 10
+		},
+		{id: 1,
+		 value: 25
+		},
+		{id: 2,
+		 value: 50
+		},
+		{id: 3,
+		 value: 100
+		}
+	]
+	
+	const orderByOptions = [
+		{
+			id: 0,
+			title: 'Number of Allegations',
+			value: 'num_allegations'
+		},
+		{
+			id: 1,
+			title: 'Command Unit Name',
+			value: 'unit_id'
+		},
+		{
+			id: 2,
+			title: 'Associated Precinct',
+			value: 'precinct'
+		},
+		{
+			id: 3,
+			title: 'Number of Complaints',
+			value: 'num_complaints'
+		}
+	]
 	//get the total number of rows in order to populate
 	//paginate component
 	const [total, setTotal] = useState(0)

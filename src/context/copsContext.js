@@ -1,4 +1,5 @@
 import React, { useContext, createContext, useState, useEffect } from 'react';
+import { useViewConfig } from './viewConfigContext'
 
 const CopsContext = createContext();
 
@@ -12,9 +13,18 @@ export const useCops = () => {
 
 export const CopsProvider = (props) => {
 
-	const [cops, setCops] = useState(null);
+	const { viewConfig } = useViewConfig();
+	const { order, 
+		setOrder, 
+		toggleOrder,
+		page,
+		setPage,
+		orderBy,
+		setOrderBy,
+		pageSize,
+		setPageSize } = viewConfig
 
-	const [page, setPage] = useState(null);
+	const [cops, setCops] = useState(null)
 
 	//make sure to use .value to access the actual value of pageSize
 	const pageSizeOptions = [
@@ -31,8 +41,6 @@ export const CopsProvider = (props) => {
 		 value: 100
 		}
 	]
-
-	const [pageSize, setPageSize] = useState(null);
 
 	const orderByOptions = [
 		{
@@ -56,14 +64,6 @@ export const CopsProvider = (props) => {
 			value: 'num_substantiated'
 		}
 	]
-
-	const [orderBy, setOrderBy] = useState(null)
-
-	const [order, setOrder] = useState(null)
-
-	const toggleOrder = () => {
-		setOrder(order === 'ASC' ? 'DESC' : 'ASC')
-	}
 
 	//get the total number of rows in order to populate
 	//paginate component
