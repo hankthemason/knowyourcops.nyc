@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useCommandUnit } from './context/commandUnitContext' 
+import { useCommandUnit } from './context/commandUnitContext'; 
 
 export const CommandUnitPage = props => {
+
 	const { commandUnit: c } = useCommandUnit()
 
 	return (

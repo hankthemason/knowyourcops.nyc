@@ -31,33 +31,35 @@ function App() {
   const [searchResults, setSearchResults] = useState([]);
 
   return (
-    <CopsProvider>
-      <Router>
-        <Switch>
-          <Route path="/cop/:id">
-            <CopProvider>
-              <CopPage />
-            </CopProvider>
-          </Route>
-          <Route path="/cops">
-            <CopsTable setSearchResults={setSearchResults}/>
-          </Route>
-          <CommandUnitsProvider>
-            <Route path ="/command_unit/:id">
-              <CommandUnitProvider>
-                <CommandUnitPage />
-              </CommandUnitProvider>
+    <ViewConfigProvider>
+      <CopsProvider>
+        <Router>
+          <Switch>
+            <Route path="/cop/:id">
+              <CopProvider>
+                <CopPage />
+              </CopProvider>
             </Route>
-            <Route path="/command_units">
-              <CommandUnitsTable />
+            <Route path="/cops">
+              <CopsTable setSearchResults={setSearchResults}/>
             </Route>
-          </CommandUnitsProvider>
-          <Route path="/search" >
-            <Search results={searchResults} setSearchResults={setSearchResults} />
-          </Route>
-        </Switch>
-      </Router>
-    </CopsProvider>
+              <CommandUnitsProvider>
+                <Route path ="/command_unit/:id">
+                  <CommandUnitProvider>
+                    <CommandUnitPage />
+                  </CommandUnitProvider>
+                </Route>
+                <Route path="/command_units">
+                  <CommandUnitsTable />
+                </Route>
+              </CommandUnitsProvider>
+            <Route path="/search" >
+              <Search results={searchResults} setSearchResults={setSearchResults} />
+            </Route>
+          </Switch>
+        </Router>
+      </CopsProvider>
+    </ViewConfigProvider>
   );
 }
 

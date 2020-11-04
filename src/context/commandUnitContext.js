@@ -17,14 +17,11 @@ export const useCommandUnit = () => {
 }
 
 export const CommandUnitProvider = (props) => {
+
 	const { id } = useParams();
 	const { commandUnits } = useCommandUnits();
 
 	let commandUnit = commandUnits.find(obj => obj.id === parseInt(id))
-	console.log(commandUnit)
-
-	
-
 	
 	return (
 		<CommandUnitContext.Provider value={{commandUnit}}>
