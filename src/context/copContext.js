@@ -18,6 +18,7 @@ export const useCop = () => {
 }
 
 const normalizeData = cop => {
+	console.log(cop.complaintsWithAllegations)
 	let yearlyStats = cop.yearlyStats
 
 	if (yearlyStats.length === 1) {
@@ -42,6 +43,15 @@ const normalizeData = cop => {
 		return {...accumulator, [value.precinct]: value.count}
 	}, {})
 
+	let tempCop = {
+		...cop,
+		yearlyStats: allYears,
+		locationStats: locationStats
+	}
+
+	console.log(tempCop)
+
+
 	return {
 		...cop, 
 		yearlyStats: allYears,
@@ -52,13 +62,14 @@ const normalizeData = cop => {
 export const CopProvider = (props) => {
 	const { id } = useParams();
 	const { copsConfig } = useCops();
-	const [tempCop, setTempCop] = useState();
+	const [incompleteCop, setIncompleteCop] = useState();
 	
-	
-
-	let incompleteCop = copsConfig.cops.find(obj => {
-			return obj.id === parseInt(id)
-	})
+	useEffect(() => {
+		setIncompleteCop(copsConfig.cops.find(obj => {
+				return obj.id === parseInt(id)
+			})
+		)
+	}, [])
 
 
 	const [cop, setCop] = useState(null)
@@ -75,8 +86,7 @@ export const CopProvider = (props) => {
   		console.log('undefined')
   		fetch(`/cop/id=${id}`)
   		.then(result => result.json())
-  		.then(result => incompleteCop = result)
-  		.then(incompleteCop => console.log(incompleteCop))
+  		.then(incompleteCop => setIncompleteCop(incompleteCop))
   	}
   }, [incompleteCop])
 
@@ -103,6 +113,7 @@ export const CopProvider = (props) => {
 			yearlyStats: complaintsDates,
 			complaintsWithAllegations: complaintsWithAllegations
 		}))
+
 	}, [complaintsLocations, complaintsDates, complaintsWithAllegations])
 
 
