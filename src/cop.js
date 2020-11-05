@@ -6,7 +6,7 @@ import { pick, values, reduce } from 'lodash';
 import { useCop } from './context/copContext';
 
 export const CopPage = (props) => {
-	
+
   const { cop } = useCop();
 
 	let name = cop.first_name + ' ' + cop.last_name;
@@ -38,13 +38,12 @@ export const CopPage = (props) => {
   let allegations;
   let allegationsByFado = {}
   let allegationsByDescription = {}
-
   
   allegations = cop.complaintsWithAllegations.reduce((acc, val) => acc.concat(val.allegations), [])
     allegations = allegations.reduce((acc, value) => {
       return {...acc, [value.allegation_id]: value}
   }, {})
-
+    
   let fadoTypes = ['Abuse of Authority', 'Discourtesy', 'Force', 'Offensive Language']
 
   for (const fadoType of fadoTypes) {
@@ -77,9 +76,6 @@ export const CopPage = (props) => {
     { id: 'num_allegations_on_complaint', sortable: true, label: 'Allegations on complaint' },
     { id: 'complainant_details', sortable: false, label: 'Complainant details' },
   ];
-
-  const [copComplaintsOrder, setCopComplaintsOrder] = useState('asc')
-  const [orderCopComplaintsBy, setOrderCopComplaintsBy] = useState('date_received')
 
 	return (
 		<div>

@@ -32,33 +32,39 @@ function App() {
 
   return (
     <ViewConfigProvider>
-      <CopsProvider>
+      
         <Router>
           <Switch>
-            <Route path="/cop/:id">
+            <Route exact path="/cop/:id">
+            <CopsProvider>
               <CopProvider>
                 <CopPage />
               </CopProvider>
+              </CopsProvider>
             </Route>
             <Route path="/cops">
+            <CopsProvider>
               <CopsTable setSearchResults={setSearchResults}/>
+            </CopsProvider>
             </Route>
-              <CommandUnitsProvider>
                 <Route path ="/command_unit/:id">
+                <CommandUnitsProvider>
                   <CommandUnitProvider>
                     <CommandUnitPage />
                   </CommandUnitProvider>
+                </CommandUnitsProvider>
                 </Route>
                 <Route path="/command_units">
+                <CommandUnitsProvider>
                   <CommandUnitsTable />
+                </CommandUnitsProvider>
                 </Route>
-              </CommandUnitsProvider>
             <Route path="/search" >
               <Search results={searchResults} setSearchResults={setSearchResults} />
             </Route>
           </Switch>
         </Router>
-      </CopsProvider>
+      
     </ViewConfigProvider>
   );
 }

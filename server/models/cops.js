@@ -93,9 +93,9 @@ export class Cops {
 			SELECT 
 				cops.*,
 				CASE 
-					WHEN COUNT(*) > 9
+					WHEN COUNT(allegations.id) > 9
 					THEN (
-					ROUND(COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(*) * 100.0, 2))
+					ROUND(COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(allegations.id) * 100.0, 2))
 				END substantiated_percentage, 
 				COUNT(*) AS num_allegations,
 				COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
@@ -443,6 +443,76 @@ export class Cops {
 			return result
 		} catch (error) {
 			console.error(error)
+		}
+	}
+
+	async readCop(id) {
+		console.log('hi')
+		try {
+			const result = await this.db.all(`
+				SELECT
+					*,
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(black * 1.0 / num_complaints * 100.0, 2) END percentage_black_complainants,
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(hispanic * 1.0 / num_complaints * 100.0, 2) END percentage_hispanic_complainants,
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(asian * 1.0 / num_complaints * 100.0, 2) END percentage_asian_complainants,
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(white * 1.0 / num_complaints * 100.0, 2) END percentage_white_complainants,
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(ethnicity_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_ethnicity_unknown_complainants,
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(male * 1.0 / num_complaints * 100.0, 2) END percentage_male_complainants,
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(female * 1.0 / num_complaints * 100.0, 2) END percentage_female_complainants,
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(gender_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_gender_unknown_complainants
+				FROM (
+				SELECT 
+					cops.*,
+					CASE 
+						WHEN COUNT(allegations.id) > 9
+						THEN (
+						ROUND(COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(allegations.id) * 100.0, 2))
+					END substantiated_percentage, 
+					COUNT(*) AS num_allegations,
+					COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%black%' THEN complaint_id END) AS black,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%hispanic%' THEN complaint_id END) AS hispanic,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%asian%' THEN complaint_id END) AS asian,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%white%' THEN complaint_id END) AS white,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '' OR complainant_ethnicity LIKE 'Other Race' THEN complaint_id END) AS ethnicity_unknown,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE 'male%' THEN complaint_id END) AS male,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '%female%' THEN complaint_id END) AS female,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '' THEN complaint_id END) AS gender_unknown,
+					COUNT(DISTINCT complaints.id) AS num_complaints
+				FROM 
+					cops 
+				INNER JOIN 
+					allegations 
+				ON 
+					cops.id = allegations.cop
+					INNER JOIN
+						complaints
+					ON 
+						complaints.id = allegations.complaint_id 
+				WHERE
+					cops.id = (?)
+				)
+			`, id)
+			// console.log('begin reduce')
+
+			// const copsReduced = reduce(result, (accumulator, value) => {
+			// 	let tempKey = value.id;
+			// 	accumulator[tempKey] = value;
+			// 	return accumulator
+			// }, {})
+			// console.log('end reduce')
+			return result
+
+		} catch(error) {
+			console.error(error);
 		}
 	}
 

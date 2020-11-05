@@ -43,13 +43,13 @@ export class Models {
 	}
 
 	async populate(csvPath, commandAbbrevCsvPath, rankAbbrevs, commandAbbrevs) {
+
 		if(await this.isDbPopulated()) return
 
 		console.log('db being populated...')
 
 		await this.populateFromCsv(csvPath);
 		await this.cops.augment(commandAbbrevCsvPath, rankAbbrevs);
-		await this.command_units.augment();
 		await this.commandUnits.augment(commandAbbrevs)
 
 		

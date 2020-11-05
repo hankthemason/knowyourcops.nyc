@@ -52,10 +52,14 @@ const normalizeData = cop => {
 export const CopProvider = (props) => {
 	const { id } = useParams();
 	const { copsConfig } = useCops();
+	const [tempCop, setTempCop] = useState();
+	
+	
 
-	const incompleteCop = copsConfig.cops.find(obj => {
-		return obj.id === parseInt(id)
+	let incompleteCop = copsConfig.cops.find(obj => {
+			return obj.id === parseInt(id)
 	})
+
 
 	const [cop, setCop] = useState(null)
 
@@ -63,7 +67,18 @@ export const CopProvider = (props) => {
 
 	const [complaintsDates, setComplaintsDates] = useState(null);
 
-  const [complaintsWithAllegations, setComplaintsWithAllegations] = useState(null);
+  const [complaintsWithAllegations, setComplaintsWithAllegations] = useState(null)
+
+  useEffect(() => {
+  	//this is if the cop wasn't found inside of the cops context
+  	if (incompleteCop === undefined) {
+  		console.log('undefined')
+  		fetch(`/cop/id=${id}`)
+  		.then(result => result.json())
+  		.then(result => incompleteCop = result)
+  		.then(incompleteCop => console.log(incompleteCop))
+  	}
+  }, [incompleteCop])
 
 	useEffect(() => {
 		fetch(`/cop_complaints/locations/id=${id}`)
@@ -81,6 +96,7 @@ export const CopProvider = (props) => {
 		if (complaintsLocations === null || 
 			complaintsDates === null || 
 			complaintsWithAllegations === null) return
+		console.log(incompleteCop)
 		setCop(normalizeData({
 			...incompleteCop, 
 			locationStats: complaintsLocations,
@@ -88,6 +104,8 @@ export const CopProvider = (props) => {
 			complaintsWithAllegations: complaintsWithAllegations
 		}))
 	}, [complaintsLocations, complaintsDates, complaintsWithAllegations])
+
+
 
 	return (
 		<CopContext.Provider value={{cop}}>

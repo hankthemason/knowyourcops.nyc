@@ -8,6 +8,7 @@ import { useCommandUnits } from './context/commandUnitsContext';
 import { values } from 'lodash'
 
 export const CommandUnitsTable = props => {
+	console.log('table')
 	const { commandUnits, settings } = useCommandUnits()
 	const { page,
 					setPage, 

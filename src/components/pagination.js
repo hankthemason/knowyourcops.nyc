@@ -4,12 +4,12 @@ import { useCops } from '../context/copsContext';
 import { useViewConfig } from '../context/viewConfigContext'
 
 export const Pagination = props => {
-	const { copsConfig } = useCops();
+	//const { copsConfig } = useCops();
 	const { viewConfig } = useViewConfig();
 
 	let currPage = viewConfig.page
 
-	let currentPage = copsConfig.page
+	//let currentPage = copsConfig.page
 
 	const numPages = Math.ceil(props.data / props.itemsPerPage);
 

@@ -14,7 +14,7 @@ export const useViewConfig = () => {
 }
 
 export const ViewConfigProvider = props => {
-	console.log('1')
+
 	const [innerContext, setInnerContext] = useState()
 	const [order, setOrder] = useState('DESC')
 	const [page, setPage] = useState(1)
@@ -35,30 +35,23 @@ export const ViewConfigProvider = props => {
 		orderBy,
 		setOrderBy,
 		pageSize,
-		setPageSize,
-		innerContext,
-		setInnerContext }
+		setPageSize }
 
-	useEffect(() => {
-		console.log('innerContext changed');
-		setInnerContext(innerContext)
-	}, [innerContext])
+	// useEffect(() => {
+	// 	const loadedViewConfig = window.sessionStorage.getItem('viewConfig');
+	// 	if (loadedViewConfig) {
+	// 		console.log('loaded')
+	// 		const viewConfig = JSON.parse(loadedViewConfig)
+	// 		//setOrder(viewConfig.order)
+	// 	} else {
+	// 		console.log('no loaded view config')
+	// 		//setOrder('DESC')
+	// 	}
+	// }, [])
 
-	console.log(innerContext)
-
-	useEffect(() => {
-		const loadedViewConfig = window.sessionStorage.getItem('viewConfig');
-		if (loadedViewConfig) {
-			const viewConfig = JSON.parse(loadedViewConfig)
-			setOrder(viewConfig.order)
-		} else {
-			setOrder('DESC')
-		}
-	}, [])
-
-	useEffect(() => {
-		window.sessionStorage.setItem('viewConfig', JSON.stringify(viewConfig))
-	}, [viewConfig])
+	// useEffect(() => {
+	// 	window.sessionStorage.setItem('viewConfig', JSON.stringify(viewConfig))
+	// }, [viewConfig])
 
 	
 

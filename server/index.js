@@ -107,10 +107,22 @@ const models = new Models(DB_PATH);
 		res.json(await models.cops.getComplaintsByYear(req.params.id))
 	})
 
+	app.get('/command_unit_complaints/years/id=:id', async (req, res) => {
+		res.json(await models.commandUnits.getComplaintsByYear(req.params.id))
+	})
+
 	//this returns all complaints with their associated allegations
 	//nested inside of JSON objects
 	app.get('/cop_complaints/allegations/id=:id', async (req, res) => {
 		res.json(await models.cops.getComplaints(req.params.id))
+	})
+
+	app.get('/command_unit_complaints/allegations/id=:id', async (req, res) => {
+		res.json(await models.commandUnits.getComplaints(req.params.id))
+	})
+
+	app.get('/cop/id=:id', async (req, res) => {
+		res.json(await models.cops.readCop(req.params.id))
 	})
 
 	app.listen(port, () => {

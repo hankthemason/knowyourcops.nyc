@@ -16,7 +16,6 @@ export const useCommandUnits = () => {
 }
 
 export const CommandUnitsProvider = props => {
-	console.log('3')
 
 	const { viewConfig } = useViewConfig();
 	const { order, 
@@ -27,13 +26,7 @@ export const CommandUnitsProvider = props => {
 		orderBy,
 		setOrderBy,
 		pageSize,
-		setPageSize,
-		innerContext,
-		setInnerContext } = viewConfig
-
-	useEffect(() => {
-		setInnerContext('commandUnits')
-	}, [])
+		setPageSize } = viewConfig
 
 	const [commandUnits, setCommandUnits] = useState(null);
 
@@ -63,7 +56,7 @@ export const CommandUnitsProvider = props => {
 		{
 			id: 1,
 			title: 'Command Unit Name',
-			value: 'unit_id'
+			value: 'command_unit_full'
 		},
 		{
 			id: 2,
@@ -91,6 +84,12 @@ export const CommandUnitsProvider = props => {
 			fetch(`/command_units/orderBy=${orderBy.value}/order=${order}/page=${page}/pageSize=${pageSize.value}`)
 			.then(result => result.json())
 			.then(commandUnits => {setCommandUnits(commandUnits)})
+		}
+		else {
+			setOrder('DESC')
+			setPage(1)
+			setOrderBy(orderByOptions[0])
+			setPageSize(pageSizeOptions[0])
 		}
 	}, [page, pageSize, orderBy, order])
 

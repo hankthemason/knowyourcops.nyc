@@ -12,7 +12,6 @@ export const useCops = () => {
 }
 
 export const CopsProvider = (props) => {
-	console.log('2')
 
 	const { viewConfig } = useViewConfig();
 	const { order, 
@@ -23,11 +22,7 @@ export const CopsProvider = (props) => {
 		orderBy,
 		setOrderBy,
 		pageSize,
-		setPageSize,
-		innerContext,
-		setInnerContext } = viewConfig
-
-	setInnerContext('cops')
+		setPageSize } = viewConfig
 
 	const [cops, setCops] = useState(null)
 
@@ -70,6 +65,13 @@ export const CopsProvider = (props) => {
 		}
 	]
 
+	// useEffect(() => {
+	// 	setOrder('DESC')
+	// 	setPage(1)
+	// 	setOrderBy(orderByOptions[0])
+	// 	setPageSize(pageSizeOptions[0])
+	// }, [])
+
 	//get the total number of rows in order to populate
 	//paginate component
 	const [total, setTotal] = useState(0)
@@ -85,6 +87,11 @@ export const CopsProvider = (props) => {
 		  fetch(`/cops/orderBy=${orderBy.value}/order=${order}/page=${page}/pageSize=${pageSize.value}`)
 		  .then(result => result.json())
 		  .then(cops => setCops(cops))
+		} else {
+			setOrder('DESC')
+			setPage(1)
+			setOrderBy(orderByOptions[0])
+			setPageSize(pageSizeOptions[0])
 		}
   }, [page, pageSize, orderBy, order])
 
@@ -92,25 +99,25 @@ export const CopsProvider = (props) => {
 
 	const copsViewConfig = { total, page, setPage, pageSize, setPageSize, pageSizeOptions, orderBy, setOrderBy, orderByOptions, order, setOrder, toggleOrder }
 
-	useEffect(() => {
-		const loadedCopsViewConfig = window.sessionStorage.getItem('copsViewConfig')
-		if (loadedCopsViewConfig) {
-			const viewConfig = JSON.parse(loadedCopsViewConfig)
-			setOrder(viewConfig.order)
-			setPage(viewConfig.page)
-			setOrderBy(viewConfig.orderBy)
-			setPageSize(viewConfig.pageSize)
-		} else {
-			setOrder('DESC')
-			setPage(1)
-			setOrderBy(orderByOptions[0])
-			setPageSize(pageSizeOptions[0])
-		}
-	}, [])
+	// useEffect(() => {
+	// 	const loadedCopsViewConfig = window.sessionStorage.getItem('copsViewConfig')
+	// 	if (loadedCopsViewConfig) {
+	// 		const viewConfig = JSON.parse(loadedCopsViewConfig)
+	// 		setOrder(viewConfig.order)
+	// 		setPage(viewConfig.page)
+	// 		setOrderBy(viewConfig.orderBy)
+	// 		setPageSize(viewConfig.pageSize)
+	// 	} else {
+	// 		setOrder('DESC')
+	// 		setPage(1)
+	// 		setOrderBy(orderByOptions[0])
+	// 		setPageSize(pageSizeOptions[0])
+	// 	}
+	// }, [])
 
-	useEffect(() => {
-		window.sessionStorage.setItem('copsViewConfig', JSON.stringify(copsViewConfig))
-	}, [copsViewConfig])
+	// useEffect(() => {
+	// 	window.sessionStorage.setItem('copsViewConfig', JSON.stringify(copsViewConfig))
+	// }, [copsViewConfig])
 
 	return (
 		<CopsContext.Provider value={{copsConfig}}>
