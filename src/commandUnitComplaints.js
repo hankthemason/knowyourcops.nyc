@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CopProvider } from './context/copContext';
+import { useCommandUnit } from './context/commandUnitContext';
 import { Link } from 'react-router-dom'
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -40,16 +40,14 @@ export const CommandUnitComplaintsTable = props => {
 
 	const { data, headCells } = props
 	let rows = data;
+	
+	const { tableConfig } = useCommandUnit();
 
-	useEffect(() => {
-		rows.map(e => {
-			e.date_received = new Date(e.date_received)
-			e.date_closed = new Date(e.date_closed)
-		})
-	}, [])
+	const { order,
+					setOrder,
+					orderBy,
+					setOrderBy } = tableConfig;
 
-	const [order, setOrder] = useState('asc')
-	const [orderBy, setOrderBy] = useState('date_received')
 	const [page, setPage] = React.useState(0);
 	const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -171,13 +169,15 @@ export const CommandUnitComplaintsTable = props => {
 
 	const sortFunction = (rows) => {
 		order === 'asc' ? 
-			rows.sort((a, b) => {
+		rows.sort((a, b) => {
 				return a[orderBy] - b[orderBy]
 			}) : rows.sort((a, b) => {
 				return b[orderBy] - a[orderBy]
 			})
 		return rows
 	}
+
+
 
 	// const onRequestSort = (event, property) => {
 	// 	const isAsc = orderBy === property && order === 'asc';

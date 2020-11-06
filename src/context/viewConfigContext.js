@@ -27,6 +27,12 @@ export const ViewConfigProvider = props => {
 
 	const [pageSize, setPageSize] = useState(null)
 
+	const [subTableOrder, setSubTableOrder] = useState(null)
+
+	const [subTableOrderBy, setSubTableOrderBy] = useState(null)
+
+	const [currentUnit, setCurrentUnit] = useState(null)
+
 	const viewConfig = { order, 
 		setOrder, 
 		toggleOrder,
@@ -35,7 +41,13 @@ export const ViewConfigProvider = props => {
 		orderBy,
 		setOrderBy,
 		pageSize,
-		setPageSize }
+		setPageSize,
+		subTableOrder,
+		setSubTableOrder,
+		subTableOrderBy,
+		setSubTableOrderBy,
+		currentUnit,
+		setCurrentUnit }
 
 	// useEffect(() => {
 	// 	const loadedViewConfig = window.sessionStorage.getItem('viewConfig');

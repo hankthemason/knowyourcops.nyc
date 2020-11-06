@@ -6,6 +6,7 @@ import React,
 import { useParams } from 'react-router-dom'
 import { useCommandUnits } from './commandUnitsContext';
 import { map, range, reduce } from 'lodash'
+import { useViewConfig } from './viewConfigContext'
 
 const CommandUnitContext = createContext();
 
@@ -18,6 +19,12 @@ export const useCommandUnit = () => {
 }
 
 const normalizeData = commandUnit => {
+	
+	commandUnit.complaintsWithAllegations.map(e => {
+		e.date_received = new Date(e.date_received)
+		e.date_closed = new Date(e.date_closed)
+	})
+
 	let yearlyStats = commandUnit.yearlyStats
 
 	if (yearlyStats.length === 1) {
@@ -45,11 +52,58 @@ const normalizeData = commandUnit => {
 export const CommandUnitProvider = (props) => {
 
 	const { id } = useParams();
-	const { commandUnits } = useCommandUnits();
+	const { commandUnits, settings } = useCommandUnits();
+
+	const { currentUnit, setCurrentUnit } = settings
 
 	const [commandUnit, setCommandUnit] = useState();
 
-	let incompleteCommandUnit = commandUnits.find(obj => obj.id === parseInt(id))
+	const { viewConfig } = useViewConfig();
+	
+	const { subTableOrder: order, 
+					setSubTableOrder: setOrder,
+					subTableOrderBy: orderBy,
+					setSubTableOrderBy: setOrderBy } = viewConfig;
+
+	const tableConfig = {
+		order,
+		setOrder,
+		orderBy,
+		setOrderBy,
+	}
+
+	useEffect(() => {
+		if (order === null && orderBy === null) {
+			setOrder('desc')
+			setOrderBy('date_received')
+		}
+	}, [])
+
+	const [incompleteCommandUnit, setIncompleteCommandUnit] = useState(null)
+
+	useEffect(() => {
+		const commandUnit = commandUnits.find(obj => {
+				return obj.id === parseInt(id)
+		})
+		if (commandUnit === undefined) {
+			fetch(`/commandUnit/id=${id}`)
+  		.then(result => result.json())
+  		.then(incompleteCommandUnit => setIncompleteCommandUnit(incompleteCommandUnit[0]))
+		} else {
+			setIncompleteCommandUnit(commandUnit)
+		}
+	}, [])
+
+	useEffect(() => {
+		if (incompleteCommandUnit && incompleteCommandUnit.id != currentUnit) {
+			console.log('id changed')
+			setCurrentUnit(incompleteCommandUnit.id)
+			setOrder('desc')
+			setOrderBy('date_received')
+		} else if (incompleteCommandUnit && incompleteCommandUnit.id === currentUnit) {
+			console.log('nothing changed')
+		}
+	}, [incompleteCommandUnit])
 
 	const [complaintsDates, setComplaintsDates] = useState(null)
 	const [complaintsWithAllegations, setComplaintsWithAllegations] = useState(null)
@@ -74,7 +128,7 @@ export const CommandUnitProvider = (props) => {
 	}, [complaintsDates, complaintsWithAllegations])
 	
 	return (
-		<CommandUnitContext.Provider value={{commandUnit}}>
+		<CommandUnitContext.Provider value={{ tableConfig, commandUnit }}>
 			{ commandUnit ? props.children : null}
 		</CommandUnitContext.Provider>
 	)

@@ -26,11 +26,12 @@ export const CommandUnitsProvider = props => {
 		orderBy,
 		setOrderBy,
 		pageSize,
-		setPageSize } = viewConfig
+		setPageSize,
+		currentUnit,
+		setCurrentUnit } = viewConfig
 
 	const [commandUnits, setCommandUnits] = useState(null);
 
-	
 		//make sure to use .value to access the actual value of pageSize
 	const pageSizeOptions = [
 		{id: 0,
@@ -104,7 +105,9 @@ export const CommandUnitsProvider = props => {
 										pageSizeOptions, 
 										orderByOptions,
 										toggleOrder,
-										total }
+										total,
+										currentUnit,
+										setCurrentUnit }
 
 	return (
 		<CommandUnitsContext.Provider value={{settings, commandUnits}}>

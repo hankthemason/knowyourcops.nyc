@@ -9,7 +9,9 @@ export const CommandUnitPage = props => {
 
 	const { commandUnit: c } = useCommandUnit()
 
-	const raceData = pick(c, ['black', 
+  const [id, setId] = useState(null)
+
+  const raceData = pick(c, ['black', 
                         		'hispanic', 
                         		'asian', 
                         		'white', 
@@ -61,9 +63,6 @@ export const CommandUnitPage = props => {
     { id: 'num_allegations_on_complaint', sortable: true, label: 'Allegations on complaint' },
     { id: 'complainant_details', sortable: false, label: 'Complainant details' },
   ];
-
-  const [copComplaintsOrder, setCopComplaintsOrder] = useState('asc')
-  const [orderCopComplaintsBy, setOrderCopComplaintsBy] = useState('date_received')
 
 	return (
 		<div>

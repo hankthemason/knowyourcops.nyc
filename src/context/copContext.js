@@ -18,7 +18,6 @@ export const useCop = () => {
 }
 
 const normalizeData = cop => {
-	console.log(cop.complaintsWithAllegations)
 	let yearlyStats = cop.yearlyStats
 
 	if (yearlyStats.length === 1) {
@@ -49,9 +48,6 @@ const normalizeData = cop => {
 		locationStats: locationStats
 	}
 
-	console.log(tempCop)
-
-
 	return {
 		...cop, 
 		yearlyStats: allYears,
@@ -62,13 +58,19 @@ const normalizeData = cop => {
 export const CopProvider = (props) => {
 	const { id } = useParams();
 	const { copsConfig } = useCops();
-	const [incompleteCop, setIncompleteCop] = useState();
+	const [incompleteCop, setIncompleteCop] = useState(null);
 	
 	useEffect(() => {
-		setIncompleteCop(copsConfig.cops.find(obj => {
-				return obj.id === parseInt(id)
-			})
-		)
+		const cop =copsConfig.cops.find(obj => {
+			return obj.id === parseInt(id)
+		})
+		if (cop === undefined) {
+			fetch(`/cop/id=${id}`)
+  		.then(result => result.json())
+  		.then(incompleteCop => setIncompleteCop(incompleteCop[0]))
+		} else {
+			setIncompleteCop(cop)
+		}
 	}, [])
 
 
@@ -79,16 +81,6 @@ export const CopProvider = (props) => {
 	const [complaintsDates, setComplaintsDates] = useState(null);
 
   const [complaintsWithAllegations, setComplaintsWithAllegations] = useState(null)
-
-  useEffect(() => {
-  	//this is if the cop wasn't found inside of the cops context
-  	if (incompleteCop === undefined) {
-  		console.log('undefined')
-  		fetch(`/cop/id=${id}`)
-  		.then(result => result.json())
-  		.then(incompleteCop => setIncompleteCop(incompleteCop))
-  	}
-  }, [incompleteCop])
 
 	useEffect(() => {
 		fetch(`/cop_complaints/locations/id=${id}`)
@@ -106,17 +98,13 @@ export const CopProvider = (props) => {
 		if (complaintsLocations === null || 
 			complaintsDates === null || 
 			complaintsWithAllegations === null) return
-		console.log(incompleteCop)
 		setCop(normalizeData({
 			...incompleteCop, 
 			locationStats: complaintsLocations,
 			yearlyStats: complaintsDates,
 			complaintsWithAllegations: complaintsWithAllegations
 		}))
-
 	}, [complaintsLocations, complaintsDates, complaintsWithAllegations])
-
-
 
 	return (
 		<CopContext.Provider value={{cop}}>
