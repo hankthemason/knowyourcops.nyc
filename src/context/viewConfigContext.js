@@ -15,6 +15,25 @@ export const useViewConfig = () => {
 
 export const ViewConfigProvider = props => {
 
+	const [config, setConfig] = useState({})
+
+	//component config is an object that might look like this:
+	//	{ componentName: {
+	//			componentState1: 'state',
+	//			componentState2: 'state'
+	//		}	
+	//	}
+	const setViewConfig = componentConfig => {
+		setConfig({
+			...config,
+			...componentConfig,
+		})
+	}
+
+	const getViewConfig = componentConfig => {
+		return config[componentConfig]
+	}
+
 	const [innerContext, setInnerContext] = useState()
 	const [order, setOrder] = useState('DESC')
 	const [page, setPage] = useState(1)
@@ -33,21 +52,7 @@ export const ViewConfigProvider = props => {
 
 	const [currentUnit, setCurrentUnit] = useState(null)
 
-	const viewConfig = { order, 
-		setOrder, 
-		toggleOrder,
-		page,
-		setPage,
-		orderBy,
-		setOrderBy,
-		pageSize,
-		setPageSize,
-		subTableOrder,
-		setSubTableOrder,
-		subTableOrderBy,
-		setSubTableOrderBy,
-		currentUnit,
-		setCurrentUnit }
+	const viewConfig = { setViewConfig, getViewConfig }
 
 	// useEffect(() => {
 	// 	const loadedViewConfig = window.sessionStorage.getItem('viewConfig');
@@ -68,7 +73,7 @@ export const ViewConfigProvider = props => {
 	
 
 	return (
-		<ViewConfigContext.Provider value={{viewConfig}}>
+		<ViewConfigContext.Provider value={viewConfig}>
 			{ props.children }
 		</ViewConfigContext.Provider>
 	)

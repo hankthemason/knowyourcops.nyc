@@ -7,7 +7,9 @@ export const Pagination = props => {
 	//const { copsConfig } = useCops();
 	const { viewConfig } = useViewConfig();
 
-	let currPage = viewConfig.page
+	const { forcePage } = props
+
+	//let currPage = viewConfig.page
 
 	//let currentPage = copsConfig.page
 
@@ -40,7 +42,7 @@ export const Pagination = props => {
         containerClassName={"pagination"}
         subContainerClassName={"pages pagination"}
         activeClassName={"active"}
-        forcePage={currPage-1}
+        forcePage={forcePage-1}
         />
 		</div>
 	)

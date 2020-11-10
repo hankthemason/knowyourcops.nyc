@@ -7,7 +7,11 @@ import { CommandUnitComplaintsTable } from './commandUnitComplaints'
 
 export const CommandUnitPage = props => {
 
-	const { commandUnit: c } = useCommandUnit()
+	const { commandUnit: c, 
+          setCommandUnitViewConfig, 
+          getCommandUnitViewConfig } = useCommandUnit()
+
+  const { orderByOptions } = getCommandUnitViewConfig()
 
   const [id, setId] = useState(null)
 
@@ -46,23 +50,24 @@ export const CommandUnitPage = props => {
     if (allegationsByFado.hasOwnProperty(fadoType)) {
       allegationsByFado.[fadoType] += 1;
     }
-    if (!allegationDescriptions.includes(allegationDescription)) {
-      allegationDescriptions.push(allegationDescription)
-      allegationsByDescription.[allegationDescription] = 1
-    }
-
-    if (allegationsByDescription.hasOwnProperty(allegationDescription)) {
-      allegationsByDescription.[allegationDescription] += 1;
-    }
+    
+    allegationsByDescription.hasOwnProperty(allegationDescription) ? 
+      allegationsByDescription[allegationDescription] += 1 :
+      allegationsByDescription[allegationDescription] = 1
   } 
 
-  const headCells = [
-    { id: 'date_received', sortable: true, label: 'Date Received' },
-    { id: 'date_closed', sortable: true, label: 'Date Closed' },
-    { id: 'precinct', sortable: true, label: 'Location(Precinct)' },
-    { id: 'num_allegations_on_complaint', sortable: true, label: 'Allegations on complaint' },
-    { id: 'complainant_details', sortable: false, label: 'Complainant details' },
-  ];
+  const headCells = orderByOptions.map(e => {
+    return {
+      ...e,
+      sortable: true
+    }
+  })
+  headCells.push({ id: 4, title: 'Complainant Details', value: 'complainant_details', sortable: false })
+  
+  c.complaintsWithAllegations.map(e => {
+    e.date_received = new Date(e.date_received)
+    e.date_closed = new Date(e.date_closed)
+  })
 
 	return (
 		<div>

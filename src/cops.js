@@ -16,55 +16,59 @@ import { Pagination } from './components/pagination';
 
 export const CopsTable = props => {
 
-	const { copsConfig } = useCops()
+	const { cops, total, setCopsViewConfig, getCopsViewConfig } = useCops()
 
-	const { cops, 
-					total, 
-					page,
-					setPage,
-					pageSize, 
-					setPageSize, 
-					pageSizeOptions,
-					orderBy,
-					setOrderBy,
-					orderByOptions,
-					order, 
-					setOrder,
-					toggleOrder } = copsConfig
+	const viewConfig = getCopsViewConfig()
 
+	const {
+		order,
+		orderBy,
+		page,
+		pageSize,
+		orderByOptions,
+		pageSizeOptions
+	} = viewConfig
+	
 	//cops is an object of 'cop' objects with their id's as keys
 	const { setSearchResults } = props
 	
 	let copsTableSorted = cops
 
-	//good
 	function orderByHandler(v) {
-		setOrderBy(orderByOptions[v])
-		console.log(orderBy)
+		setCopsViewConfig({
+			...viewConfig,
+			orderBy: orderByOptions[v]
+		})
 	}
 
-	//good
 	function currentPageHandler(v) {
-		setPage(v+1)
+		setCopsViewConfig({
+			...viewConfig,
+			page: v + 1
+		})	
 	}
 
-	//good
 	function handlePageSizeChange(v) {
-    setPageSize(pageSizeOptions[v]);
+		setCopsViewConfig({
+			...viewConfig,
+			pageSize: pageSizeOptions[v]
+		})
   };
+
+  function toggleOrder() {
+  	setCopsViewConfig({
+  		...viewConfig,
+  		order: order === 'asc' ? 'desc' : 'asc'
+  	})
+  }
 
   let history = useHistory()
 
-  function search(v) {
-  	// let results = filter(cops, function(e) {
-  	// 	return e.last_name.toLowerCase() === v.toLowerCase() ||
-  	// 		e.first_name.toLowerCase() === v.toLowerCase();
-  	// })
-  	//if (results) {
-  		//setSearchResults(results);
-	  	history.push(`/search?searchquery=${v}`);
-		//}
-  }
+  let model = 'cops'
+  
+	function search(v) {
+		history.push(`/search/model=${model}?searchquery=${v}`);
+	}
 
 	return (
 		<div>
@@ -118,6 +122,7 @@ export const CopsTable = props => {
 				data={total} 
 				itemsPerPage={pageSize.value}
 				handler={currentPageHandler}
+				forcePage={page}
 			/>
 		</div>
 	)

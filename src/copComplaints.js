@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useCop } from './context/copContext'
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -20,6 +21,18 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
 export const CopComplaintsTable = props => {
 
+	const { cop, setCopViewConfig, getCopViewConfig } = useCop();
+
+  const viewConfig = getCopViewConfig()
+
+  const {
+		order,
+		orderBy,
+		page,
+		pageSize,
+		orderByOptions,
+	} = viewConfig
+
 	const monthNames = [
 		'January',
 		'February',
@@ -35,18 +48,8 @@ export const CopComplaintsTable = props => {
 		'December'
 	]
 
-	const [order, setOrder] = useState('asc')
-	const [orderBy, setOrderBy] = useState('date_received')
-
 	const { data, headCells } = props
 	let rows = data;
-
-	useEffect(() => {
-		rows.map(e => {
-			e.date_received = new Date(e.date_received)
-			e.date_closed = new Date(e.date_closed)
-		})
-	}, [])
 
 	const useStyles = makeStyles({
 		table: {
@@ -61,7 +64,7 @@ export const CopComplaintsTable = props => {
 	    },
 	  },
 	});
-	
+
 	const classes = useStyles();
 
 	function Row(props) {
@@ -154,31 +157,22 @@ export const CopComplaintsTable = props => {
 	const sortFunction = (rows) => {
 		order === 'asc' ? 
 			rows.sort((a, b) => {
-				return a[orderBy] - b[orderBy]
+				return a[orderBy.value] - b[orderBy.value]
 			}) : rows.sort((a, b) => {
-				return b[orderBy] - a[orderBy]
+				return b[orderBy.value] - a[orderBy.value]
 			})
 		return rows
 	}
 
-	// const onRequestSort = (event, property) => {
-	// 	const isAsc = orderBy === property && order === 'asc';
- //    setOrder(isAsc ? 'desc' : 'asc');
- //    setOrderBy(property);
-	// }
-
-	// const createSortHandler = (property, sortable) => event => {
-	// 	if (sortable) {
-	// 		onRequestSort(event, property)
-	// 	}
- //  };
-
  	//this is a curried function
- 	const createClickHandler = (property, sortable) => () => {
+ 	const createClickHandler = (id, sortable) => () => {
  		if (sortable) {
- 			const isAsc = orderBy === property && order === 'asc';
-    	setOrder(isAsc ? 'desc' : 'asc');
-    	setOrderBy(property);
+ 			const isAsc = orderBy === orderByOptions[id] && order === 'asc';
+    	setCopViewConfig({
+    		...viewConfig,
+    		order: isAsc ? 'desc' : 'asc',
+    		orderBy: orderByOptions[id]
+    	})
  		}	
  	}
 
@@ -202,24 +196,21 @@ export const CopComplaintsTable = props => {
           		headCell.sortable ? (
 		          <TableCell
 		            key={headCell.id}
-		            sortDirection={orderBy === headCell.id ? order : false}
-
+		            sortDirection={orderBy.value === headCell.value ? order : false}
 		          >
 		            <TableSortLabel
-		              active={orderBy === headCell.id}
-		              direction={orderBy === headCell.id ? order : 'asc'}
-		              //onClick needs to return a function ??
-		              //onClick={createSortHandler(headCell.id, headCell.sortable)}
+		              active={orderBy.value === headCell.value}
+		              direction={orderBy.value === headCell.value ? order : 'asc'}
 		              onClick={createClickHandler(headCell.id, headCell.sortable)}
 		            >
-		              {headCell.label}
+		              {headCell.title}
 		            </TableSortLabel>
 		          </TableCell>
 		          ) : <TableCell
 		            key={headCell.id}
-		            sortDirection={orderBy === headCell.id ? order : false}
+		            sortDirection={orderBy.value === headCell.value ? order : false}
 		          >
-		          	{headCell.label}
+		          	{headCell.title}
 		          </TableCell>
 		        ))}
           </TableRow>

@@ -3,6 +3,7 @@ import React, { useContext,
 								useState, 
 								useEffect } from 'react';
 import { reduce } from 'lodash';
+import { DefaultViewConfig } from '../types/default'
 import { useViewConfig } from './viewConfigContext'
 
 const CommandUnitsContext = createContext();
@@ -17,59 +18,51 @@ export const useCommandUnits = () => {
 
 export const CommandUnitsProvider = props => {
 
-	const { viewConfig } = useViewConfig();
-	const { order, 
-		setOrder, 
-		toggleOrder,
-		page,
-		setPage,
-		orderBy,
-		setOrderBy,
-		pageSize,
-		setPageSize,
-		currentUnit,
-		setCurrentUnit } = viewConfig
+	const viewConfigName = 'commandUnitsViewConfig';
+
+	const { setViewConfig, getViewConfig } = useViewConfig();
+
+	const setCommandUnitsViewConfig = (viewConfig) => { setViewConfig({[viewConfigName]: viewConfig})}
+
+	const getCommandUnitsViewConfig = () => getViewConfig(viewConfigName)
+
+	const viewConfigExists = getCommandUnitsViewConfig() != undefined
+
+	useEffect(() => {
+		setCommandUnitsViewConfig({
+			...DefaultViewConfig,
+			orderBy: {
+					id: 0,
+					title: 'Number of Allegations',
+					value: 'num_allegations'
+				},
+			orderByOptions: [
+				{
+					id: 0,
+					title: 'Number of Allegations',
+					value: 'num_allegations'
+				},
+				{
+					id: 1,
+					title: 'Command Unit Name',
+					value: 'command_unit_full'
+				},
+				{
+					id: 2,
+					title: 'Associated Precinct',
+					value: 'precinct'
+				},
+				{
+					id: 3,
+					title: 'Number of Complaints',
+					value: 'num_complaints'
+				}
+			]
+		})
+	}, [viewConfigExists])
 
 	const [commandUnits, setCommandUnits] = useState(null);
-
-		//make sure to use .value to access the actual value of pageSize
-	const pageSizeOptions = [
-		{id: 0,
-		 value: 10
-		},
-		{id: 1,
-		 value: 25
-		},
-		{id: 2,
-		 value: 50
-		},
-		{id: 3,
-		 value: 100
-		}
-	]
 	
-	const orderByOptions = [
-		{
-			id: 0,
-			title: 'Number of Allegations',
-			value: 'num_allegations'
-		},
-		{
-			id: 1,
-			title: 'Command Unit Name',
-			value: 'command_unit_full'
-		},
-		{
-			id: 2,
-			title: 'Associated Precinct',
-			value: 'precinct'
-		},
-		{
-			id: 3,
-			title: 'Number of Complaints',
-			value: 'num_complaints'
-		}
-	]
 	//get the total number of rows in order to populate
 	//paginate component
 	const [total, setTotal] = useState(0)
@@ -80,37 +73,20 @@ export const CommandUnitsProvider = props => {
 		.then(total => setTotal(total[0].rows))
 	}, [])
 
+	const viewConfig = getCommandUnitsViewConfig()
+
 	useEffect(() => {
-		if (order && page && orderBy && pageSize) {
-			fetch(`/command_units/orderBy=${orderBy.value}/order=${order}/page=${page}/pageSize=${pageSize.value}`)
+		if (viewConfigExists) {
+			fetch(`/command_units/orderBy=${viewConfig.orderBy.value}/order=${viewConfig.order}/page=${viewConfig.page}/pageSize=${viewConfig.pageSize.value}`)
 			.then(result => result.json())
 			.then(commandUnits => {setCommandUnits(commandUnits)})
-		}
-		else {
-			setOrder('DESC')
-			setPage(1)
-			setOrderBy(orderByOptions[0])
-			setPageSize(pageSizeOptions[0])
-		}
-	}, [page, pageSize, orderBy, order])
+		}		
+	}, [viewConfig])
 
-	const settings = { page, 
-										setPage, 
-										pageSize, 
-										setPageSize, 
-										order, 
-										setOrder, 
-										orderBy, 
-										setOrderBy,
-										pageSizeOptions, 
-										orderByOptions,
-										toggleOrder,
-										total,
-										currentUnit,
-										setCurrentUnit }
+	const commandUnitsConfig = { commandUnits, total, setCommandUnitsViewConfig, getCommandUnitsViewConfig }
 
 	return (
-		<CommandUnitsContext.Provider value={{settings, commandUnits}}>
+		<CommandUnitsContext.Provider value={commandUnitsConfig}>
 			{ commandUnits ? props.children : null}
 		</CommandUnitsContext.Provider>
 	)

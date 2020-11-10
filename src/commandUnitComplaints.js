@@ -23,6 +23,10 @@ import TablePagination from '@material-ui/core/TablePagination';
 
 export const CommandUnitComplaintsTable = props => {
 
+	const { commandUnit, setCommandUnitViewConfig, getCommandUnitViewConfig } = useCommandUnit();
+	
+	const viewConfig = getCommandUnitViewConfig();
+
 	const monthNames = [
 		'January',
 		'February',
@@ -40,24 +44,26 @@ export const CommandUnitComplaintsTable = props => {
 
 	const { data, headCells } = props
 	let rows = data;
-	
-	const { tableConfig } = useCommandUnit();
 
 	const { order,
-					setOrder,
 					orderBy,
-					setOrderBy } = tableConfig;
+					page,
+					pageSize,
+					pageSizeOptions,
+					orderByOptions } = viewConfig;
 
-	const [page, setPage] = React.useState(0);
-	const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-	const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+	const currentPageHandler = (event, newPage) => {
+    setCommandUnitViewConfig({
+    	...viewConfig,
+    	page: newPage
+    });
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  const handlePageSizeChange = (event) => {
+    setCommandUnitViewConfig({
+			...viewConfig,
+			pageSize: event.target.value
+		})
   };
 
 	const useStyles = makeStyles({
@@ -170,9 +176,9 @@ export const CommandUnitComplaintsTable = props => {
 	const sortFunction = (rows) => {
 		order === 'asc' ? 
 		rows.sort((a, b) => {
-				return a[orderBy] - b[orderBy]
+				return a[orderBy.value] - b[orderBy.value]
 			}) : rows.sort((a, b) => {
-				return b[orderBy] - a[orderBy]
+				return b[orderBy.value] - a[orderBy.value]
 			})
 		return rows
 	}
@@ -192,12 +198,15 @@ export const CommandUnitComplaintsTable = props => {
  //  };
 
  	//this is a curried function
- 	const createClickHandler = (property, sortable) => () => {
+ 	const createClickHandler = (id, sortable) => () => {
  		if (sortable) {
- 			const isAsc = orderBy === property && order === 'asc';
-    	setOrder(isAsc ? 'desc' : 'asc');
-    	setOrderBy(property);
- 		}	
+ 			const isAsc = orderBy.value === orderByOptions[id].value && order === 'asc';
+    	setCommandUnitViewConfig({
+    		...viewConfig,
+    		order: isAsc ? 'desc' : 'asc',
+    		orderBy: orderByOptions[id]
+    	})
+ 		}
  	}
 
  	//this is a closure function
@@ -220,30 +229,30 @@ export const CommandUnitComplaintsTable = props => {
           		headCell.sortable ? (
 		          <TableCell
 		            key={headCell.id}
-		            sortDirection={orderBy === headCell.id ? order : false}
+		            sortDirection={orderBy.value === headCell.value ? order : false}
 		          >
 		            <TableSortLabel
-		              active={orderBy === headCell.id}
-		              direction={orderBy === headCell.id ? order : 'asc'}
+		              active={orderBy.value === headCell.value}
+		              direction={orderBy.value === headCell.value ? order : 'asc'}
 		              //onClick needs to return a function ??
 		              //onClick={createSortHandler(headCell.id, headCell.sortable)}
 		              onClick={createClickHandler(headCell.id, headCell.sortable)}
 		            >
-		              {headCell.label}
+		              {headCell.title}
 		            </TableSortLabel>
 		          </TableCell>
 		          ) : <TableCell
 		            key={headCell.id}
-		            sortDirection={orderBy === headCell.id ? order : false}
+		            sortDirection={orderBy.value === headCell.value ? order : false}
 		          >
-		          	{headCell.label}
+		          	{headCell.title}
 		          </TableCell>
 		        ))}
           </TableRow>
         </TableHead>
         <TableBody>
           {sortFunction(rows)
-          	.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+          	.slice(page * pageSize, page * pageSize + pageSize)
           	.map((row) => (
             <Row key={row.name} row={row} />
           ))}
@@ -252,12 +261,17 @@ export const CommandUnitComplaintsTable = props => {
       </Table>
       <TablePagination
         rowsPerPageOptions={[10, 25, 50]}
-        //component="div"
+        component="div"
         count={rows.length}
-        rowsPerPage={rowsPerPage}
+        rowsPerPage={pageSize}
         page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
+        onChangePage={currentPageHandler}
+        onChangeRowsPerPage={handlePageSizeChange}
+        style={{display:'flex',
+   							justifyContent: 'left',  
+   							width: "100%",  
+   							alignItems: 'left',
+   							padding:'0px'}}
       />
     </TableContainer>
   );

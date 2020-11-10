@@ -5,6 +5,8 @@ import React,
 				useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useCops } from './copsContext';
+import { useViewConfig } from './viewConfigContext'
+import { DefaultViewConfig } from '../types/default';
 import { map, range, reduce } from 'lodash'
 
 const CopContext = createContext(); 
@@ -56,12 +58,56 @@ const normalizeData = cop => {
 }
 
 export const CopProvider = (props) => {
+
+	const viewConfigName = 'copViewConfig'
+
+	const { setViewConfig, getViewConfig } = useViewConfig();
+
+	const setCopViewConfig = (viewConfig) => setViewConfig({[viewConfigName]: viewConfig})
+	const getCopViewConfig = () => getViewConfig(viewConfigName)
+
+	const viewConfigExists = getCopViewConfig() != undefined
+
+	useEffect(() => {
+		setCopViewConfig({
+			...DefaultViewConfig,
+			orderBy: {
+					id: 0,
+					title: 'Date Received',
+					value: 'date_received'
+				},
+			orderByOptions: [
+				{
+					id: 0,
+					title: 'Date Received',
+					value: 'date_received'
+				},
+				{
+					id: 1,
+					title: 'Date Closed',
+					value: 'date_closed'
+				},
+				{
+					id: 2,
+					title: 'Precinct',
+					value: 'precinct'
+				},
+				{
+					id: 3,
+					title: 'Number of Allegations on Complaint',
+					value: 'num_allegations_on_complaint'
+				}
+			]
+		})
+	}, [viewConfigExists])
+
 	const { id } = useParams();
-	const { copsConfig } = useCops();
+	const { cops } = useCops();
+
 	const [incompleteCop, setIncompleteCop] = useState(null);
 	
 	useEffect(() => {
-		const cop =copsConfig.cops.find(obj => {
+		const cop = cops.find(obj => {
 			return obj.id === parseInt(id)
 		})
 		if (cop === undefined) {
@@ -71,8 +117,7 @@ export const CopProvider = (props) => {
 		} else {
 			setIncompleteCop(cop)
 		}
-	}, [])
-
+	}, [cops])
 
 	const [cop, setCop] = useState(null)
 
@@ -106,8 +151,10 @@ export const CopProvider = (props) => {
 		}))
 	}, [complaintsLocations, complaintsDates, complaintsWithAllegations])
 
+	const copConfig = { cop, setCopViewConfig, getCopViewConfig }
+
 	return (
-		<CopContext.Provider value={{cop}}>
+		<CopContext.Provider value={copConfig}>
 			{ cop ? props.children : null}
 		</CopContext.Provider>
 		)

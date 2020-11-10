@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 
 export const SearchBar = props => {
+
+	const { placeHolder } = props
 	
 	const [searchQuery, setSearchQuery] = useState(null)
 
@@ -30,7 +32,7 @@ export const SearchBar = props => {
   		<input 
   			type="text" 
   			style={BarStyling}
-  			placeholder={"search for a cop"}
+  			placeholder={placeHolder}
   			onChange={handleSearchQueryChange}
   		/>
   		<input type="submit" />

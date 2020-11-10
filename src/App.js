@@ -19,13 +19,6 @@ import {
 } from 'react-router-dom'
 
 function App() {
-  const [allegations, setAllegations] = useState(null);
-
-  useEffect(() => {
-    fetch("/allegations")
-    .then(result => result.json())
-    .then(allegations => setAllegations(allegations))
-  }, [])
 
   //temporary example
   const [searchResults, setSearchResults] = useState([]);
@@ -59,12 +52,11 @@ function App() {
                   <CommandUnitsTable />
                 </CommandUnitsProvider>
                 </Route>
-            <Route path="/search" >
+            <Route path="/search/model=:model" >
               <Search results={searchResults} setSearchResults={setSearchResults} />
             </Route>
           </Switch>
         </Router>
-      
     </ViewConfigProvider>
   );
 }

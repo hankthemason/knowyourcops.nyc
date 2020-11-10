@@ -1,5 +1,6 @@
 import React, { useContext, createContext, useState, useEffect } from 'react';
-import { useViewConfig } from './viewConfigContext'
+import { useViewConfig } from './viewConfigContext';
+import { DefaultViewConfig } from '../types/default';
 
 const CopsContext = createContext();
 
@@ -13,64 +14,50 @@ export const useCops = () => {
 
 export const CopsProvider = (props) => {
 
-	const { viewConfig } = useViewConfig();
-	const { order, 
-		setOrder, 
-		toggleOrder,
-		page,
-		setPage,
-		orderBy,
-		setOrderBy,
-		pageSize,
-		setPageSize } = viewConfig
+	const viewConfigName = 'copsViewConfig';
+
+	const { setViewConfig, getViewConfig } = useViewConfig();
+
+	const setCopsViewConfig = (viewConfig) => setViewConfig({[viewConfigName]: viewConfig})
+
+	const getCopsViewConfig = () => getViewConfig(viewConfigName)
+
+	const viewConfigExists = getCopsViewConfig() != undefined
+
+	useEffect(() => {
+		setCopsViewConfig({
+			...DefaultViewConfig,
+			orderBy: {
+					id: 0,
+					title: 'Number of Allegations',
+					value: 'num_allegations'
+				},
+			orderByOptions: [
+				{
+					id: 0,
+					title: 'Number of Allegations',
+					value: 'num_allegations'
+				},
+				{
+					id: 1,
+					title: 'Name',
+					value: 'last_name'
+				},
+				{
+					id: 2,
+					title: 'Command Unit',
+					value: 'command_unit_full'
+				},
+				{
+					id: 3,
+					title: 'Number of Substantiated Allegations',
+					value: 'num_substantiated'
+				}
+			] 
+		})
+	}, [viewConfigExists]);
 
 	const [cops, setCops] = useState(null)
-
-	//make sure to use .value to access the actual value of pageSize
-	const pageSizeOptions = [
-		{id: 0,
-		 value: 10
-		},
-		{id: 1,
-		 value: 25
-		},
-		{id: 2,
-		 value: 50
-		},
-		{id: 3,
-		 value: 100
-		}
-	]
-
-	const orderByOptions = [
-		{
-			id: 0,
-			title: 'Number of Allegations',
-			value: 'num_allegations'
-		},
-		{
-			id: 1,
-			title: 'Name',
-			value: 'last_name'
-		},
-		{
-			id: 2,
-			title: 'Command Unit',
-			value: 'command_unit_full'
-		},
-		{
-			id: 3,
-			title: 'Number of Substantiated Allegations',
-			value: 'num_substantiated'
-		}
-	]
-
-	// useEffect(() => {
-	// 	setOrder('DESC')
-	// 	setPage(1)
-	// 	setOrderBy(orderByOptions[0])
-	// 	setPageSize(pageSizeOptions[0])
-	// }, [])
 
 	//get the total number of rows in order to populate
 	//paginate component
@@ -82,22 +69,19 @@ export const CopsProvider = (props) => {
 		.then(total => setTotal(total[0].rows))
 	}, [])
 
+	const viewConfig = getCopsViewConfig()
+
 	useEffect(() => {
-		if (order && page && orderBy && pageSize) {
-		  fetch(`/cops/orderBy=${orderBy.value}/order=${order}/page=${page}/pageSize=${pageSize.value}`)
+		if (viewConfigExists) {
+		  fetch(`/cops/orderBy=${viewConfig.orderBy.value}/order=${viewConfig.order}/page=${viewConfig.page}/pageSize=${viewConfig.pageSize.value}`)
 		  .then(result => result.json())
 		  .then(cops => setCops(cops))
-		} else {
-			setOrder('DESC')
-			setPage(1)
-			setOrderBy(orderByOptions[0])
-			setPageSize(pageSizeOptions[0])
-		}
-  }, [page, pageSize, orderBy, order])
+		}		 
+  }, [viewConfig])
 
-	const copsConfig = { cops, total, page, setPage, pageSize, setPageSize, pageSizeOptions, orderBy, setOrderBy, orderByOptions, order, setOrder, toggleOrder }
+	const copsConfig = { cops, total, setCopsViewConfig, getCopsViewConfig }
 
-	const copsViewConfig = { total, page, setPage, pageSize, setPageSize, pageSizeOptions, orderBy, setOrderBy, orderByOptions, order, setOrder, toggleOrder }
+	//const copsViewConfig = { total, page, setPage, pageSize, setPageSize, pageSizeOptions, orderBy, setOrderBy, orderByOptions, order, setOrder, toggleOrder }
 
 	// useEffect(() => {
 	// 	const loadedCopsViewConfig = window.sessionStorage.getItem('copsViewConfig')
@@ -120,8 +104,8 @@ export const CopsProvider = (props) => {
 	// }, [copsViewConfig])
 
 	return (
-		<CopsContext.Provider value={{copsConfig}}>
-			{ cops && order ? props.children : null}
+		<CopsContext.Provider value={copsConfig}>
+			{ cops && viewConfigExists ? props.children : null}
 		</CopsContext.Provider>
 	)
 }

@@ -3,11 +3,21 @@ export class Search {
 		this.models = models
 	}
 
-	async search(searchQuery) {
+	async searchModel(model, searchQuery) {
+		try {
+			const results = 
+				await this.models.[model].search(searchQuery)	
+			return results
+		} catch(error) {
+			console.error(error)
+		}
+	}
+
+	async searchAll(searchQuery) {
 		try {
 			return {
-				cops: await this.models.cops.search(searchQuery),
-				commandUnits: await this.models.commandUnits.search(searchQuery)
+				cops: await this.models.cops.search(searchQuery)
+				//commandUnits: await this.models.commandUnits.search(searchQuery)
 			}
 			
 		} catch(error) {

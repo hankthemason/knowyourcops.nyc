@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { Button } from './components/button';
 import { DropDown } from './components/dropdown';
 import { SearchBar } from './components/searchBar';
@@ -8,36 +8,63 @@ import { useCommandUnits } from './context/commandUnitsContext';
 import { values } from 'lodash'
 
 export const CommandUnitsTable = props => {
-	const { commandUnits, settings } = useCommandUnits()
-	const { page,
-					setPage, 
-					pageSize,
-					setPageSize, 
-					order,
-					setOrder, 
-					orderBy,
-					setOrderBy, 
-					pageSizeOptions, 
-					orderByOptions, 
-					toggleOrder,
-					total } = settings
+	const { commandUnits, 
+					total, 
+					setCommandUnitsViewConfig, 
+					getCommandUnitsViewConfig } = useCommandUnits()
+
+	const viewConfig = getCommandUnitsViewConfig();
+
+	const {
+		order,
+		orderBy,
+		page,
+		pageSize,
+		orderByOptions,
+		pageSizeOptions
+	} = viewConfig
 
 	function orderByHandler(v) {
-		setOrderBy(orderByOptions[v])
+		setCommandUnitsViewConfig({
+			...viewConfig,
+			orderBy: orderByOptions[v]
+		})
 	}
 
 	function currentPageHandler(v) {
-		setPage(v+1)
+		setCommandUnitsViewConfig({
+			...viewConfig,
+			page: v + 1
+		})
 	}
 
 	function handlePageSizeChange(v) {
-    setPageSize(pageSizeOptions[v]);
+    setCommandUnitsViewConfig({
+			...viewConfig,
+			pageSize: pageSizeOptions[v]
+		});
   };
+
+  function toggleOrder() {
+  	setCommandUnitsViewConfig({
+  		...viewConfig,
+  		order: order === 'asc' ? 'desc' : 'asc'
+  	})
+  }
+
+  let history = useHistory()
+
+  const model = 'commandUnits'
+
+  function search(v) {
+		history.push(`/search/model=${model}?searchquery=${v}`);
+	}
 
 	return (
 		<div>
 			<Button display={order === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
-			<DropDown options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>			
+			<DropDown options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>	
+			<SearchBar handler={search} placeHolder='search for a command unit'/> 		
 			<table>
 				<caption>Command Units Table</caption>
 				<thead>
@@ -84,6 +111,7 @@ export const CommandUnitsTable = props => {
 				data={total} 
 				itemsPerPage={pageSize.value}
 				handler={currentPageHandler}
+				forcePage={page}
 			/>
 		</div>
 	)

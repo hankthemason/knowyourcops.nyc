@@ -217,6 +217,30 @@ export class CommandUnits {
 		}
 	}
 
+	async search(searchQuery) {
+		try {
+			const results = {
+				type: 'commandUnit',
+				identifier: 'command_unit_full'
+			}
+			results.results =  await this.db.all(`
+					SELECT 
+						*
+					FROM 
+						command_units
+					WHERE
+						command_unit_full LIKE '%${searchQuery}%'
+					OR
+						unit_id LIKE '%${searchQuery}%'
+					OR
+						precinct LIKE '%${searchQuery}%'
+			`)
+			return results
+		} catch(error) {
+			console.error(error)
+		}
+	}	
+
 	async augment(commandAbbrevs)	{
 		try {
 			await this.db.run(`

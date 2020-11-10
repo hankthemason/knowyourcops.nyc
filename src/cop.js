@@ -7,7 +7,9 @@ import { useCop } from './context/copContext';
 
 export const CopPage = (props) => {
 
-  const { cop } = useCop();
+  const { cop, setCopViewConfig, getCopViewConfig } = useCop();
+
+  const { orderByOptions } = getCopViewConfig()
 
 	let name = cop.first_name + ' ' + cop.last_name;
 	let numAllegations = cop.num_allegations;
@@ -52,30 +54,45 @@ export const CopPage = (props) => {
 
   let allegationDescriptions = [];
 
+  console.log(allegations)
+
   for (const [key, value] of Object.entries(allegations)) {
     let fadoType = allegations.[key].fado_type;
     let allegationDescription = allegations.[key].description;
     if (allegationsByFado.hasOwnProperty(fadoType)) {
       allegationsByFado.[fadoType] += 1;
     }
-    if (!allegationDescriptions.includes(allegationDescription)) {
-      allegationDescriptions.push(allegationDescription)
-      allegationsByDescription.[allegationDescription] = 1
-    }
 
-    if (allegationsByDescription.hasOwnProperty(allegationDescription)) {
-      allegationsByDescription.[allegationDescription] += 1;
-    }
+    allegationsByDescription.hasOwnProperty(allegationDescription) ? 
+      allegationsByDescription[allegationDescription] += 1 :
+      allegationsByDescription[allegationDescription] = 1
+
+    console.log(allegationsByDescription)
+
+    // if (!allegationDescriptions.includes(allegationDescription)) {
+    //   allegationDescriptions.push(allegationDescription)
+    //   allegationsByDescription.[allegationDescription] = 1
+    // }
+
+    // if (allegationsByDescription.hasOwnProperty(allegationDescription)) {
+    //   allegationsByDescription.[allegationDescription] += 1;
+    // }
+
+  
   } 
   
+  const headCells = orderByOptions.map(e => {
+    return {
+      ...e,
+      sortable: true
+    }
+  })
+  headCells.push({ id: 4, title: 'Complainant Details', value: 'complainant_details', sortable: false })
 
-  const headCells = [
-    { id: 'date_received', sortable: true, label: 'Date Received' },
-    { id: 'date_closed', sortable: true, label: 'Date Closed' },
-    { id: 'precinct', sortable: true, label: 'Location(Precinct)' },
-    { id: 'num_allegations_on_complaint', sortable: true, label: 'Allegations on complaint' },
-    { id: 'complainant_details', sortable: false, label: 'Complainant details' },
-  ];
+  cop.complaintsWithAllegations.map(e => {
+    e.date_received = new Date(e.date_received)
+    e.date_closed = new Date(e.date_closed)
+  })
 
 	return (
 		<div>

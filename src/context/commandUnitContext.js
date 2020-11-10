@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom'
 import { useCommandUnits } from './commandUnitsContext';
 import { map, range, reduce } from 'lodash'
 import { useViewConfig } from './viewConfigContext'
+import { DefaultViewConfig } from '../types/default'
 
 const CommandUnitContext = createContext();
 
@@ -52,32 +53,66 @@ const normalizeData = commandUnit => {
 export const CommandUnitProvider = (props) => {
 
 	const { id } = useParams();
-	const { commandUnits, settings } = useCommandUnits();
 
-	const { currentUnit, setCurrentUnit } = settings
+	const viewConfigName = `commandUnit${id}ViewConfig`
+
+	console.log(viewConfigName)
+
+	const { setViewConfig, getViewConfig } = useViewConfig()
+
+	const setCommandUnitViewConfig = (viewConfig) => setViewConfig({[viewConfigName]: viewConfig})
+	const getCommandUnitViewConfig = () => getViewConfig(viewConfigName)
 
 	const [commandUnit, setCommandUnit] = useState();
 
-	const { viewConfig } = useViewConfig();
-	
-	const { subTableOrder: order, 
-					setSubTableOrder: setOrder,
-					subTableOrderBy: orderBy,
-					setSubTableOrderBy: setOrderBy } = viewConfig;
+	const viewConfigExists = getCommandUnitViewConfig != undefined
 
-	const tableConfig = {
-		order,
-		setOrder,
-		orderBy,
-		setOrderBy,
-	}
+	const viewConfig = getCommandUnitViewConfig()
+
+	const viewConfigPopulated = viewConfig != undefined && 
+															viewConfig.hasOwnProperty('order') &&
+															viewConfig.hasOwnProperty('orderBy') &&
+															viewConfig.hasOwnProperty('page') &&
+															viewConfig.hasOwnProperty('pageSize')
 
 	useEffect(() => {
-		if (order === null && orderBy === null) {
-			setOrder('desc')
-			setOrderBy('date_received')
-		}
-	}, [])
+			if (viewConfigPopulated) return
+
+			setCommandUnitViewConfig({
+				...DefaultViewConfig,
+				page: 0,
+				pageSize: 10,
+				orderBy: {
+						id: 0,
+						title: 'Date Received',
+						value: 'date_received'
+					},
+				orderByOptions: [
+					{
+						id: 0,
+						title: 'Date Received',
+						value: 'date_received'
+					},
+					{
+						id: 1,
+						title: 'Date Closed',
+						value: 'date_closed'
+					},
+					{
+						id: 2,
+						title: 'Precinct',
+						value: 'precinct'
+					},
+					{
+						id: 3,
+						title: 'Number of Allegations on Complaint',
+						value: 'num_allegations_on_complaint'
+					}
+				]
+			})
+	}, [viewConfigExists])
+
+	const { commandUnits } = useCommandUnits();
 
 	const [incompleteCommandUnit, setIncompleteCommandUnit] = useState(null)
 
@@ -92,18 +127,7 @@ export const CommandUnitProvider = (props) => {
 		} else {
 			setIncompleteCommandUnit(commandUnit)
 		}
-	}, [])
-
-	useEffect(() => {
-		if (incompleteCommandUnit && incompleteCommandUnit.id != currentUnit) {
-			console.log('id changed')
-			setCurrentUnit(incompleteCommandUnit.id)
-			setOrder('desc')
-			setOrderBy('date_received')
-		} else if (incompleteCommandUnit && incompleteCommandUnit.id === currentUnit) {
-			console.log('nothing changed')
-		}
-	}, [incompleteCommandUnit])
+	}, [commandUnits])
 
 	const [complaintsDates, setComplaintsDates] = useState(null)
 	const [complaintsWithAllegations, setComplaintsWithAllegations] = useState(null)
@@ -126,9 +150,11 @@ export const CommandUnitProvider = (props) => {
 			complaintsWithAllegations: complaintsWithAllegations
 		}))
 	}, [complaintsDates, complaintsWithAllegations])
+
+	const commandUnitConfig = { commandUnit, setCommandUnitViewConfig, getCommandUnitViewConfig }
 	
 	return (
-		<CommandUnitContext.Provider value={{ tableConfig, commandUnit }}>
+		<CommandUnitContext.Provider value={ commandUnitConfig }>
 			{ commandUnit ? props.children : null}
 		</CommandUnitContext.Provider>
 	)
