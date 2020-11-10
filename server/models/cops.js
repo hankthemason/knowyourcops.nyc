@@ -447,7 +447,6 @@ export class Cops {
 	}
 
 	async readCop(id) {
-		console.log('hi')
 		try {
 			const result = await this.db.all(`
 				SELECT
@@ -549,7 +548,12 @@ export class Cops {
 
 	async search(searchQuery) {
 		try {
-			return await this.db.all(`
+			const results = {
+				type: 'cop',
+				identifier: ['last_name'],
+				display: ['first_name', 'last_name']
+			}
+			results.results = await this.db.all(`
 					SELECT 
 						*
 					FROM 
@@ -559,6 +563,7 @@ export class Cops {
 					OR
 						first_name LIKE '%${searchQuery}%'
 			`)
+			return results
 		} catch(error) {
 			console.error(error)
 		}

@@ -30,6 +30,7 @@ export const CommandUnitComplaintsTable = props => {
 	const monthNames = [
 		'January',
 		'February',
+
 		'March',
 		'April',
 		'May',
@@ -274,7 +275,7 @@ export const CommandUnitComplaintsTable = props => {
    							padding:'0px'}}
       />
     </TableContainer>
-  );
+  )
 }
 
 

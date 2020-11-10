@@ -31,6 +31,8 @@ export const CommandUnitsTable = props => {
 		})
 	}
 
+	console.log(page)
+
 	function currentPageHandler(v) {
 		setCommandUnitsViewConfig({
 			...viewConfig,

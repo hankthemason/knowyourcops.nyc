@@ -11,6 +11,7 @@ import { ViewConfigProvider } from './context/viewConfigContext';
 import { CommandUnitPage } from './commandUnit' 
 import { CommandUnitsProvider } from './context/commandUnitsContext'
 import { CommandUnitProvider } from './context/commandUnitContext'
+import { SearchProvider } from './context/searchContext'
 import {
   BrowserRouter as Router,
   Switch,
@@ -19,9 +20,6 @@ import {
 } from 'react-router-dom'
 
 function App() {
-
-  //temporary example
-  const [searchResults, setSearchResults] = useState([]);
 
   return (
     <ViewConfigProvider>
@@ -37,7 +35,7 @@ function App() {
             </Route>
             <Route path="/cops">
             <CopsProvider>
-              <CopsTable setSearchResults={setSearchResults}/>
+              <CopsTable />
             </CopsProvider>
             </Route>
                 <Route path ="/command_unit/:id">
@@ -53,7 +51,9 @@ function App() {
                 </CommandUnitsProvider>
                 </Route>
             <Route path="/search/model=:model" >
-              <Search results={searchResults} setSearchResults={setSearchResults} />
+              <SearchProvider>
+                <Search />
+              </SearchProvider>
             </Route>
           </Switch>
         </Router>

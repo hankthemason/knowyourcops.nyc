@@ -56,8 +56,6 @@ export const CommandUnitProvider = (props) => {
 
 	const viewConfigName = `commandUnit${id}ViewConfig`
 
-	console.log(viewConfigName)
-
 	const { setViewConfig, getViewConfig } = useViewConfig()
 
 	const setCommandUnitViewConfig = (viewConfig) => setViewConfig({[viewConfigName]: viewConfig})
@@ -77,7 +75,6 @@ export const CommandUnitProvider = (props) => {
 
 	useEffect(() => {
 			if (viewConfigPopulated) return
-
 			setCommandUnitViewConfig({
 				...DefaultViewConfig,
 				page: 0,
@@ -117,20 +114,23 @@ export const CommandUnitProvider = (props) => {
 	const [incompleteCommandUnit, setIncompleteCommandUnit] = useState(null)
 
 	useEffect(() => {
+		console.log('hi')
 		const commandUnit = commandUnits.find(obj => {
 				return obj.id === parseInt(id)
 		})
+		console.log(commandUnit)
 		if (commandUnit === undefined) {
-			fetch(`/commandUnit/id=${id}`)
+			fetch(`/command_unit/id=${id}`)
   		.then(result => result.json())
   		.then(incompleteCommandUnit => setIncompleteCommandUnit(incompleteCommandUnit[0]))
 		} else {
 			setIncompleteCommandUnit(commandUnit)
 		}
-	}, [commandUnits])
+	}, [])
 
 	const [complaintsDates, setComplaintsDates] = useState(null)
 	const [complaintsWithAllegations, setComplaintsWithAllegations] = useState(null)
+	const [cops, setCops] = useState(null)
 
 	useEffect(() => {
     fetch(`/command_unit_complaints/years/id=${id}`)
@@ -139,17 +139,22 @@ export const CommandUnitProvider = (props) => {
      fetch(`/command_unit_complaints/allegations/id=${id}`)
     .then(result => result.json())
     .then(complaintsWithAllegations => setComplaintsWithAllegations(complaintsWithAllegations))
+    fetch(`/command_unit/id=${id}/cops`)
+    .then(result => result.json())
+    .then(cops => setCops(cops))
 	}, [])
 
 	useEffect(() => {
 		if (complaintsDates === null || 
-				complaintsWithAllegations === null) return
+				complaintsWithAllegations === null ||
+				cops === null) return
 		setCommandUnit(normalizeData({
 			...incompleteCommandUnit, 
 			yearlyStats: complaintsDates,
-			complaintsWithAllegations: complaintsWithAllegations
+			complaintsWithAllegations: complaintsWithAllegations,
+			cops: cops
 		}))
-	}, [complaintsDates, complaintsWithAllegations])
+	}, [complaintsDates, complaintsWithAllegations, cops])
 
 	const commandUnitConfig = { commandUnit, setCommandUnitViewConfig, getCommandUnitViewConfig }
 	

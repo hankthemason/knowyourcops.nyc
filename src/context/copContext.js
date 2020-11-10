@@ -111,13 +111,14 @@ export const CopProvider = (props) => {
 			return obj.id === parseInt(id)
 		})
 		if (cop === undefined) {
+			console.log('undef')
 			fetch(`/cop/id=${id}`)
   		.then(result => result.json())
   		.then(incompleteCop => setIncompleteCop(incompleteCop[0]))
 		} else {
 			setIncompleteCop(cop)
 		}
-	}, [cops])
+	}, [])
 
 	const [cop, setCop] = useState(null)
 
@@ -140,7 +141,7 @@ export const CopProvider = (props) => {
 	}, [])
 
 	useEffect(() => {
-		if (complaintsLocations === null || 
+		if (incompleteCop === null || complaintsLocations === null || 
 			complaintsDates === null || 
 			complaintsWithAllegations === null) return
 		setCop(normalizeData({
@@ -149,7 +150,7 @@ export const CopProvider = (props) => {
 			yearlyStats: complaintsDates,
 			complaintsWithAllegations: complaintsWithAllegations
 		}))
-	}, [complaintsLocations, complaintsDates, complaintsWithAllegations])
+	}, [complaintsLocations, complaintsDates, complaintsWithAllegations, incompleteCop])
 
 	const copConfig = { cop, setCopViewConfig, getCopViewConfig }
 

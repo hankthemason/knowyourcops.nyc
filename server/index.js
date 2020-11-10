@@ -127,6 +127,15 @@ const models = new Models(DB_PATH);
 		res.json(await models.cops.readCop(req.params.id))
 	})
 
+	app.get('/command_unit/id=:id', async (req, res) => {
+		res.json(await models.commandUnits.readCommandUnit(req.params.id))
+	})
+
+	app.get('/command_unit/id=:id/cops', async (req, res) => {
+		console.log('hi')
+		res.json(await models.commandUnits.getCops(req.params.id))
+	})
+
 	app.listen(port, () => {
 		console.log(`Example app listening at http://localhost:${port}`)
 	})

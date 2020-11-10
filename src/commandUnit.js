@@ -4,6 +4,8 @@ import { BarChart } from './components/barChart'
 import { LineChart } from './components/lineChart'
 import { pick, values, reduce } from 'lodash';
 import { CommandUnitComplaintsTable } from './commandUnitComplaints'
+import { CopsTable } from './cops'
+import { CommandUnitCopsTable } from './commandUnitCops'
 
 export const CommandUnitPage = props => {
 
