@@ -114,11 +114,9 @@ export const CommandUnitProvider = (props) => {
 	const [incompleteCommandUnit, setIncompleteCommandUnit] = useState(null)
 
 	useEffect(() => {
-		console.log('hi')
 		const commandUnit = commandUnits.find(obj => {
 				return obj.id === parseInt(id)
 		})
-		console.log(commandUnit)
 		if (commandUnit === undefined) {
 			fetch(`/command_unit/id=${id}`)
   		.then(result => result.json())
@@ -155,6 +153,8 @@ export const CommandUnitProvider = (props) => {
 			cops: cops
 		}))
 	}, [complaintsDates, complaintsWithAllegations, cops])
+
+	console.log(commandUnit)
 
 	const commandUnitConfig = { commandUnit, setCommandUnitViewConfig, getCommandUnitViewConfig }
 	

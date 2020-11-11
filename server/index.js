@@ -132,7 +132,6 @@ const models = new Models(DB_PATH);
 	})
 
 	app.get('/command_unit/id=:id/cops', async (req, res) => {
-		console.log('hi')
 		res.json(await models.commandUnits.getCops(req.params.id))
 	})
 

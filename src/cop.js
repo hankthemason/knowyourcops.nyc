@@ -66,19 +66,6 @@ export const CopPage = (props) => {
     allegationsByDescription.hasOwnProperty(allegationDescription) ? 
       allegationsByDescription[allegationDescription] += 1 :
       allegationsByDescription[allegationDescription] = 1
-
-    console.log(allegationsByDescription)
-
-    // if (!allegationDescriptions.includes(allegationDescription)) {
-    //   allegationDescriptions.push(allegationDescription)
-    //   allegationsByDescription.[allegationDescription] = 1
-    // }
-
-    // if (allegationsByDescription.hasOwnProperty(allegationDescription)) {
-    //   allegationsByDescription.[allegationDescription] += 1;
-    // }
-
-  
   } 
   
   const headCells = orderByOptions.map(e => {

@@ -5,7 +5,7 @@ import { LineChart } from './components/lineChart'
 import { pick, values, reduce } from 'lodash';
 import { CommandUnitComplaintsTable } from './commandUnitComplaints'
 import { CopsTable } from './cops'
-import { CommandUnitCopsTable } from './commandUnitCops'
+import { PaginatedSortTable } from './components/paginatedSortTable'
 
 export const CommandUnitPage = props => {
 
@@ -58,18 +58,45 @@ export const CommandUnitPage = props => {
       allegationsByDescription[allegationDescription] = 1
   } 
 
-  const headCells = orderByOptions.map(e => {
+  const complaintsTableHeadCells = orderByOptions.map(e => {
     return {
       ...e,
       sortable: true
     }
   })
-  headCells.push({ id: 4, title: 'Complainant Details', value: 'complainant_details', sortable: false })
+  complaintsTableHeadCells.push({ id: 4, title: 'Complainant Details', value: 'complainant_details', sortable: false })
   
   c.complaintsWithAllegations.map(e => {
     e.date_received = new Date(e.date_received)
     e.date_closed = new Date(e.date_closed)
   })
+
+  const copsTableHeadCells = [
+    {
+      id: 0,
+      title: 'Full Name',
+      value: 'full_name',
+      sortable: true
+    },
+    {
+      id: 1,
+      title: 'Number of Allegations (In This Unit)',
+      value: 'num_allegations',
+      sortable: true
+    },
+    {
+      id: 2,
+      title: 'Number of Complaints (In This Unit)',
+      value: 'num_complaints',
+      sortable: true
+    },
+    {
+      id: 3,
+      title: 'Officer Details',
+      value: 'officer_details',
+      sortable: false
+    }
+  ]
 
 	return (
 		<div>
@@ -84,7 +111,8 @@ export const CommandUnitPage = props => {
 			<BarChart data={allegationsByFado} title='Allegations by FADO type' />
       <BarChart data={allegationsByDescription} title='Allegations by description' />
       <h2>Complaints received: </h2>
-      <CommandUnitComplaintsTable data={c.complaintsWithAllegations} headCells={headCells} />
+      <CommandUnitComplaintsTable data={c.complaintsWithAllegations} headCells={complaintsTableHeadCells} />
+      <PaginatedSortTable data={c.cops} headCells={copsTableHeadCells} />
 		</div>
 	)
 }

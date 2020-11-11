@@ -13,11 +13,6 @@ export class CopAtTimeOfComplaint {
 				age INTEGER,
 				FOREIGN KEY(cop_id) REFERENCES cops(id),
 				FOREIGN KEY(complaint_id) REFERENCES complaints(id)
-				UNIQUE(
-					cop_id,
-					rank,
-					assignment, 
-					age)
 				);`
 			)
 	}

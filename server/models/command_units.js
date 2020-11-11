@@ -301,21 +301,68 @@ export class CommandUnits {
 		}
 	}
 
+	// SELECT
+	// 				cop_id,
+	// 				full_name,
+	// 				COUNT(*) AS num_allegations,
+	// 				COUNT(DISTINCT complaint_id) AS num_complaints
+	// 			FROM(
+	// 			SELECT
+	// 				command_units.*,
+	// 				cops.id as cop_id,
+	// 				cops.shield_no,
+	// 				cops.first_name || ' ' || cops.last_name as full_name,
+	// 				cops.rank_abbrev,
+	// 				cops.rank_full,
+	// 				cops.command_unit AS current_command,
+	// 				cops.command_unit_full AS current_command_full,
+	// 				cops.ethnicity,
+	// 				cops.gender,
+	// 				complaints.id AS complaint_id,
+	// 				allegations.id AS allegation_id
+	// 			FROM 
+	// 				command_units
+	// 			JOIN
+	// 				cop_at_time_of_complaint cop
+	// 			ON
+	// 				command_units.unit_id = cop.assignment
+	// 			JOIN
+	// 				cops
+	// 			ON
+	// 				cop.cop_id = cops.id
+	// 			JOIN
+	// 				complaints
+	// 			ON
+	// 				cop.complaint_id = complaints.id
+	// 			JOIN
+	// 				allegations
+	// 			ON
+	// 				allegations.complaint_id = complaints.id
+	// 			WHERE
+	// 				command_units.id = (?)
+	// 			)
+	// 			GROUP BY
+	// 				cop_id
+	// 			ORDER BY
+	// 				num_allegations DESC
+	// 			`
+
+
 	async getCops(id) {
 		try {
-			console.log('hello')
 			const results = await this.db.all(`
 				SELECT
+					full_name,
+					cop_id AS id,
+					ethnicity || ' ' || gender AS cop_details,
+					COUNT(*) AS num_allegations,
+					COUNT(DISTINCT complaint_id) AS num_complaints
+				FROM
+					(
+				SELECT
 					command_units.*,
-					COUNT(cop.cop_id) as count,
-					cops.id,
-					cops.shield_no,
-					cops.first_name,
-					cops.last_name,
-					cops.rank_abbrev,
-					cops.rank_full,
-					cops.command_unit AS current_command,
-					cops.command_unit_full AS current_command_full,
+					cop.*,
+					cops.first_name || ' ' || cops.last_name AS full_name,
 					cops.ethnicity,
 					cops.gender
 				FROM 
@@ -323,18 +370,17 @@ export class CommandUnits {
 				JOIN
 					cop_at_time_of_complaint cop
 				ON
-					command_units.unit_id = cop.assignment
+					cop.assignment = command_units.unit_id
 				JOIN
 					cops
 				ON
 					cop.cop_id = cops.id
 				WHERE
-					command_units.id = (?)
-				GROUP BY 
-					cop.cop_id
+					command_units.id = (?))
+				GROUP BY
+					cop_id
 				ORDER BY
-					count DESC
-
+					num_allegations DESC
 				`, id)
 			return results
 		} catch(error) {
