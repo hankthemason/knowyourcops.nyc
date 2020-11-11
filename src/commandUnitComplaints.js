@@ -23,9 +23,20 @@ import TablePagination from '@material-ui/core/TablePagination';
 
 export const CommandUnitComplaintsTable = props => {
 
-	const { commandUnit, setCommandUnitViewConfig, getCommandUnitViewConfig } = useCommandUnit();
+	let { commandUnit, setCommandUnitViewConfig: setCUVC, getCommandUnitViewConfig } = useCommandUnit();
 	
-	const viewConfig = getCommandUnitViewConfig();
+	const complaintsTableExists = getCommandUnitViewConfig().hasOwnProperty('complaintsTable')
+
+	let viewConfig;
+	if (complaintsTableExists) viewConfig = getCommandUnitViewConfig().complaintsTable;
+
+	//redefine function so that it only assigns config to
+	//complaintsTable (not the other table)
+	const setCommandUnitViewConfig = (object) => {
+		setCUVC({
+			complaintsTable: object
+		})
+	}
 
 	const monthNames = [
 		'January',

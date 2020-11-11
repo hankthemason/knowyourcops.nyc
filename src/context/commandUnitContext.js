@@ -63,51 +63,103 @@ export const CommandUnitProvider = (props) => {
 
 	const [commandUnit, setCommandUnit] = useState();
 
-	const viewConfigExists = getCommandUnitViewConfig != undefined
+	const viewConfigExists = getCommandUnitViewConfig() != undefined
 
 	const viewConfig = getCommandUnitViewConfig()
 
-	const viewConfigPopulated = viewConfig != undefined && 
-															viewConfig.hasOwnProperty('order') &&
-															viewConfig.hasOwnProperty('orderBy') &&
-															viewConfig.hasOwnProperty('page') &&
-															viewConfig.hasOwnProperty('pageSize')
+	console.log(viewConfig)
+
+	const viewConfigPopulated = viewConfig != undefined 
+
+	// const complaintsTableViewConfigPopulated = viewConfig.complaintsTable != undefined && 
+	// 														viewConfig.complaintsTable.hasOwnProperty('order') &&
+	// 														viewConfig.complaintsTable.hasOwnProperty('orderBy') &&
+	// 														viewConfig.complaintsTable.hasOwnProperty('page') &&
+	// 														viewConfig.complaintsTable.hasOwnProperty('pageSize')
+
+	// const copsTableViewConfigPopulated = viewConfig.copsTable != undefined && 
+	// 														viewConfig.copsTable.hasOwnProperty('order') &&
+	// 														viewConfig.copsTable.hasOwnProperty('orderBy') &&
+	// 														viewConfig.copsTable.hasOwnProperty('page') &&
+	// 														viewConfig.copsTable.hasOwnProperty('pageSize')														
 
 	useEffect(() => {
-			if (viewConfigPopulated) return
+			//if (complaintsTableViewConfigPopulated) return
 			setCommandUnitViewConfig({
-				...DefaultViewConfig,
-				page: 0,
-				pageSize: 10,
-				orderBy: {
-						id: 0,
-						title: 'Date Received',
-						value: 'date_received'
-					},
-				orderByOptions: [
-					{
-						id: 0,
-						title: 'Date Received',
-						value: 'date_received'
-					},
-					{
-						id: 1,
-						title: 'Date Closed',
-						value: 'date_closed'
-					},
-					{
-						id: 2,
-						title: 'Precinct',
-						value: 'precinct'
-					},
-					{
-						id: 3,
-						title: 'Number of Allegations on Complaint',
-						value: 'num_allegations_on_complaint'
-					}
-				]
+					complaintsTable: {
+					...DefaultViewConfig,
+					page: 0,
+					pageSize: 10,
+					orderBy: {
+							id: 0,
+							title: 'Date Received',
+							value: 'date_received'
+						},
+					orderByOptions: [
+						{
+							id: 0,
+							title: 'Date Received',
+							value: 'date_received'
+						},
+						{
+							id: 1,
+							title: 'Date Closed',
+							value: 'date_closed'
+						},
+						{
+							id: 2,
+							title: 'Precinct',
+							value: 'precinct'
+						},
+						{
+							id: 3,
+							title: 'Number of Allegations on Complaint',
+							value: 'num_allegations_on_complaint'
+						}
+					]
+				}
 			})
 	}, [viewConfigExists])
+
+	useEffect(() => {
+			//if (copsTableViewConfigPopulated) return
+			setCommandUnitViewConfig({
+				copsTable: {
+					...DefaultViewConfig,
+					page: 0,
+					pageSize: 10,
+					orderBy: {
+							id: 0,
+							title: 'Full Name',
+							value: 'full_name'
+						},
+					orderByOptions: [
+						{
+							id: 0,
+							title: 'Full Name',
+							value: 'full_name'
+						},
+						{
+				      id: 1,
+				      title: 'Number of Allegations (In This Unit)',
+				      value: 'num_allegations',
+				    },
+				    {
+				      id: 2,
+				      title: 'Number of Complaints (In This Unit)',
+				      value: 'num_complaints',
+				    },
+				    {
+				      id: 3,
+				      title: 'Officer Details',
+				      value: 'cop_details',
+				    }
+					]
+				}
+			})
+	}, [viewConfigExists])
+
+
 
 	const { commandUnits } = useCommandUnits();
 
@@ -153,8 +205,6 @@ export const CommandUnitProvider = (props) => {
 			cops: cops
 		}))
 	}, [complaintsDates, complaintsWithAllegations, cops])
-
-	console.log(commandUnit)
 
 	const commandUnitConfig = { commandUnit, setCommandUnitViewConfig, getCommandUnitViewConfig }
 	

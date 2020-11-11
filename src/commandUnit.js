@@ -13,7 +13,20 @@ export const CommandUnitPage = props => {
           setCommandUnitViewConfig, 
           getCommandUnitViewConfig } = useCommandUnit()
 
-  const { orderByOptions } = getCommandUnitViewConfig()
+  const complaintsTableExists = getCommandUnitViewConfig() != undefined
+
+  let orderByOptions;
+  if (complaintsTableExists) {
+     orderByOptions = getCommandUnitViewConfig().complaintsTable.orderByOptions
+  }
+
+  const getCopsTableViewConfig = () => {
+    return getCommandUnitViewConfig().copsTable
+  }
+
+  const setCopsTableViewConfig = (object) => {
+    setCommandUnitViewConfig({copsTable: {object}})
+  }
 
   const [id, setId] = useState(null)
 
@@ -93,7 +106,7 @@ export const CommandUnitPage = props => {
     {
       id: 3,
       title: 'Officer Details',
-      value: 'officer_details',
+      value: 'cop_details',
       sortable: false
     }
   ]
@@ -112,7 +125,11 @@ export const CommandUnitPage = props => {
       <BarChart data={allegationsByDescription} title='Allegations by description' />
       <h2>Complaints received: </h2>
       <CommandUnitComplaintsTable data={c.complaintsWithAllegations} headCells={complaintsTableHeadCells} />
-      <PaginatedSortTable data={c.cops} headCells={copsTableHeadCells} />
+      <PaginatedSortTable 
+        data={c.cops} 
+        headCells={copsTableHeadCells} 
+        viewConfigGetter={getCopsTableViewConfig}
+        viewConfigGetter={setCopsTableViewConfig} />
 		</div>
 	)
 }
