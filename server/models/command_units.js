@@ -352,7 +352,8 @@ export class CommandUnits {
 		try {
 			const results = await this.db.all(`
 				SELECT
-					full_name,
+					first_name,
+					last_name,
 					cop_id AS id,
 					ethnicity || ' ' || gender AS cop_details,
 					COUNT(*) AS num_allegations,
@@ -362,7 +363,8 @@ export class CommandUnits {
 				SELECT
 					command_units.*,
 					cop.*,
-					cops.first_name || ' ' || cops.last_name AS full_name,
+					cops.first_name,
+					cops.last_name,
 					cops.ethnicity,
 					cops.gender
 				FROM 

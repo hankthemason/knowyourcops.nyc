@@ -22,11 +22,177 @@ import TablePagination from '@material-ui/core/TablePagination';
 
 export const PaginatedSortTable = props => {
 
-	const { data: rows, headCells } = props
+	const { data: rows, 
+					headCells,
+					viewConfigGetter: getTableViewConfig,
+					viewConfigSetter: setTableViewConfig } = props
+
+	const tableViewConfig = getTableViewConfig()
+	console.log(tableViewConfig)
+
+	//console.log(viewConfig)
+
+	const { order,
+					orderBy,
+					page,
+					pageSize,
+					orderByOptions,
+					pageSizeOptions } = tableViewConfig
+
+	function EnhancedTableHead(props) {
+  	const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+
+  	const createClickHandler = (id, sortable) => () => {
+	 		if (sortable) {
+	 			const isAsc = orderBy.value === orderByOptions[id].value && order === 'asc';
+	    	setTableViewConfig({
+	    		...tableViewConfig,
+	    		order: isAsc ? 'desc' : 'asc',
+	    		orderBy: orderByOptions[id]
+	    	})
+	 		}
+ 		}
+
+	  return (
+	  	<TableHead>
+	      <TableRow>
+	        <TableCell padding="checkbox">
+	        </TableCell>
+	        {headCells.map((headCell) => (
+	          <TableCell
+	            key={headCell.id}
+	            align='left'
+	            //padding={headCell.disablePadding ? 'none' : 'default'}
+	            sortDirection={orderBy.value === headCell.value ? order : false}
+	          >
+	          	{headCell.sortable ? (
+	            	<TableSortLabel
+	              	active={orderBy.value === headCell.value}
+	              	direction={orderBy.value === headCell.value ? order : 'asc'}
+	              	onClick={createClickHandler(headCell.id, headCell.sortable)}
+	            	>
+	              	{headCell.title}
+	            	</TableSortLabel> ) : headCell.title }
+	          </TableCell>
+	        ))}
+	      </TableRow>
+    	</TableHead>
+    )
+	}
+
+	// const useStyles = makeStyles((theme) => ({
+	// 	root: {
+	// 	  width: '100%',
+	// 	},
+	// 	paper: {
+	// 	  marginBottom: theme.spacing(2),
+	// 	},
+	// 	table: {
+	// 	  maxWidth: 800,
+	// 	}
+	// }));
+
+	// const useRowStyles = makeStyles({
+	//   root: {
+	//     '& > *': {
+	//       borderBottom: 'unset',
+	//     },
+	//   },
+	// });
+	
+	//const classes = useStyles();
+
+	const getLastName = (fullName) => {
+		return fullName.split(' ')[1]
+	}
+
+	const array = rows.map(e => e.last_name)
+	//console.log(array.sort())
+
+	const sortFunction = (rows) => {
+		if (orderBy.type === 'string') {
+			order === 'asc' ?
+				rows.sort((a, b) => {
+					return a[orderBy.value].localeCompare(b[orderBy.value])
+				}) : rows.sort((a, b) => {
+					return b[orderBy.value].localeCompare(a[orderBy.value])
+				})
+			return rows
+		}
+		order === 'asc' ? 
+			rows.sort((a, b) => {
+				return a[orderBy.value] - b[orderBy.value]
+			}) : rows.sort((a, b) => {
+				return b[orderBy.value] - a[orderBy.value]
+			})
+		return rows
+	}
+
+	const currentPageHandler = (event, newPage) => {
+    setTableViewConfig({
+    	...tableViewConfig,
+    	page: newPage
+    });
+  };
+
+  const handlePageSizeChange = (event) => {
+    setTableViewConfig({
+			...tableViewConfig,
+			pageSize: event.target.value
+		})
+  };
 
 	return (
-		null
-	)
-
-
+		<Paper>
+		<TableContainer >
+      <Table
+        //className={classes.table}
+        aria-labelledby="tableTitle"
+        //size={dense ? 'small' : 'medium'}
+        aria-label="enhanced table"
+      >
+        <EnhancedTableHead
+          //classes={classes}
+          order={order}
+          orderBy={orderBy}
+          //onRequestSort={handleRequestSort}
+          //rowCount={rows.length}
+        />
+      </Table>
+      <TableBody>
+        {sortFunction(rows)
+          .slice(page * pageSize, page * pageSize + pageSize)
+          .map((row, index) => {
+            return (
+              <TableRow component="th" scope="row" padding="none">
+                <Link to={`/cop/${row.id}`}>
+                	<TableCell width="25%">
+                  	{row.first_name + ' ' + row.last_name}
+                	</TableCell>
+                </Link>
+                <TableCell width="25%" align="right">{row.num_allegations}</TableCell>
+                <TableCell width="25%" align="right">{row.num_complaints}</TableCell>
+                <TableCell width="25%" align="right">{row.cop_details}</TableCell>
+              </TableRow>
+            );
+          })
+        }
+      </TableBody>
+      </TableContainer>
+      <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={pageSize}
+          page={page}
+          onChangePage={currentPageHandler}
+          onChangeRowsPerPage={handlePageSizeChange}
+          style={{display:'flex',
+   							justifyContent: 'left',  
+   							width: "100%",  
+   							alignItems: 'left',
+   							padding:'0px'}}
+      />
+    </Paper>
+  );
 }

@@ -25,23 +25,24 @@ export const CommandUnitComplaintsTable = props => {
 
 	let { commandUnit, setCommandUnitViewConfig: setCUVC, getCommandUnitViewConfig } = useCommandUnit();
 	
-	const complaintsTableExists = getCommandUnitViewConfig().hasOwnProperty('complaintsTable')
-
-	let viewConfig;
-	if (complaintsTableExists) viewConfig = getCommandUnitViewConfig().complaintsTable;
+	let viewConfig = getCommandUnitViewConfig()
 
 	//redefine function so that it only assigns config to
 	//complaintsTable (not the other table)
 	const setCommandUnitViewConfig = (object) => {
 		setCUVC({
+			...viewConfig,
 			complaintsTable: object
 		})
 	}
 
+	let complaintsTableViewConfig = getCommandUnitViewConfig().complaintsTable
+
+	console.log(complaintsTableViewConfig)
+
 	const monthNames = [
 		'January',
 		'February',
-
 		'March',
 		'April',
 		'May',
@@ -62,18 +63,18 @@ export const CommandUnitComplaintsTable = props => {
 					page,
 					pageSize,
 					pageSizeOptions,
-					orderByOptions } = viewConfig;
+					orderByOptions } = viewConfig.complaintsTable;
 
 	const currentPageHandler = (event, newPage) => {
     setCommandUnitViewConfig({
-    	...viewConfig,
+    	...viewConfig.complaintsTable,
     	page: newPage
     });
   };
 
   const handlePageSizeChange = (event) => {
     setCommandUnitViewConfig({
-			...viewConfig,
+			...viewConfig.complaintsTable,
 			pageSize: event.target.value
 		})
   };
@@ -214,7 +215,7 @@ export const CommandUnitComplaintsTable = props => {
  		if (sortable) {
  			const isAsc = orderBy.value === orderByOptions[id].value && order === 'asc';
     	setCommandUnitViewConfig({
-    		...viewConfig,
+    		...viewConfig.complaintsTable,
     		order: isAsc ? 'desc' : 'asc',
     		orderBy: orderByOptions[id]
     	})
@@ -266,7 +267,7 @@ export const CommandUnitComplaintsTable = props => {
           {sortFunction(rows)
           	.slice(page * pageSize, page * pageSize + pageSize)
           	.map((row) => (
-            <Row key={row.name} row={row} />
+            <Row key={row} row={row} />
           ))}
          	
         </TableBody>

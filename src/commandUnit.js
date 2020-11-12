@@ -15,18 +15,38 @@ export const CommandUnitPage = props => {
 
   const complaintsTableExists = getCommandUnitViewConfig() != undefined
 
-  let orderByOptions;
+  const viewConfig = getCommandUnitViewConfig()
+
+  let complaintsTableOrderByOptions;
   if (complaintsTableExists) {
-     orderByOptions = getCommandUnitViewConfig().complaintsTable.orderByOptions
+     complaintsTableOrderByOptions = getCommandUnitViewConfig().complaintsTable.orderByOptions
   }
+
+  //rewrite these functions so that they don't overwrite the viewConfig
 
   const getCopsTableViewConfig = () => {
     return getCommandUnitViewConfig().copsTable
   }
 
   const setCopsTableViewConfig = (object) => {
-    setCommandUnitViewConfig({copsTable: {object}})
+    setCommandUnitViewConfig({
+      ...viewConfig,
+      copsTable: object
+    })
   }
+
+  const getComplaintsTableViewConfig = () => {
+    return getCommandUnitViewConfig().complaintsTable
+  }
+
+  const setComplaintsTableViewConfig = (object) => {
+    setCommandUnitViewConfig({
+      ...viewConfig,
+      complaintsTable: {object}
+    })
+  }
+
+
 
   const [id, setId] = useState(null)
 
@@ -71,7 +91,7 @@ export const CommandUnitPage = props => {
       allegationsByDescription[allegationDescription] = 1
   } 
 
-  const complaintsTableHeadCells = orderByOptions.map(e => {
+  const complaintsTableHeadCells = complaintsTableOrderByOptions.map(e => {
     return {
       ...e,
       sortable: true
@@ -88,26 +108,30 @@ export const CommandUnitPage = props => {
     {
       id: 0,
       title: 'Full Name',
-      value: 'full_name',
-      sortable: true
+      value: 'last_name',
+      sortable: true,
+      type: 'string'
     },
     {
       id: 1,
       title: 'Number of Allegations (In This Unit)',
       value: 'num_allegations',
-      sortable: true
+      sortable: true,
+      type: 'integer'
     },
     {
       id: 2,
       title: 'Number of Complaints (In This Unit)',
       value: 'num_complaints',
-      sortable: true
+      sortable: true,
+      type: 'integer'
     },
     {
       id: 3,
       title: 'Officer Details',
       value: 'cop_details',
-      sortable: false
+      sortable: false,
+      type: 'string'
     }
   ]
 
@@ -129,7 +153,7 @@ export const CommandUnitPage = props => {
         data={c.cops} 
         headCells={copsTableHeadCells} 
         viewConfigGetter={getCopsTableViewConfig}
-        viewConfigGetter={setCopsTableViewConfig} />
+        viewConfigSetter={setCopsTableViewConfig} />
 		</div>
 	)
 }

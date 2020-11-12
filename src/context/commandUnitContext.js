@@ -59,6 +59,7 @@ export const CommandUnitProvider = (props) => {
 	const { setViewConfig, getViewConfig } = useViewConfig()
 
 	const setCommandUnitViewConfig = (viewConfig) => setViewConfig({[viewConfigName]: viewConfig})
+
 	const getCommandUnitViewConfig = () => getViewConfig(viewConfigName)
 
 	const [commandUnit, setCommandUnit] = useState();
@@ -69,97 +70,84 @@ export const CommandUnitProvider = (props) => {
 
 	console.log(viewConfig)
 
-	const viewConfigPopulated = viewConfig != undefined 
-
-	// const complaintsTableViewConfigPopulated = viewConfig.complaintsTable != undefined && 
-	// 														viewConfig.complaintsTable.hasOwnProperty('order') &&
-	// 														viewConfig.complaintsTable.hasOwnProperty('orderBy') &&
-	// 														viewConfig.complaintsTable.hasOwnProperty('page') &&
-	// 														viewConfig.complaintsTable.hasOwnProperty('pageSize')
-
-	// const copsTableViewConfigPopulated = viewConfig.copsTable != undefined && 
-	// 														viewConfig.copsTable.hasOwnProperty('order') &&
-	// 														viewConfig.copsTable.hasOwnProperty('orderBy') &&
-	// 														viewConfig.copsTable.hasOwnProperty('page') &&
-	// 														viewConfig.copsTable.hasOwnProperty('pageSize')														
+	const viewConfigPopulated = viewConfig != undefined
 
 	useEffect(() => {
-			//if (complaintsTableViewConfigPopulated) return
-			setCommandUnitViewConfig({
-					complaintsTable: {
-					...DefaultViewConfig,
-					page: 0,
-					pageSize: 10,
-					orderBy: {
-							id: 0,
-							title: 'Date Received',
-							value: 'date_received'
-						},
-					orderByOptions: [
-						{
-							id: 0,
-							title: 'Date Received',
-							value: 'date_received'
-						},
-						{
-							id: 1,
-							title: 'Date Closed',
-							value: 'date_closed'
-						},
-						{
-							id: 2,
-							title: 'Precinct',
-							value: 'precinct'
-						},
-						{
-							id: 3,
-							title: 'Number of Allegations on Complaint',
-							value: 'num_allegations_on_complaint'
-						}
-					]
-				}
-			})
+		if (viewConfig != undefined) {
+			if (viewConfig['complaintsTable'].hasOwnProperty('order')) return
+		}
+		setCommandUnitViewConfig({
+			copsTable: {
+				...DefaultViewConfig,
+				page: 0,
+				pageSize: 10,
+				orderBy: {
+			      id: 1,
+			      title: 'Number of Allegations (In This Unit)',
+			      value: 'num_allegations',
+			      type: 'integer'
+			    },
+				orderByOptions: [
+					{
+						id: 0,
+						title: 'Full Name',
+						value: 'last_name',
+						type: 'string'
+					},
+					{
+			      id: 1,
+			      title: 'Number of Allegations (In This Unit)',
+			      value: 'num_allegations',
+			      type: 'integer'
+			    },
+			    {
+			      id: 2,
+			      title: 'Number of Complaints (In This Unit)',
+			      value: 'num_complaints',
+			      type: 'integer'
+			    },
+			    {
+			      id: 3,
+			      title: 'Officer Details',
+			      value: 'cop_details',
+			      type: 'text'
+			    }
+				]
+			},
+			complaintsTable: {
+				...DefaultViewConfig,
+				page: 0,
+				pageSize: 10,
+				orderBy: {
+						id: 0,
+						title: 'Date Received',
+						value: 'date_received'
+					},
+				orderByOptions: [
+					{
+						id: 0,
+						title: 'Date Received',
+						value: 'date_received'
+					},
+					{
+						id: 1,
+						title: 'Date Closed',
+						value: 'date_closed'
+					},
+					{
+						id: 2,
+						title: 'Precinct',
+						value: 'precinct'
+					},
+					{
+						id: 3,
+						title: 'Number of Allegations on Complaint',
+						value: 'num_allegations_on_complaint'
+					}
+				]
+			}
+		})
 	}, [viewConfigExists])
-
-	useEffect(() => {
-			//if (copsTableViewConfigPopulated) return
-			setCommandUnitViewConfig({
-				copsTable: {
-					...DefaultViewConfig,
-					page: 0,
-					pageSize: 10,
-					orderBy: {
-							id: 0,
-							title: 'Full Name',
-							value: 'full_name'
-						},
-					orderByOptions: [
-						{
-							id: 0,
-							title: 'Full Name',
-							value: 'full_name'
-						},
-						{
-				      id: 1,
-				      title: 'Number of Allegations (In This Unit)',
-				      value: 'num_allegations',
-				    },
-				    {
-				      id: 2,
-				      title: 'Number of Complaints (In This Unit)',
-				      value: 'num_complaints',
-				    },
-				    {
-				      id: 3,
-				      title: 'Officer Details',
-				      value: 'cop_details',
-				    }
-					]
-				}
-			})
-	}, [viewConfigExists])
-
-
 
 	const { commandUnits } = useCommandUnits();
 
