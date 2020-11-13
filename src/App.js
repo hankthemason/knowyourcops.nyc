@@ -12,6 +12,10 @@ import { CommandUnitPage } from './commandUnit'
 import { CommandUnitsProvider } from './context/commandUnitsContext'
 import { CommandUnitProvider } from './context/commandUnitContext'
 import { SearchProvider } from './context/searchContext'
+import { ComplaintsProvider } from './context/complaintsContext'
+import { ComplaintsTable } from './complaints'
+import { ComplaintPage } from './complaint'
+import { ComplaintProvider } from './context/complaintContext'
 import {
   BrowserRouter as Router,
   Switch,
@@ -23,7 +27,6 @@ function App() {
 
   return (
     <ViewConfigProvider>
-      
         <Router>
           <Switch>
             <Route exact path="/cop/:id">
@@ -54,6 +57,18 @@ function App() {
               <SearchProvider>
                 <Search />
               </SearchProvider>
+            </Route>
+            <Route path="/complaints">
+              <ComplaintsProvider>
+                <ComplaintsTable />
+              </ComplaintsProvider>
+            </Route>
+            <Route path="/complaint/:id">
+              <ComplaintsProvider>
+                <ComplaintProvider>
+                  <ComplaintPage />
+                </ComplaintProvider>
+              </ComplaintsProvider>
             </Route>
           </Switch>
         </Router>

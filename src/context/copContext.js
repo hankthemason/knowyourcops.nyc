@@ -111,7 +111,6 @@ export const CopProvider = (props) => {
 			return obj.id === parseInt(id)
 		})
 		if (cop === undefined) {
-			console.log('undef')
 			fetch(`/cop/id=${id}`)
   		.then(result => result.json())
   		.then(incompleteCop => setIncompleteCop(incompleteCop[0]))

@@ -60,24 +60,169 @@ export class Complaints {
 		}		
 	}
 
-	async read() {
+	async read(orderBy, order, page, pageSize) {
 		try {
 			//limited for now to ease page loading
 			const result = await this.db.all(`
 				SELECT
 					complaints.*,
-					COUNT(*) AS num_allegations_on_complaint
+					COUNT(*) AS num_allegations,
+					JSON_GROUP_ARRAY(JSON_OBJECT('allegation_id',
+																				a.id,
+																				'complaint_id',
+																				a.complaint_id,
+																				'cop_full_name',
+																				cops.first_name || ' ' || cops.last_name,
+																				'cop_id',
+																				cops.id,
+																				'badge_number',
+																				cops.shield_no,
+																				'cop_rank_abbrev',
+																				cops.rank_abbrev,
+																				'cop_rank_full',
+																				cops.rank_full,
+																				'cop_ethnicity',
+																				cops.ethnicity,
+																				'cop_gender',
+																				cops.gender,
+																				'cop_command_unit', 
+																				cops.command_unit,
+																				'command_unit_id',
+																				command_units.id,
+																				'fado_type',
+																				a.fado_type,
+																				'description',
+																				a.description,
+																				'board_disposition',
+																				a.board_disposition)) as allegations
 				FROM 
 					complaints
-				INNER JOIN
-					allegations
+				JOIN
+					allegations a
 				ON
-					allegations.complaint_id = complaints.id
+					a.complaint_id = complaints.id
+				JOIN
+					cops 
+				ON
+					cops.id = a.cop
+				JOIN
+					command_units
+				ON
+					cops.command_unit = command_units.unit_id
 				GROUP BY
 					complaints.id
 				ORDER BY
-					num_allegations_on_complaint DESC
+					${orderBy} ${order}
+				LIMIT 
+					${pageSize}
+				OFFSET
+					${pageSize} * (${page} - 1)
 			`)
+			result.map(e => {
+				e.allegations = JSON.parse(e.allegations)
+			})
+			return result
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	async readComplaint(id) {
+		try {
+			//limited for now to ease page loading
+			const result = await this.db.all(`
+				SELECT
+					complaints.*,
+					COUNT(*) AS num_allegations,
+					JSON_GROUP_ARRAY(JSON_OBJECT('allegation_id',
+																				a.id,
+																				'complaint_id',
+																				a.complaint_id,
+																				'cop_full_name',
+																				cops.first_name || ' ' || cops.last_name,
+																				'cop_id',
+																				cops.id,
+																				'badge_number',
+																				cops.shield_no,
+																				'cop_rank_abbrev',
+																				cops.rank_abbrev,
+																				'cop_rank_full',
+																				cops.rank_full,
+																				'cop_ethnicity',
+																				cops.ethnicity,
+																				'cop_gender',
+																				cops.gender,
+																				'cop_command_unit', 
+																				cops.command_unit,
+																				'command_unit_id',
+																				command_units.id,
+																				'fado_type',
+																				a.fado_type,
+																				'description',
+																				a.description,
+																				'board_disposition',
+																				a.board_disposition)) as allegations
+				FROM 
+					complaints
+				JOIN
+					allegations a
+				ON
+					a.complaint_id = complaints.id
+				JOIN
+					cops 
+				ON
+					cops.id = a.cop
+				JOIN
+					command_units
+				ON
+					cops.command_unit = command_units.unit_id
+				WHERE
+					complaints.id = (?)
+				GROUP BY
+					complaints.id
+			`, id)
+			//the allegations propery is not correctly formatted as a JSON object
+			result.map(e => {
+				e.allegations = JSON.parse(e.allegations)
+				e.date_received = new Date(e.date_received + ' 12:00:00 GMT-0400')
+				e.date_closed = new Date(e.date_closed + ' 12:00:00 GMT-0400')
+			})
+			return result
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	async getCommandUnits(id) {
+		try {
+			let result = await this.db.all(`
+				SELECT
+					command_units.id as id,
+					command_units.unit_id as unit_id,
+					command_units.command_unit_full as command_unit_full
+				FROM
+					complaints
+				JOIN
+					command_units
+				ON
+					complaints.precinct = command_units.precinct
+				WHERE
+					complaints.id = (?)
+			`, id)
+			return result
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	async total() {
+		try {
+			const result = await this.db.all(`
+				SELECT
+					COUNT(*) AS rows
+				FROM
+					complaints 
+				`)
 			return result
 		} catch (error) {
 			console.error(error)

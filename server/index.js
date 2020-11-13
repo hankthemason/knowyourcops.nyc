@@ -135,6 +135,18 @@ const models = new Models(DB_PATH);
 		res.json(await models.commandUnits.getCops(req.params.id))
 	})
 
+	app.get('/complaints/orderBy=:orderBy/order=:order/page=:page/pageSize=:pageSize', async (req, res) => {
+		res.json(await models.complaints.read(req.params.orderBy, req.params.order, req.params.page, req.params.pageSize));
+	})
+
+	app.get('/complaint/id=:id', async (req, res) => {
+		res.json(await models.complaints.readComplaint(req.params.id))
+	})
+
+	app.get('/complaint/id=:id/command_units', async (req, res) => {
+		res.json(await models.complaints.getCommandUnits(req.params.id))
+	})
+
 	app.listen(port, () => {
 		console.log(`Example app listening at http://localhost:${port}`)
 	})

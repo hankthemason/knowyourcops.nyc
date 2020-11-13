@@ -1,11 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-	BrowserRouter as Router,
-	Switch,
-	Route,
-	Link, 
-	useHistory
-} from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 //the 'values' method returns an array(keys are arbitrary/autoincremented)
 import { values, orderBy, filter } from 'lodash';
 import { Button } from './components/button';
