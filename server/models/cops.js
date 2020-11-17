@@ -192,41 +192,137 @@ export class Cops {
 		}
 	}
 
+	// async getComplaints(id) {
+	// 	try {
+	// 		const result = await this.db.all(`
+	// 			SELECT
+	// 				complaints.*,
+	// 				COUNT(CASE WHEN a.complaint_id = complaints.id THEN 1 END) AS num_allegations_on_complaint,
+	// 				JSON_GROUP_ARRAY(JSON_OBJECT('allegation_id',
+	// 																			a.id,
+	// 																			'complaint_id',
+	// 																			a.complaint_id,
+	// 																			'cop_command_unit', 
+	// 																			a.cop_command_unit,
+	// 																			'precinct',
+	// 																			a.precinct,
+	// 																			'fado_type',
+	// 																			a.fado_type,
+	// 																			'description',
+	// 																			a.description,
+	// 																			'board_disposition',
+	// 																			a.board_disposition)) as allegations
+	// 			FROM
+	// 				cops
+	// 			JOIN
+	// 			 allegations a
+	// 			ON
+	// 				a.cop = cops.id
+	// 			JOIN
+	// 				complaints
+	// 			ON
+	// 				complaints.id = a.complaint_id
+	// 			WHERE
+	// 				cops.id = '${id}'
+	// 			GROUP BY
+	// 				complaints.id
+	// 		`)
+	// 		//the allegations propery is not correctly formatted as a JSON object
+	// 		result.map(e => {
+	// 			e.allegations = JSON.parse(e.allegations)
+	// 			e.date_received = new Date(e.date_received + ' 12:00:00 GMT-0400')
+	// 			e.date_closed = new Date(e.date_closed + ' 12:00:00 GMT-0400')
+	// 		})
+	// 		return result
+	// 	} catch (error) {
+	// 		console.error(error)
+	// 	}
+	// }
+
+	//updated to include join with cop_at_time_of_complaint
 	async getComplaints(id) {
 		try {
 			const result = await this.db.all(`
 				SELECT
-					complaints.*,
-					COUNT(CASE WHEN a.complaint_id = complaints.id THEN 1 END) AS num_allegations_on_complaint,
+					id,
+					date_received,
+					date_closed,
+					precinct,
+					contact_reason,
+					outcome_description,
+					complainant_ethnicity,
+					complainant_gender,
+					complainant_age_incident,
+					cop_rank,
+					cop_rank_full,
+					cop_command_unit,
+					cop_command_unit_full,
+					command_unit_id,
+					COUNT(CASE WHEN a_complaint_id = id THEN 1 END) AS num_allegations_on_complaint,
 					JSON_GROUP_ARRAY(JSON_OBJECT('allegation_id',
-																				a.id,
+																				a_id,
 																				'complaint_id',
-																				a.complaint_id,
+																				a_complaint_id,
 																				'cop_command_unit', 
-																				a.cop_command_unit,
+																				a_cop_command_unit,
 																				'precinct',
-																				a.precinct,
+																				a_precinct,
 																				'fado_type',
-																				a.fado_type,
+																				a_fado_type,
 																				'description',
-																				a.description,
+																				a_description,
 																				'board_disposition',
-																				a.board_disposition)) as allegations
+																				a_board_disposition)) as allegations
+				FROM(
+				SELECT
+					a.id AS a_id,
+					a.cop AS a_cop,
+					a.cop_command_unit AS a_cop_command_unit,
+					a.precinct AS a_precinct,
+					a.complaint_id AS a_complaint_id,
+					a.fado_type AS a_fado_type,
+					a.description AS a_description,
+					a.board_disposition AS a_board_disposition,
+					complaints.id as id,
+					complaints.date_received,
+					complaints.date_closed,
+					complaints.precinct,
+					complaints.contact_reason,
+					complaints.outcome_description,
+					complaints.complainant_ethnicity,
+					complaints.complainant_gender,
+					complaints.complainant_age_incident,
+					cop.rank AS cop_rank,
+					cop.rank_full AS cop_rank_full,
+					cop.assignment AS cop_command_unit,
+					cop.command_unit_full AS cop_command_unit_full,
+					command_units.id AS command_unit_id
 				FROM
-					cops
+					cops 
+				JOIN 
+					allegations a
+				ON 
+					a.cop = cops.id 
+				JOIN 
+					complaints 
+				ON 
+					complaints.id = a.complaint_id 
+				JOIN 
+					cop_at_time_of_complaint cop 
+				ON 
+					cop.cop_id = cops.id AND cop.complaint_id = complaints.id
 				JOIN
-				 allegations a
+					command_units
 				ON
-					a.cop = cops.id
-				JOIN
-					complaints
-				ON
-					complaints.id = a.complaint_id
-				WHERE
-					cops.id = '${id}'
+					cop.assignment = command_units.unit_id
+				WHERE 
+					cops.id = (?)
 				GROUP BY
-					complaints.id
-			`)
+					a.id)
+				GROUP BY
+					id
+			`, id)
+				
 			//the allegations propery is not correctly formatted as a JSON object
 			result.map(e => {
 				e.allegations = JSON.parse(e.allegations)
@@ -508,6 +604,42 @@ export class Cops {
 			// 	return accumulator
 			// }, {})
 			// console.log('end reduce')
+			return result
+
+		} catch(error) {
+			console.error(error);
+		}
+	}
+
+	async readCopp(id) {
+		try {
+			const result = await this.db.all(`
+				SELECT 
+					COUNT(DISTINCT CASE WHEN complainant_ethnicity LIKE '%black%' THEN id END) AS black
+				FROM(
+				SELECT
+					cop.rank AS cop_at_time_rank, 
+					cop.assignment AS cop_at_time_assignment,
+					complaints.*
+				FROM 
+					cops 
+				JOIN
+					cop_at_time_of_complaint cop
+				ON
+					cops.id = cop.cop_id
+				JOIN
+					allegations
+				ON
+					allegations.cop = cops.id
+				JOIN
+					complaints
+				ON
+					complaints.id = allegations.cop
+				WHERE
+					cops.id = (?)
+				GROUP BY
+					allegations.id)
+			`, id)
 			return result
 
 		} catch(error) {

@@ -51,6 +51,7 @@ export class Models {
 		await this.populateFromCsv(csvPath);
 		await this.cops.augment(commandAbbrevCsvPath, rankAbbrevs);
 		await this.commandUnits.augment(commandAbbrevs)
+		await this.copAtTimeOfComplaint.augment(commandAbbrevs)
 
 		
 		console.log('db finished populating')

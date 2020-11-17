@@ -42,7 +42,6 @@ export const ComplaintProvider = (props) => {
 			.then(result => result.json())
 			.then(complaint => setComplaint(complaint[0]))
 		} else {
-			console.log(c)
 			setComplaint(c)
 		}
 	}, [])

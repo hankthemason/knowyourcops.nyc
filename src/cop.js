@@ -4,6 +4,7 @@ import { BarChart } from './components/barChart'
 import { LineChart } from './components/lineChart'
 import { pick, values, reduce } from 'lodash';
 import { useCop } from './context/copContext';
+import { Link } from 'react-router-dom'
 
 export const CopPage = (props) => {
 
@@ -40,6 +41,18 @@ export const CopPage = (props) => {
   let allegations;
   let allegationsByFado = {}
   let allegationsByDescription = {}
+
+  let allRanksHeld = []
+  let allAssignments = {}
+
+  cop.complaintsWithAllegations.forEach(e => {
+    if (!allRanksHeld.includes(e.cop_rank_full)) {
+      allRanksHeld.push(e.cop_rank_full)
+    }
+    if (e.cop_command_unit_full != 'undefined' && !allAssignments.hasOwnProperty(e.command_unit_id)) {
+      allAssignments[e.command_unit_id] = e.cop_command_unit_full
+    }
+  })
   
   allegations = cop.complaintsWithAllegations.reduce((acc, val) => acc.concat(val.allegations), [])
     allegations = allegations.reduce((acc, value) => {
@@ -53,8 +66,6 @@ export const CopPage = (props) => {
   }
 
   let allegationDescriptions = [];
-
-  console.log(allegations)
 
   for (const [key, value] of Object.entries(allegations)) {
     let fadoType = allegations.[key].fado_type;
@@ -88,11 +99,21 @@ export const CopPage = (props) => {
 			<p> Number of allegations: {numAllegations} </p>
 			<p> Number of complaints: {complaints} </p>
 			<p> Number of allegations substantiated: {allegationsSubstantiated} </p>
-      <p> Rank: {rank} </p>
-      {assignment_full != null ? (
-        <p> Assignment: {assignment_full} </p> ):
-        <p> Assignment: {assignment_abbrev} </p> }
-			{percentageSubstantiated != null ? <p>Percentage of allegations substantiated: {percentageSubstantiated} </p> : null}
+      <p> Current Rank: {rank} </p>
+      <p> {'All ranks held: ' + allRanksHeld.map(e => ' ' + e)}</p>
+      <p> {`Current Assignment: `}  
+        <Link to={`/command_unit/${cop.command_unit_id}`}>
+        {assignment_full ? assignment_full : assignment_abbrev}
+        </Link>
+      </p>
+      
+      <p>{`All assignments: `} 
+        {Object.entries(allAssignments).map((item, index) => (
+          [(index ? ', ': ''),
+            <Link to={`/command_unit/${item[0]}`}>{item[1]}</Link>]
+        ))}
+      </p>
+			{percentageSubstantiated != null ? <p>Percentage of allegations substantiated: {percentageSubstantiated}% </p> : null}
 			<BarChart data={raceData} title='Allegations by complainant ethnicity'/>
 			<BarChart data={genderData} title='Allegations by complainant gender'/> 
 			<BarChart data={cop.locationStats} title='Allegations by location'/>
