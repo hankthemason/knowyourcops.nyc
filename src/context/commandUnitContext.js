@@ -20,7 +20,8 @@ export const useCommandUnit = () => {
 }
 
 const normalizeData = commandUnit => {
-	
+	console.log(commandUnit)
+
 	commandUnit.complaintsWithAllegations.map(e => {
 		e.date_received = new Date(e.date_received)
 		e.date_closed = new Date(e.date_closed)
@@ -67,8 +68,6 @@ export const CommandUnitProvider = (props) => {
 	const viewConfigExists = getCommandUnitViewConfig() != undefined
 
 	const viewConfig = getCommandUnitViewConfig()
-
-	console.log(viewConfig)
 
 	const viewConfigPopulated = viewConfig != undefined
 
@@ -156,7 +155,7 @@ export const CommandUnitProvider = (props) => {
 	useEffect(() => {
 		const commandUnit = commandUnits.find(obj => {
 				return obj.id === parseInt(id)
-		})
+		}) 
 		if (commandUnit === undefined) {
 			fetch(`/command_unit/id=${id}`)
   		.then(result => result.json())
@@ -186,13 +185,15 @@ export const CommandUnitProvider = (props) => {
 		if (complaintsDates === null || 
 				complaintsWithAllegations === null ||
 				cops === null) return
-		setCommandUnit(normalizeData({
-			...incompleteCommandUnit, 
-			yearlyStats: complaintsDates,
-			complaintsWithAllegations: complaintsWithAllegations,
-			cops: cops
-		}))
-	}, [complaintsDates, complaintsWithAllegations, cops])
+		if (incompleteCommandUnit !== null) {
+			setCommandUnit(normalizeData({
+				...incompleteCommandUnit, 
+				yearlyStats: complaintsDates,
+				complaintsWithAllegations: complaintsWithAllegations,
+				cops: cops
+			}))
+		}
+	}, [incompleteCommandUnit, complaintsDates, complaintsWithAllegations, cops])
 
 	const commandUnitConfig = { commandUnit, setCommandUnitViewConfig, getCommandUnitViewConfig }
 	

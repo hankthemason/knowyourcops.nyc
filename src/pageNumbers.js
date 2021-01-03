@@ -10,7 +10,6 @@ export const PageNumbers = props => {
 	}
 
 	function handleClick(event) {
-		console.log(event)
 		props.handler(event.selected)
 	}
 	

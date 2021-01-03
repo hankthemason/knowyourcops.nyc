@@ -60,11 +60,12 @@ export class Models {
 	async populateFromCsv(csvPath) {
 		const csv = fs.readFileSync(csvPath);
 		const results = await neatCsv(csv);
+		//maybe rename as 'record'
 		for (const result of results) {
 			await	this.precincts.create(result)
 			await	this.cops.create(result)
 			await	this.complaints.create(result)
-			await	this.commandUnits.create(result)
+			await	this.commandUnits.createFromRecord(result)
 			await	this.allegations.create(result)
 			await	this.copAtTimeOfComplaint.create(result)
 		}

@@ -56,8 +56,6 @@ export const PaginatedSortTable = props => {
 	  return (
 	  	<TableHead>
 	      <TableRow>
-	        <TableCell padding="checkbox">
-	        </TableCell>
 	        {headCells.map((headCell) => (
 	          <TableCell
 	            key={headCell.id}
@@ -158,26 +156,26 @@ export const PaginatedSortTable = props => {
           //onRequestSort={handleRequestSort}
           //rowCount={rows.length}
         />
-      </Table>
       <TableBody>
         {sortFunction(rows)
           .slice(page * pageSize, page * pageSize + pageSize)
           .map((row, index) => {
             return (
               <TableRow component="th" scope="row" padding="none">
-                <Link to={`/cop/${row.id}`}>
-                	<TableCell width="25%">
-                  	{row.first_name + ' ' + row.last_name}
-                	</TableCell>
-                </Link>
-                <TableCell width="25%" align="right">{row.num_allegations}</TableCell>
-                <TableCell width="25%" align="right">{row.num_complaints}</TableCell>
-                <TableCell width="25%" align="right">{row.cop_details}</TableCell>
+              	<TableCell>
+              		<Link to={`/cop/${row.id}`}>
+                		{row.first_name + ' ' + row.last_name}
+                	</Link>
+              	</TableCell>
+                <TableCell>{row.num_allegations}</TableCell>
+                <TableCell>{row.num_complaints}</TableCell>
+                <TableCell>{row.cop_details}</TableCell>
               </TableRow>
             );
           })
         }
       </TableBody>
+      </Table>
       </TableContainer>
       <TablePagination
           rowsPerPageOptions={[10, 25, 50]}

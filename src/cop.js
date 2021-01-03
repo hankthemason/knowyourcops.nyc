@@ -92,6 +92,8 @@ export const CopPage = (props) => {
     e.date_closed = new Date(e.date_closed)
   })
 
+  console.log(cop)
+
 	return (
 		<div>
 			<p> Full name: {name}</p>

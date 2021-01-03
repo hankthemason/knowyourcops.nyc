@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import logo from './logo.svg';
-import './App.css';
 import { CopsTable } from './cops';
 import { CommandUnitsTable } from './commandUnits'
 import { CopPage } from './cop';
@@ -16,6 +15,8 @@ import { ComplaintsProvider } from './context/complaintsContext'
 import { ComplaintsTable } from './complaints'
 import { ComplaintPage } from './complaint'
 import { ComplaintProvider } from './context/complaintContext'
+import { PrecinctsMap } from './map.js'
+import { PrecinctsMapProvider } from './context/precinctsMapContext'
 import {
   BrowserRouter as Router,
   Switch,
@@ -41,18 +42,18 @@ function App() {
               <CopsTable />
             </CopsProvider>
             </Route>
-                <Route path ="/command_unit/:id">
-                <CommandUnitsProvider>
-                  <CommandUnitProvider>
-                    <CommandUnitPage />
-                  </CommandUnitProvider>
-                </CommandUnitsProvider>
-                </Route>
-                <Route path="/command_units">
-                <CommandUnitsProvider>
-                  <CommandUnitsTable />
-                </CommandUnitsProvider>
-                </Route>
+            <Route path ="/command_unit/:id">
+              <CommandUnitsProvider>
+                <CommandUnitProvider>
+                  <CommandUnitPage />
+                </CommandUnitProvider>
+              </CommandUnitsProvider>
+            </Route>
+            <Route path="/command_units">
+              <CommandUnitsProvider>
+                <CommandUnitsTable />
+              </CommandUnitsProvider>
+            </Route>
             <Route path="/search/model=:model" >
               <SearchProvider>
                 <Search />
@@ -69,6 +70,11 @@ function App() {
                   <ComplaintPage />
                 </ComplaintProvider>
               </ComplaintsProvider>
+            </Route>
+            <Route path="/precinctsMap">
+              <PrecinctsMapProvider>
+                <PrecinctsMap />
+              </PrecinctsMapProvider>
             </Route>
           </Switch>
         </Router>

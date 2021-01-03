@@ -1,14 +1,26 @@
 import React, {useState, useEffect} from 'react';
 import { Link, useHistory } from 'react-router-dom'
-//the 'values' method returns an array(keys are arbitrary/autoincremented)
 import { values, orderBy, filter } from 'lodash';
+import { makeStyles } from '@material-ui/core/styles';
 import { Button } from './components/button';
 import { DropDown } from './components/dropdown';
 import { useCops } from './context/copsContext';
 import { SearchBar } from './components/searchBar';
 import { Pagination } from './components/pagination';
 
+const useStyles = makeStyles(theme => ({
+	table: {
+		fontFamily: theme.typography.fontFamily
+		//borderCollapse: "collapse"
+	},
+	thead: {
+		backgroundColor: theme.palette.background.secondary
+	}
+}))
+
 export const CopsTable = props => {
+
+	const classes = useStyles()
 
 	const { cops, total, setCopsViewConfig, getCopsViewConfig } = useCops()
 
@@ -69,9 +81,9 @@ export const CopsTable = props => {
 			<Button display={order === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
 			<DropDown options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>
 			<SearchBar handler={search} placeHolder='search for a cop'/> 
-			<table>
+			<table className={classes.table}>
 				<caption>Cops Table</caption>
-				<thead>
+				<thead className={classes.thead}>
 					<tr>
 						<th>name</th>
 						<th>command unit</th>

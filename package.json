@@ -15,6 +15,8 @@
     "chart.js": "^2.9.3",
     "concurrently": "^5.3.0",
     "csv-parser": "^2.3.3",
+    "csv-writer": "^1.6.0",
+    "d3": "^6.2.0",
     "express": "^4.17.1",
     "immutability-helper": "^3.1.1",
     "lodash": "^4.17.20",
@@ -35,7 +37,7 @@
   "scripts": {
     "start": "concurrently 'nodemon --exec npm run restart-server' 'wait-on http://localhost:3001 && react-scripts start'",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "npx jest --watch",
     "eject": "react-scripts eject",
     "build-server": "babel server -d dist",
     "start-server": "npm run build-server && node dist",

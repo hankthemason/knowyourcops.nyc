@@ -110,10 +110,17 @@ export const CopProvider = (props) => {
 		const cop = cops.find(obj => {
 			return obj.id === parseInt(id)
 		})
+		console.log(cop)
 		if (cop === undefined) {
 			fetch(`/cop/id=${id}`)
   		.then(result => result.json())
+  		.catch(error => {
+  			console.error(error)
+  		})
   		.then(incompleteCop => setIncompleteCop(incompleteCop[0]))
+  		.catch(error => {
+  			console.error(error)
+  		})
 		} else {
 			setIncompleteCop(cop)
 		}
@@ -140,7 +147,8 @@ export const CopProvider = (props) => {
 	}, [])
 
 	useEffect(() => {
-		if (incompleteCop === null || complaintsLocations === null || 
+		if (incompleteCop === null || 
+			complaintsLocations === null || 
 			complaintsDates === null || 
 			complaintsWithAllegations === null) return
 		setCop(normalizeData({

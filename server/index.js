@@ -2,12 +2,14 @@ import express from 'express'
 import { CsvHelper } from './csvHelper'
 import { Models } from './models'
 import { Search } from './search'
+import { jsonGetter } from './jsonGetter'
 
 const csv = 'ccrb_data/data.csv';
 const DB_PATH = './db/ccrb.db';
-const commandCsv = 'ccrb_data/command_abrevs.csv'
+const commandCsv = 'ccrb_data/command_abrevs_cleaned.csv'
 const allegationTypesCsv = 'ccrb_data/FADO-Table 1.csv'
 const rankAbbrevsCsv = 'ccrb_data/Rank Abbrevs-Table 1.csv'
+const nypdGeo = 'map_data/nypd_geo.geojson'
 
 const port = 3001
 
@@ -50,6 +52,10 @@ const models = new Models(DB_PATH);
 
 	app.get('/command_units/orderBy=:orderBy/order=:order/page=:page/pageSize=:pageSize', async (req, res) => {
 		res.json(await models.commandUnits.read(req.params.orderBy, req.params.order, req.params.page, req.params.pageSize));
+	})
+
+	app.get('/command_units', async (req, res) => {
+		res.json(await models.commandUnits.readAll());
 	})
 
 	app.get('/precincts', async (req, res) => {
@@ -153,6 +159,10 @@ const models = new Models(DB_PATH);
 
 	app.get('/complaint/id=:id/command_units', async (req, res) => {
 		res.json(await models.complaints.getCommandUnits(req.params.id))
+	})
+
+	app.get('/map', async (req, res) => {
+		res.json(await jsonGetter(nypdGeo))
 	})
 
 	app.listen(port, () => {

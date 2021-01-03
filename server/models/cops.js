@@ -92,6 +92,7 @@ export class Cops {
 			FROM (
 			SELECT 
 				cops.*,
+				cmd_units.id AS command_unit_id,
 				CASE 
 					WHEN COUNT(allegations.id) > 9
 					THEN (
@@ -110,14 +111,18 @@ export class Cops {
 				COUNT(DISTINCT complaints.id) AS num_complaints
 			FROM 
 				cops 
-			INNER JOIN 
+			JOIN 
 				allegations 
 			ON 
 				cops.id = allegations.cop
-				INNER JOIN
+				JOIN
 					complaints
 				ON 
 					complaints.id = allegations.complaint_id 
+				JOIN
+					command_units cmd_units
+				ON
+					cops.command_unit = cmd_units.unit_id
 			GROUP BY
 				cops.id
 			)
@@ -566,6 +571,7 @@ export class Cops {
 				FROM (
 				SELECT 
 					cops.*,
+					cmd_units.id as command_unit_id,
 					CASE 
 						WHEN COUNT(allegations.id) > 9
 						THEN (
@@ -584,14 +590,18 @@ export class Cops {
 					COUNT(DISTINCT complaints.id) AS num_complaints
 				FROM 
 					cops 
-				INNER JOIN 
+				JOIN 
 					allegations 
 				ON 
 					cops.id = allegations.cop
-					INNER JOIN
+					JOIN
 						complaints
 					ON 
 						complaints.id = allegations.complaint_id 
+					JOIN
+						command_units cmd_units
+					ON
+						cops.command_unit = cmd_units.unit_id
 				WHERE
 					cops.id = (?)
 				)
