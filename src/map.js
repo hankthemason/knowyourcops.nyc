@@ -17,7 +17,7 @@ export const PrecinctsMap = props => {
 	})
 
 	const containerRef = useRef()
-  console.log(containerRef)
+  //console.log(containerRef)
 
 	useEffect(() => {
 
@@ -53,26 +53,29 @@ export const PrecinctsMap = props => {
 			.selectAll("a")
     	.data(data.features)
     	.join("a")
-    		.attr("href", function(d) {
-          return (d.properties.id ?
-    			 (`command_unit/${d.properties.id}`) : (`command_unit/empty_precinct`))
-    		})
+      //this allows you to conditionally set an "href" attr, only for precincts that actually have allegations
+      //another alternative would be to set up a default page for precincts that don't have allegations
+      .each(function(d) {
+        const a = d3.select(this)
+        if (d.properties.id) {
+          a.attr("href", function(d) {
+            return (`command_unit/${d.properties.id}`)
+          })
+        }
+      })
+    		// .attr("href", function(d) {
+      //     return (d.properties.id ?
+    		// 	 (`command_unit/${d.properties.id}`) : (`command_unit/empty_precinct`))
+    		// })
     	.append("path")
         .attr('d', pathGenerator)
     	.attr('class', 'precinct')
-    	.attr('fill', 'transparent')
+    	.attr('fill', 'white')
     	.attr('stroke', '#999999')
-    	.attr('stroke-width', '1')
+    	.attr('stroke-width', '.2')
     	.on("mouseover", function(event,d) {
     		
     		const cmdUnit = commandUnits.filter(e => e.unit_id === d.properties.precinctString)[0]
-    		
-    		// d3.select(event.currentTarget)
-    		// 	.append("a")
-    		// 	.attr("href", `/command_unit/${cmdUnit.id}`)
-    		// 	.html("hi!!")
-
-    		
 
     		tooltip
     			.style("left", (event.pageX + 18) + "px")
@@ -80,18 +83,18 @@ export const PrecinctsMap = props => {
       		.transition()
          	.duration(200)
          	.style("opacity", .9);
+
         cmdUnit ? 
        	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
        								+ "<br>" + "Allegations: " + cmdUnit.num_allegations) : 
        	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
        								+ "<br>" + "Allegations: " + 0)
 
-
        	d3.select(event.currentTarget)
-       		.attr('stroke', '#000')
-       		.attr('stroke-width', 1)
+       		.attr('stroke', '#000000')
+       		.attr('stroke-width', .5)
        		.raise()
-       })
+      })
     	.on("mouseout", function(event, d) {
        	tooltip.transition()
         	.duration(500)
@@ -99,8 +102,9 @@ export const PrecinctsMap = props => {
 
         d3.select(event.currentTarget)
         	.attr('stroke', '#999999')
-        	.attr('stroke-width', '0.8')
+        	.attr('stroke-width', '0.2')
         	.lower()
+
        });
 	}, [])
 
