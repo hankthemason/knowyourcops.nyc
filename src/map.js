@@ -50,9 +50,17 @@ export const PrecinctsMap = props => {
   //   	.attr('stroke-width', '1')
 
   	svg.append("g")
-			.selectAll("a")
+			.selectAll("g")
     	.data(data.features)
-    	.join("a")
+    	.join("g")
+        .on("mouseover", function(event, d) {
+          d3.select(event.currentTarget)
+            .attr('stroke', '#000000')
+            .attr('stroke-width', .5)
+            .raise()
+        })
+
+      .append("a")
       //this allows you to conditionally set an "href" attr, only for precincts that actually have allegations
       //another alternative would be to set up a default page for precincts that don't have allegations
       .each(function(d) {
