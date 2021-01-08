@@ -60,7 +60,7 @@ export const NavBar = (props) => {
 		
 		return (
 	    <Typography variant="h6" component="h1">
-	    	<Link href="/cops" color="inherit">
+	    	<Link href="/cops" color="inherit" underline="none">
 	      	KnowYourCops.nyc
 	    	</Link>
 	    </Typography>
