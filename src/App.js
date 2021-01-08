@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import logo from './logo.svg';
+import { NavBar } from './components/navBar'
 import { CopsTable } from './cops';
 import { CommandUnitsTable } from './commandUnits'
 import { CopPage } from './cop';
@@ -28,56 +29,57 @@ function App() {
 
   return (
     <ViewConfigProvider>
-        <Router>
-          <Switch>
-            <Route exact path="/cop/:id">
-            <CopsProvider>
-              <CopProvider>
-                <CopPage />
-              </CopProvider>
-              </CopsProvider>
-            </Route>
-            <Route path="/cops">
-            <CopsProvider>
-              <CopsTable />
+      <Router>
+        <NavBar />
+        <Switch>
+          <Route exact path="/cop/:id">
+          <CopsProvider>
+            <CopProvider>
+              <CopPage />
+            </CopProvider>
             </CopsProvider>
-            </Route>
-            <Route path ="/command_unit/:id">
-              <CommandUnitsProvider>
-                <CommandUnitProvider>
-                  <CommandUnitPage />
-                </CommandUnitProvider>
-              </CommandUnitsProvider>
-            </Route>
-            <Route path="/command_units">
-              <CommandUnitsProvider>
-                <CommandUnitsTable />
-              </CommandUnitsProvider>
-            </Route>
-            <Route path="/search/model=:model" >
-              <SearchProvider>
-                <Search />
-              </SearchProvider>
-            </Route>
-            <Route path="/complaints">
-              <ComplaintsProvider>
-                <ComplaintsTable />
-              </ComplaintsProvider>
-            </Route>
-            <Route path="/complaint/:id">
-              <ComplaintsProvider>
-                <ComplaintProvider>
-                  <ComplaintPage />
-                </ComplaintProvider>
-              </ComplaintsProvider>
-            </Route>
-            <Route path="/precinctsMap">
-              <PrecinctsMapProvider>
-                <PrecinctsMap />
-              </PrecinctsMapProvider>
-            </Route>
-          </Switch>
-        </Router>
+          </Route>
+          <Route path="/cops">
+          <CopsProvider>
+            <CopsTable />
+          </CopsProvider>
+          </Route>
+          <Route path ="/command_unit/:id">
+            <CommandUnitsProvider>
+              <CommandUnitProvider>
+                <CommandUnitPage />
+              </CommandUnitProvider>
+            </CommandUnitsProvider>
+          </Route>
+          <Route path="/command_units">
+            <CommandUnitsProvider>
+              <CommandUnitsTable />
+            </CommandUnitsProvider>
+          </Route>
+          <Route path="/search/model=:model" >
+            <SearchProvider>
+              <Search />
+            </SearchProvider>
+          </Route>
+          <Route path="/complaints">
+            <ComplaintsProvider>
+              <ComplaintsTable />
+            </ComplaintsProvider>
+          </Route>
+          <Route path="/complaint/:id">
+            <ComplaintsProvider>
+              <ComplaintProvider>
+                <ComplaintPage />
+              </ComplaintProvider>
+            </ComplaintsProvider>
+          </Route>
+          <Route path="/precinctsMap">
+            <PrecinctsMapProvider>
+              <PrecinctsMap />
+            </PrecinctsMapProvider>
+          </Route>
+        </Switch>
+      </Router>
     </ViewConfigProvider>
   );
 }

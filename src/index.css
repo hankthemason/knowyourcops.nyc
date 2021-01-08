@@ -40,7 +40,7 @@ th {
 }
 .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus{
   background-color: #47ccde ;
-  border-color: #47ccde;
+  border-color: #0000ff;
   outline: none ;
 }
 .pagination > li > a, .pagination > li > span{

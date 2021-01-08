@@ -101,14 +101,14 @@ export const CopsTable = props => {
 							<td>
 								{`${entry.command_unit_full ? entry.command_unit_full : entry.command_unit }`}
 							</td>
-							<td>
-								{`Allegations: ${entry.num_allegations}`}
+							<td style={{textAlign: "center"}}>
+								{`${entry.num_allegations}`}
+							</td>
+							<td style={{textAlign: "center"}}>
+								{`${entry.num_substantiated}`}
 							</td>
 							<td>
-								{`Substantiated: ${entry.num_substantiated}`}
-							</td>
-							<td>
-								{`Ethnicity: ${entry.ethnicity}`}
+								{`${entry.ethnicity}`}
 							</td>
 						</tr>
 						)

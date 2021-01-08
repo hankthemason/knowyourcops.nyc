@@ -7,19 +7,25 @@ export const PrecinctsMap = props => {
 
 	const { mapData: data, commandUnits } = usePrecinctsMap()
 
-	//console.log(commandUnits)
-
   data.features.map(e => {
 		const match = commandUnits.filter(unit => unit.unit_id === e.properties.precinctString)
-		//console.log(e.properties.precinctString)
-    //console.log(match)
+    
     match.length ? e.properties.id = match[0].id : e.properties.id = null
 	})
 
+  const max = commandUnits.reduce((a, b) => {
+    //the cmdunit with the most allegations is null
+    if (b.unit_id.length) {
+      a = Math.max(a, b.num_allegations)
+    }
+    return a
+  }, 0)
+
 	const containerRef = useRef()
-  //console.log(containerRef)
 
 	useEffect(() => {
+
+    const quantizeScale = d3.scaleSequential([0, max], d3.interpolateBlues)
 
 		var tooltip = d3.select(containerRef.current)
 			.append("div")
@@ -35,7 +41,7 @@ export const PrecinctsMap = props => {
 			.attr("height", "500")
 			.attr("width", "100%")
 
-		const projection = d3.geoAlbers().fitExtent([[20, 20], [300, 300]], data)
+		const projection = d3.geoAlbers().fitExtent([[20, 20], [500, 500]], data)
 
 		const pathGenerator = d3.geoPath().projection(projection)
 
@@ -53,35 +59,44 @@ export const PrecinctsMap = props => {
 			.selectAll("g")
     	.data(data.features)
     	.join("g")
+        .attr('class', 'precinct')
+
+        .attr('stroke', '#999999')
+        .attr('stroke-width', '.2')
         .on("mouseover", function(event, d) {
           d3.select(event.currentTarget)
             .attr('stroke', '#000000')
-            .attr('stroke-width', .5)
+            .attr('stroke-width', 1)
             .raise()
         })
-
+        .on("mouseout", function(event, d) {
+          d3.select(event.currentTarget)
+            .attr('stroke', '#999999')
+            .attr('stroke-width', '0.2')
+            .lower()
+        })
       .append("a")
       //this allows you to conditionally set an "href" attr, only for precincts that actually have allegations
       //another alternative would be to set up a default page for precincts that don't have allegations
-      .each(function(d) {
-        const a = d3.select(this)
-        if (d.properties.id) {
-          a.attr("href", function(d) {
-            return (`command_unit/${d.properties.id}`)
-          })
-        }
-      })
-    		// .attr("href", function(d) {
-      //     return (d.properties.id ?
-    		// 	 (`command_unit/${d.properties.id}`) : (`command_unit/empty_precinct`))
-    		// })
+        .each(function(d) {
+          const a = d3.select(this)
+          if (d.properties.id) {
+            a.attr("href", function(d) {
+              return (`command_unit/${d.properties.id}`)
+            })
+          }
+        })
     	.append("path")
         .attr('d', pathGenerator)
-    	.attr('class', 'precinct')
-    	.attr('fill', 'white')
-    	.attr('stroke', '#999999')
-    	.attr('stroke-width', '.2')
-    	.on("mouseover", function(event,d) {
+        .attr('fill', d => {
+          const match = commandUnits.filter(e => e.unit_id === d.properties.precinctString)
+          if (match[0] != undefined) {
+            return quantizeScale(match[0].num_allegations)
+          }
+          return quantizeScale(0)
+          
+        })
+    	.on("mouseover mousemove", function(event,d) {
     		
     		const cmdUnit = commandUnits.filter(e => e.unit_id === d.properties.precinctString)[0]
 
@@ -98,21 +113,11 @@ export const PrecinctsMap = props => {
        	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
        								+ "<br>" + "Allegations: " + 0)
 
-       	d3.select(event.currentTarget)
-       		.attr('stroke', '#000000')
-       		.attr('stroke-width', .5)
-       		.raise()
       })
     	.on("mouseout", function(event, d) {
        	tooltip.transition()
         	.duration(500)
          	.style("opacity", 0);
-
-        d3.select(event.currentTarget)
-        	.attr('stroke', '#999999')
-        	.attr('stroke-width', '0.2')
-        	.lower()
-
        });
 	}, [])
 

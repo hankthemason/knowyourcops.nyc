@@ -28,7 +28,6 @@ export const PrecinctsMapProvider = props => {
 		fetch('/command_units')
 		.then(result => result.json())
 		.then(commandUnits => setCommandUnits(commandUnits))
-
 	}, [])
 
 	if (mapData) {

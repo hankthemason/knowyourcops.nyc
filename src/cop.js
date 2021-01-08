@@ -101,9 +101,9 @@ export const CopPage = (props) => {
 			<p> Number of allegations: {numAllegations} </p>
 			<p> Number of complaints: {complaints} </p>
 			<p> Number of allegations substantiated: {allegationsSubstantiated} </p>
-      <p> Current Rank: {rank} </p>
+      <p> Most Recent Rank: {rank} </p>
       <p> {'All ranks held: ' + allRanksHeld.map(e => ' ' + e)}</p>
-      <p> {`Current Assignment: `}  
+      <p> {`Most Recent Assignment: `}  
         <Link to={`/command_unit/${cop.command_unit_id}`}>
         {assignment_full ? assignment_full : assignment_abbrev}
         </Link>

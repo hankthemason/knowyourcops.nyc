@@ -1,5 +1,6 @@
 import React from 'react';
 import { useHistory, Link } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles'
 import { Button } from './components/button';
 import { DropDown } from './components/dropdown';
 import { SearchBar } from './components/searchBar';
@@ -7,7 +8,18 @@ import { Pagination } from './components/pagination';
 import { useCommandUnits } from './context/commandUnitsContext';
 import { values } from 'lodash'
 
+const useStyles = makeStyles(theme => ({
+	table: {
+		fontFamily: theme.typography.fontFamily
+		//borderCollapse: "collapse"
+	},
+	thead: {
+		backgroundColor: theme.palette.background.secondary
+	}
+}))
+
 export const CommandUnitsTable = props => {
+
 	const { commandUnits, 
 					total, 
 					setCommandUnitsViewConfig, 
@@ -69,7 +81,7 @@ export const CommandUnitsTable = props => {
 			<SearchBar handler={search} placeHolder='search for a command unit'/> 		
 			<table>
 				<caption>Command Units Table</caption>
-				<thead>
+				<thead className={useStyles().thead}>
 					<tr>
 						<th>Full Name</th>
 						<th>Abbreviation</th>
@@ -89,10 +101,10 @@ export const CommandUnitsTable = props => {
 								<td>
 									{entry.unit_id ? entry.unit_id : null}
 								</td>
-								<td>
+								<td style={{textAlign: "center"}}>
 									{entry.precinct != 'null' ? entry.precinct : ''}
 								</td>
-								<td>
+								<td style={{textAlign: "center"}}>
 									{entry.num_allegations}
 								</td>
 							</tr>
