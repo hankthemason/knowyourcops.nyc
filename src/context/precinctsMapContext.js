@@ -30,12 +30,6 @@ export const PrecinctsMapProvider = props => {
 		.then(commandUnits => setCommandUnits(commandUnits))
 	}, [])
 
-	if (mapData) {
-		mapData.features.map(e => {
-			e.properties.precinctString = e.properties.precinct.toString().padStart(3, '0') + " PCT"
-		})
-	}
-
 	return (
 		<PrecinctsMapContext.Provider value={{mapData, commandUnits}}>
 		

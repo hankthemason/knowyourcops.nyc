@@ -28,9 +28,6 @@ export const PaginatedSortTable = props => {
 					viewConfigSetter: setTableViewConfig } = props
 
 	const tableViewConfig = getTableViewConfig()
-	console.log(tableViewConfig)
-
-	//console.log(viewConfig)
 
 	const { order,
 					orderBy,

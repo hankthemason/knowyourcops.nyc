@@ -18,6 +18,7 @@ import { ComplaintPage } from './complaint'
 import { ComplaintProvider } from './context/complaintContext'
 import { PrecinctsMap } from './map.js'
 import { PrecinctsMapProvider } from './context/precinctsMapContext'
+import { MapsProvider } from './context/mapsContext'
 import {
   BrowserRouter as Router,
   Switch,
@@ -37,7 +38,7 @@ function App() {
             <CopProvider>
               <CopPage />
             </CopProvider>
-            </CopsProvider>
+          </CopsProvider>
           </Route>
           <Route path="/cops">
           <CopsProvider>
@@ -47,7 +48,9 @@ function App() {
           <Route path ="/command_unit/:id">
             <CommandUnitsProvider>
               <CommandUnitProvider>
-                <CommandUnitPage />
+                <MapsProvider>
+                  <CommandUnitPage />
+                </MapsProvider>
               </CommandUnitProvider>
             </CommandUnitsProvider>
           </Route>

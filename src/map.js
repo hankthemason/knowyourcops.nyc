@@ -25,7 +25,7 @@ export const PrecinctsMap = props => {
 
 	useEffect(() => {
 
-    const quantizeScale = d3.scaleSequential([0, max], d3.interpolateBlues)
+    const sequentialScale = d3.scaleSequential([0, max], d3.interpolateBlues)
 
 		var tooltip = d3.select(containerRef.current)
 			.append("div")
@@ -91,9 +91,9 @@ export const PrecinctsMap = props => {
         .attr('fill', d => {
           const match = commandUnits.filter(e => e.unit_id === d.properties.precinctString)
           if (match[0] != undefined) {
-            return quantizeScale(match[0].num_allegations)
+            return sequentialScale(match[0].num_allegations)
           }
-          return quantizeScale(0)
+          return sequentialScale(0)
           
         })
     	.on("mouseover mousemove", function(event,d) {

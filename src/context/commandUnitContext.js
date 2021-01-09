@@ -20,7 +20,6 @@ export const useCommandUnit = () => {
 }
 
 const normalizeData = commandUnit => {
-	console.log(commandUnit)
 
 	commandUnit.complaintsWithAllegations.map(e => {
 		e.date_received = new Date(e.date_received)

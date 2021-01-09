@@ -4,6 +4,7 @@ import { Models } from './models'
 import { Search } from './search'
 import { jsonGetter } from './jsonGetter'
 import { fileWriter } from './fileWriter'
+import { augmentGeoJson } from './scripts/augmentGeoJson'
 
 const csv = 'ccrb_data/data.csv';
 const DB_PATH = './db/ccrb.db';
@@ -11,7 +12,7 @@ const commandCsv = 'ccrb_data/command_abrevs_cleaned.csv'
 const allegationTypesCsv = 'ccrb_data/FADO-Table 1.csv'
 const rankAbbrevsCsv = 'ccrb_data/Rank Abbrevs-Table 1.csv'
 const nypdGeo = 'map_data/nypd_geo.geojson'
-const allegationsPath = './files/allegations.json'
+const mapPath = './files/nypd_geo.geojson'
 
 const port = 3001
 
@@ -34,10 +35,6 @@ const models = new Models(DB_PATH);
 	const allegationTypes = await helper.getAllegationTypes(allegationTypesCsv)
 	
 	const search = new Search(models)
-
-	const alleg = await models.allegations.read()
-
-	fileWriter(alleg, allegationsPath)
 
 	app.get('/', async (req, res) => {
 		res.send('hello')
