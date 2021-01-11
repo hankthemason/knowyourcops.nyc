@@ -34,23 +34,7 @@ export const ViewConfigProvider = props => {
 		return config[componentConfig]
 	}
 
-	const [innerContext, setInnerContext] = useState()
-	const [order, setOrder] = useState('DESC')
-	const [page, setPage] = useState(1)
-
-	const toggleOrder = () => {
-		setOrder(order === 'ASC' ? 'DESC' : 'ASC')
-	}
-
-	const [orderBy, setOrderBy] = useState(null)
-
-	const [pageSize, setPageSize] = useState(null)
-
-	const [subTableOrder, setSubTableOrder] = useState(null)
-
-	const [subTableOrderBy, setSubTableOrderBy] = useState(null)
-
-	const [currentUnit, setCurrentUnit] = useState(null)
+	console.log(config)
 
 	const viewConfig = { setViewConfig, getViewConfig }
 

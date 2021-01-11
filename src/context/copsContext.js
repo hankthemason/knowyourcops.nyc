@@ -63,6 +63,7 @@ export const CopsProvider = (props) => {
 	//paginate component
 	const [total, setTotal] = useState(0)
 
+	// maybe don't do a fetch every time to get the total number of rows?
 	useEffect(() => {
 		fetch(`/total_rows/table=cops`)
 		.then(result => result.json())

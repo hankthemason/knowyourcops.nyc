@@ -24,7 +24,7 @@ export const CopActivityMap = props => {
 	const containerRef = useRef()
 
 	const max = pageData.reduce((acc, current) => {
-		acc = current.allegations > acc ? current.allegations : acc
+		acc = current.complaints > acc ? current.complaints : acc
 		return acc
 	}, 0)
 
@@ -76,24 +76,28 @@ export const CopActivityMap = props => {
 			      		
 			    const match = pageData.filter(e => e.precinct === precinct)
 
-			    return match[0] ? sequentialScale(match[0].allegations) : 'transparent'
+			    return match[0] ? sequentialScale(match[0].complaints) : 'transparent'
 			  })
 			  .on("mouseover mousemove", function(event,d) {
     		
-		  		//const cmdUnit = commandUnits.filter(e => e.unit_id === d.properties.precinctString)[0]
+		  		const precinct = parseInt(d.properties.precinct)
+			      		
+			    const match = pageData.filter(e => e.precinct === precinct)
 
 		  		tooltip
-		  			.style("left", (event.pageX + 18) + "px")
+		  			.style("left", (event.pageX - 1000) + "px")
 		      	.style("top", (event.pageY - 28) + "px")
 		    		.transition()
 		       	.duration(200)
 		       	.style("opacity", .9);
 
-		      // cmdUnit ? 
-		     	// tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-		     	// 							+ "<br>" + "Allegations: " + cmdUnit.num_allegations) : 
-		     	// tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-		     	// 							+ "<br>" + "Allegations: " + 0)
+		      
+		     	match[0] ? tooltip.html("<strong> Precinct: " + precinct + "</strong>"
+		     								+ "<br>" + "Complaints: " + match[0].complaints) : 
+		     							tooltip.html("<strong> Precinct: " + precinct + "</strong>"
+		     								+ "<br>" + "Complaints: " + 0)
+		     
+		     	
 
       	})
 		  	.on("mouseout", function(event, d) {

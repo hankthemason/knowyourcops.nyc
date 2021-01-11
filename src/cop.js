@@ -97,7 +97,7 @@ export const CopPage = (props) => {
 
   if (cop.locationStats) {
     locationStatsArr = reduce(cop.locationStats, function(acc, val, key) {
-      acc.push({precinct: parseInt(key), allegations: val})
+      acc.push({precinct: parseInt(key), complaints: val})
       return acc
     }, [])
   }
