@@ -36,7 +36,9 @@ function App() {
           <Route exact path="/cop/:id">
           <CopsProvider>
             <CopProvider>
-              <CopPage />
+              <MapsProvider>
+                <CopPage />
+              </MapsProvider>
             </CopProvider>
           </CopsProvider>
           </Route>

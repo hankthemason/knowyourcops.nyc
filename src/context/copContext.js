@@ -110,7 +110,6 @@ export const CopProvider = (props) => {
 		const cop = cops.find(obj => {
 			return obj.id === parseInt(id)
 		})
-		console.log(cop)
 		if (cop === undefined) {
 			fetch(`/cop/id=${id}`)
   		.then(result => result.json())

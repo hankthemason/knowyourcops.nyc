@@ -14,7 +14,7 @@ export const PrecinctsMap = props => {
 	})
 
   const max = commandUnits.reduce((a, b) => {
-    //the cmdunit with the most allegations is null
+    //the cmdunit with the most allegations is null, so exclude this cmdunit
     if (b.unit_id.length) {
       a = Math.max(a, b.num_allegations)
     }

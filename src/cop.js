@@ -5,6 +5,7 @@ import { LineChart } from './components/lineChart'
 import { pick, values, reduce } from 'lodash';
 import { useCop } from './context/copContext';
 import { Link } from 'react-router-dom'
+import { CopActivityMap } from './components/copActivityMap'
 
 export const CopPage = (props) => {
 
@@ -92,10 +93,18 @@ export const CopPage = (props) => {
     e.date_closed = new Date(e.date_closed)
   })
 
-  console.log(cop)
+  let locationStatsArr
+
+  if (cop.locationStats) {
+    locationStatsArr = reduce(cop.locationStats, function(acc, val, key) {
+      acc.push({precinct: parseInt(key), allegations: val})
+      return acc
+    }, [])
+  }
 
 	return (
 		<div>
+      <CopActivityMap height={400} width={400} pageData={locationStatsArr} />
 			<p> Full name: {name}</p>
 			<p> Ethnicity: {ethnicity}</p>
 			<p> Number of allegations: {numAllegations} </p>
