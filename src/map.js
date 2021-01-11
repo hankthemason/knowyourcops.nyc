@@ -1,9 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { usePrecinctsMap } from './context/precinctsMapContext'
+import { useViewConfig } from './context/viewConfigContext'
 import * as d3 from "d3";
 import values from 'lodash'
 
 export const PrecinctsMap = props => {
+  const { setCurrentView } = useViewConfig()
+  const componentName = 'precinctsMap'
+  setCurrentView(componentName)
 
 	const { mapData: data, commandUnits } = usePrecinctsMap()
 

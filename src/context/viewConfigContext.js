@@ -23,10 +23,11 @@ export const ViewConfigProvider = props => {
 	//			componentState2: 'state'
 	//		}	
 	//	}
-	const setViewConfig = componentConfig => {
+	const setViewConfig = (componentConfig, componentName) => {
 		setConfig({
 			...config,
 			...componentConfig,
+			currentView: componentName
 		})
 	}
 
@@ -34,9 +35,15 @@ export const ViewConfigProvider = props => {
 		return config[componentConfig]
 	}
 
-	console.log(config)
+	const getCurrentView = () => {
+		return config.currentView
+	}
 
-	const viewConfig = { setViewConfig, getViewConfig }
+	const setCurrentView = componentName => {
+		config.currentView = componentName
+	}
+
+	const viewConfig = { setViewConfig, getViewConfig, getCurrentView, setCurrentView }
 
 	// useEffect(() => {
 	// 	const loadedViewConfig = window.sessionStorage.getItem('viewConfig');
@@ -53,8 +60,6 @@ export const ViewConfigProvider = props => {
 	// useEffect(() => {
 	// 	window.sessionStorage.setItem('viewConfig', JSON.stringify(viewConfig))
 	// }, [viewConfig])
-
-	
 
 	return (
 		<ViewConfigContext.Provider value={viewConfig}>

@@ -20,9 +20,11 @@ export const CommandUnitsProvider = props => {
 
 	const viewConfigName = 'commandUnitsViewConfig';
 
+	const componentName = 'commandUnits'
+
 	const { setViewConfig, getViewConfig } = useViewConfig();
 
-	const setCommandUnitsViewConfig = (viewConfig) => { setViewConfig({[viewConfigName]: viewConfig})}
+	const setCommandUnitsViewConfig = (viewConfig) => setViewConfig({[viewConfigName]: viewConfig}, componentName)
 
 	const getCommandUnitsViewConfig = () => getViewConfig(viewConfigName)
 
@@ -82,7 +84,7 @@ export const CommandUnitsProvider = props => {
 			.then(commandUnits => {setCommandUnits(commandUnits)})
 		}		
 	}, [viewConfig])
-
+	
 	const commandUnitsConfig = { commandUnits, total, setCommandUnitsViewConfig, getCommandUnitsViewConfig }
 
 	return (
