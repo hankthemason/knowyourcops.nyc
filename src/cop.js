@@ -125,9 +125,9 @@ export const CopPage = (props) => {
         ))}
       </p>
 			{percentageSubstantiated != null ? <p>Percentage of allegations substantiated: {percentageSubstantiated}% </p> : null}
-			<BarChart data={raceData} title='Allegations by complainant ethnicity'/>
-			<BarChart data={genderData} title='Allegations by complainant gender'/> 
-			<BarChart data={cop.locationStats} title='Allegations by location'/>
+			<BarChart data={raceData} title='Complaints by complainant ethnicity'/>
+			<BarChart data={genderData} title='Complaints by complainant gender'/> 
+			<BarChart data={cop.locationStats} title='Complaints by location'/>
 			<LineChart data={cop.yearlyStats} title='Complaints by year'/>
       <div>
         <BarChart data={allegationsByFado} title='Allegations by FADO type' />

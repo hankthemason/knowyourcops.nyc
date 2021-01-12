@@ -93,10 +93,6 @@ const models = new Models(DB_PATH);
 		res.json(await models.cops.getSubstantiatedPercentage(req.params.id))
 	})
 
-	app.get('/ethnicity_and_gender_percentages', async (req, res) => {
-		res.json(await models.cops.getEthnicityAndGenderPercentages())
-	})
-
 	app.get('/cop_at_time_of_complaint', async (req, res) => {
 		res.json(await models.copAtTimeOfComplaint.read())
 	})
@@ -133,10 +129,6 @@ const models = new Models(DB_PATH);
 
 	app.get('/cop/id=:id', async (req, res) => {
 		res.json(await models.cops.readCop(req.params.id))
-	})
-
-	app.get('/copp/id=:id', async (req, res) => {
-		res.json(await models.cops.readCopp(req.params.id))
 	})
 
 	app.get('/cop_at_time_of_complaint/id=:id', async (req, res) => {
