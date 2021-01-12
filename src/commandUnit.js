@@ -6,7 +6,7 @@ import { pick, values, reduce } from 'lodash';
 import { CommandUnitComplaintsTable } from './commandUnitComplaints'
 import { CopsTable } from './cops'
 import { PaginatedSortTable } from './components/paginatedSortTable'
-import { PrecinctsMap } from './components/precinctsMap'
+import { PrecinctsMap } from './components/map'
 
 export const CommandUnitPage = props => {
 
@@ -136,9 +136,13 @@ export const CommandUnitPage = props => {
     }
   ]
 
+  const mapType = 'commandUnit'
+  const mapDataPoint = ''
+  const mapFloat = 'right'
+
 	return (
 		<div>
-      <PrecinctsMap height={400} width={400} type='commandUnit' pageData={c} />
+      <PrecinctsMap height={400} width={400} type={mapType} pageData={[c]} float={mapFloat}/>
 			<p> Command Unit: {c.command_unit_full != null ? c.command_unit_full : c.unit_id } </p>
 			<p> Associated Precinct: {c.precinct}</p>
 			<p> Number of allegations:  {c.num_allegations}</p>

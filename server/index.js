@@ -56,8 +56,13 @@ const models = new Models(DB_PATH);
 		res.json(await models.commandUnits.read(req.params.orderBy, req.params.order, req.params.page, req.params.pageSize));
 	})
 
+	//right now the only components using this point are the map components
 	app.get('/command_units', async (req, res) => {
 		res.json(await models.commandUnits.readAll());
+	})
+
+	app.get('/command_units_with_precincts', async (req, res) => {
+		res.json(await models.commandUnits.commandUnitsWithPrecincts());
 	})
 
 	app.get('/precincts', async (req, res) => {

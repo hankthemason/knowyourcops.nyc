@@ -19,17 +19,23 @@ export const MapsProvider = props => {
 
 	const [ mapData, setMapData ] = useState(null)
 
+	const [ commandUnits, setCommandUnits ] = useState(null)
+
 	useEffect(() => {
 		fetch('/map')
 		.then(result => result.json())
 		.then(mapData => setMapData(mapData))
 
+		fetch('/command_units_with_precincts')
+		.then(result => result.json())
+		.then(commandUnits => setCommandUnits(commandUnits))
+
 	}, [])
 
 	return (
 		 
-		<MapsContext.Provider value ={{mapData}}>
-			{mapData ? props.children : null}
+		<MapsContext.Provider value ={{mapData, commandUnits}}>
+			{mapData && commandUnits ? props.children : null}
 		</MapsContext.Provider> 
 	)
 }

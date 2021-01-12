@@ -16,8 +16,7 @@ import { ComplaintsProvider } from './context/complaintsContext'
 import { ComplaintsTable } from './complaints'
 import { ComplaintPage } from './complaint'
 import { ComplaintProvider } from './context/complaintContext'
-import { PrecinctsMap } from './map.js'
-import { PrecinctsMapProvider } from './context/precinctsMapContext'
+import { MainMap } from './mainPrecinctsMap.js'
 import { MapsProvider } from './context/mapsContext'
 import {
   BrowserRouter as Router,
@@ -79,9 +78,13 @@ function App() {
             </ComplaintsProvider>
           </Route>
           <Route path="/precinctsMap">
-            <PrecinctsMapProvider>
-              <PrecinctsMap />
-            </PrecinctsMapProvider>
+            
+            <MapsProvider>
+            <CommandUnitsProvider>
+              <MainMap />
+            </CommandUnitsProvider>
+            </MapsProvider>
+            
           </Route>
         </Switch>
       </Router>

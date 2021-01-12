@@ -23,7 +23,7 @@ export class CommandUnits {
 		//step 1: look at command_at_incident and parse an int (precinct) from it (if it exists)
 		const match = command_unit.match(/(.*) (?:PCT)?(?:DET)?$/);
 		
-		const precinct_id = match && match[1] ? parseInt(match[1]) || null : null;
+		let precinct_id = match && match[1] ? (parseInt(match[1]) || null) : null;
 		//step 2: check precinct table to see if a corresponding row exists yet; 
 		//if not, we need to make that row in the precincts table
 
@@ -134,7 +134,6 @@ export class CommandUnits {
 	async readAll() {
 		
 		try {
-	
 			const result = await this.db.all(`
 				SELECT
 				*,
@@ -367,53 +366,6 @@ export class CommandUnits {
 		}
 	}
 
-	// SELECT
-	// 				cop_id,
-	// 				full_name,
-	// 				COUNT(*) AS num_allegations,
-	// 				COUNT(DISTINCT complaint_id) AS num_complaints
-	// 			FROM(
-	// 			SELECT
-	// 				command_units.*,
-	// 				cops.id as cop_id,
-	// 				cops.shield_no,
-	// 				cops.first_name || ' ' || cops.last_name as full_name,
-	// 				cops.rank_abbrev,
-	// 				cops.rank_full,
-	// 				cops.command_unit AS current_command,
-	// 				cops.command_unit_full AS current_command_full,
-	// 				cops.ethnicity,
-	// 				cops.gender,
-	// 				complaints.id AS complaint_id,
-	// 				allegations.id AS allegation_id
-	// 			FROM 
-	// 				command_units
-	// 			JOIN
-	// 				cop_at_time_of_complaint cop
-	// 			ON
-	// 				command_units.unit_id = cop.assignment
-	// 			JOIN
-	// 				cops
-	// 			ON
-	// 				cop.cop_id = cops.id
-	// 			JOIN
-	// 				complaints
-	// 			ON
-	// 				cop.complaint_id = complaints.id
-	// 			JOIN
-	// 				allegations
-	// 			ON
-	// 				allegations.complaint_id = complaints.id
-	// 			WHERE
-	// 				command_units.id = (?)
-	// 			)
-	// 			GROUP BY
-	// 				cop_id
-	// 			ORDER BY
-	// 				num_allegations DESC
-	// 			`
-
-
 	async getCops(id) {
 		try {
 			const results = await this.db.all(`
@@ -450,6 +402,70 @@ export class CommandUnits {
 				ORDER BY
 					num_allegations DESC
 				`, id)
+			return results
+		} catch(error) {
+			console.error(error)
+		}
+	}
+
+	//return a list of ONLY command units that have an associated precinct
+	//for use with the precincts maps
+	async commandUnitsWithPrecincts() {
+		try {
+			const results = await this.db.all(`
+				SELECT
+				*,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(black * 1.0 / num_complaints * 100.0, 2) END percentage_black_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(hispanic * 1.0 / num_complaints * 100.0, 2) END percentage_hispanic_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(asian * 1.0 / num_complaints * 100.0, 2) END percentage_asian_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(white * 1.0 / num_complaints * 100.0, 2) END percentage_white_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(ethnicity_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_ethnicity_unknown_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(male * 1.0 / num_complaints * 100.0, 2) END percentage_male_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(female * 1.0 / num_complaints * 100.0, 2) END percentage_female_complainants,
+				CASE WHEN num_complaints > 4 THEN
+				ROUND(gender_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_gender_unknown_complainants
+				FROM (
+				SELECT
+					command_units.*,
+					CASE 
+						WHEN COUNT(allegations.id) > 9
+						THEN (
+						ROUND(COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(allegations.id) * 100.0, 2))
+					END substantiated_percentage,
+					COUNT(allegations.id) AS num_allegations,
+					COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%black%' THEN complaint_id END) AS black,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%hispanic%' THEN complaint_id END) AS hispanic,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%asian%' THEN complaint_id END) AS asian,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '%white%' THEN complaint_id END) AS white,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_ethnicity LIKE '' OR complainant_ethnicity LIKE 'Other Race' THEN complaint_id END) AS ethnicity_unknown,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE 'male%' THEN complaint_id END) AS male,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '%female%' THEN complaint_id END) AS female,
+					COUNT(DISTINCT CASE WHEN complaints.complainant_gender LIKE '' THEN complaint_id END) AS gender_unknown,
+					COUNT(DISTINCT complaints.id) AS num_complaints
+				FROM 
+					command_units
+				INNER JOIN 
+					allegations
+				ON 
+					command_units.unit_id = allegations.cop_command_unit
+					INNER JOIN
+						complaints
+					ON
+						complaints.id = allegations.complaint_id
+				WHERE
+					typeof(command_units.precinct) = "integer"
+				GROUP BY 
+					command_units.unit_id
+				)
+			`)
 			return results
 		} catch(error) {
 			console.error(error)

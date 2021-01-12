@@ -19,7 +19,7 @@ export const CopActivityMap = props => {
 
 	const { height, width, pageData } = props
 
-	const { mapData } = useMaps()
+	const { mapData, commandUnits } = useMaps()
 
 	const containerRef = useRef()
 
@@ -28,8 +28,7 @@ export const CopActivityMap = props => {
 		return acc
 	}, 0)
 
-	const sequentialScale = d3.scaleSequential([0, max + 1], d3.interpolateBlues)
-
+	const sequentialScale = d3.scaleSequential([0, max], d3.interpolateBlues)
 
 	useEffect(() => {
 

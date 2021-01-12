@@ -25,7 +25,7 @@ export const PrecinctsMapProvider = props => {
 		.then(result => result.json())
 		.then(mapData => setMapData(mapData))
 
-		fetch('/command_units')
+		fetch('/command_units_with_precincts')
 		.then(result => result.json())
 		.then(commandUnits => setCommandUnits(commandUnits))
 	}, [])
