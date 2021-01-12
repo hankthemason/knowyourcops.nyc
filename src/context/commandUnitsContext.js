@@ -22,46 +22,50 @@ export const CommandUnitsProvider = props => {
 
 	const componentName = 'commandUnits'
 
-	const { setViewConfig, getViewConfig } = useViewConfig();
+	const { setViewConfig, getViewConfig, getCurrentView } = useViewConfig();
+
+	let currentView = getCurrentView()
 
 	const setCommandUnitsViewConfig = (viewConfig) => setViewConfig({[viewConfigName]: viewConfig}, componentName)
 
 	const getCommandUnitsViewConfig = () => getViewConfig(viewConfigName)
 
-	const viewConfigExists = getCommandUnitsViewConfig() != undefined
-
 	useEffect(() => {
-		setCommandUnitsViewConfig({
-			...DefaultViewConfig,
-			orderBy: {
-					id: 0,
-					title: 'Number of Allegations',
-					value: 'num_allegations'
-				},
-			orderByOptions: [
-				{
-					id: 0,
-					title: 'Number of Allegations',
-					value: 'num_allegations'
-				},
-				{
-					id: 1,
-					title: 'Command Unit Name',
-					value: 'command_unit_full'
-				},
-				{
-					id: 2,
-					title: 'Associated Precinct',
-					value: 'precinct'
-				},
-				{
-					id: 3,
-					title: 'Number of Complaints',
-					value: 'num_complaints'
-				}
-			]
-		})
-	}, [viewConfigExists])
+		if (currentView != componentName || getCommandUnitsViewConfig() === undefined) {
+			setCommandUnitsViewConfig({
+				...DefaultViewConfig,
+				orderBy: {
+						id: 0,
+						title: 'Number of Allegations',
+						value: 'num_allegations'
+					},
+				orderByOptions: [
+					{
+						id: 0,
+						title: 'Number of Allegations',
+						value: 'num_allegations'
+					},
+					{
+						id: 1,
+						title: 'Command Unit Name',
+						value: 'command_unit_full'
+					},
+					{
+						id: 2,
+						title: 'Associated Precinct',
+						value: 'precinct'
+					},
+					{
+						id: 3,
+						title: 'Number of Complaints',
+						value: 'num_complaints'
+					}
+				]
+			})
+		}
+	}, [])
+
+	const viewConfigExists = getCommandUnitsViewConfig() != undefined
 
 	const [commandUnits, setCommandUnits] = useState(null);
 	
@@ -78,7 +82,7 @@ export const CommandUnitsProvider = props => {
 	const viewConfig = getCommandUnitsViewConfig()
 
 	useEffect(() => {
-		if (viewConfigExists) {
+		if (viewConfigExists && currentView === componentName) {
 			fetch(`/command_units/orderBy=${viewConfig.orderBy.value}/order=${viewConfig.order}/page=${viewConfig.page}/pageSize=${viewConfig.pageSize.value}`)
 			.then(result => result.json())
 			.then(commandUnits => {setCommandUnits(commandUnits)})

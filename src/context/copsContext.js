@@ -83,7 +83,7 @@ export const CopsProvider = (props) => {
 	const viewConfig = getCopsViewConfig()
 	
 	useEffect(() => {
-		if (viewConfigExists) {
+		if (viewConfigExists && currentView === componentName) {
 		  fetch(`/cops/orderBy=${viewConfig.orderBy.value}/order=${viewConfig.order}/page=${viewConfig.page}/pageSize=${viewConfig.pageSize.value}`)
 		  .then(result => result.json())
 		  .then(cops => setCops(cops))
