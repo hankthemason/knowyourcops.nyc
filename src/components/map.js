@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { useMaps } from '../context/mapsContext'
+import { useViewConfig } from '../context/viewConfigContext'
 import { makeStyles } from '@material-ui/core/styles';
 import { values } from 'lodash'
 
@@ -23,6 +24,8 @@ export const PrecinctsMap = props => {
 	
 	let sequentialScale
 	let max
+
+	const tooltipLeft = float === 'right' ? -1000 : 18
 
 	//get the max value if the map is heat style
 	if (type === 'heat') {
@@ -132,7 +135,7 @@ export const PrecinctsMap = props => {
 
     				tooltip
     					//+18
-		    			.style("left", (event.pageX - 1000) + "px")
+		    			.style("left", (event.pageX + tooltipLeft) + "px")
 		        	.style("top", (event.pageY - 28) + "px")
 		      		.transition()
 		         	.duration(200)
