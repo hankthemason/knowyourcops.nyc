@@ -191,8 +191,28 @@ export class CommandUnits {
 		}
 	}
 
+	//method to get command units with no associated complaints
+	//these are units that have a cop in the db who *most recently* worked at one of these command units
+	//they are entered into the db because a row in the orig csv includes them in the 'command now' category
+	async getEmptyCommandUnit(id) {
+		try {
+			const result = await this.db.all(`
+				SELECT
+					*
+				FROM
+					command_units
+				WHERE
+					command_units.id = ${id}
+				`)
+			return result
+		} catch(error) {
+			console.error(error)
+		}
+	}
+
 	async readCommandUnit(id) {
 		try {
+			console.log(typeof(id))
 			const result = await this.db.all(`
 				SELECT
 				*,
@@ -245,6 +265,10 @@ export class CommandUnits {
 					command_units.id = (?)
 				)
 			`, id)
+			if (result[0].id === null) {
+				const emptyUnit = await this.getEmptyCommandUnit(id)
+				return emptyUnit
+			}
 			return result
 		} catch(error) {
 			console.error(error);
