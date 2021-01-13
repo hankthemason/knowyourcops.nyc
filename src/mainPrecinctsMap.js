@@ -8,6 +8,9 @@ import * as d3 from "d3";
 import values from 'lodash'
 
 export const MainMap = props => {
+  const { setCurrentView } = useViewConfig()
+  const componentName = 'precinctsMap'
+  setCurrentView(componentName)
   
   const {commandUnits} = useMaps()
 

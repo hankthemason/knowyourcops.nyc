@@ -132,7 +132,6 @@ export class CommandUnits {
 	}
 
 	async readAll() {
-		
 		try {
 			const result = await this.db.all(`
 				SELECT
