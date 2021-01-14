@@ -56,6 +56,13 @@ export class CommandUnits {
 					COUNT(*) AS rows
 				FROM
 					command_units
+				WHERE
+					command_units.unit_id IN (
+						SELECT
+							a.cop_command_unit
+						FROM
+							allegations a
+					)
 				`)
 			return result
 		} catch (error) {
