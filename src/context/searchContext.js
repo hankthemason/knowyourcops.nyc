@@ -22,7 +22,7 @@ export const SearchProvider = (props) => {
 
 	let keyword = useLocation().search.match(/\?searchquery=(.*)/)
 	if (keyword.length === 2) {
-		keyword = keyword[1]
+		keyword = keyword[1].trim()
 	}
 
 	useEffect(() => {

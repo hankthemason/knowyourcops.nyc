@@ -445,6 +445,7 @@ export class CommandUnits {
 				SELECT
 					first_name,
 					last_name,
+					shield_no,
 					cop_id AS id,
 					ethnicity, 
 					gender
@@ -455,6 +456,7 @@ export class CommandUnits {
 					c.id AS cop_id,
 					c.first_name,
 					c.last_name,
+					c.shield_no,
 					c.ethnicity,
 					c.gender
 				FROM 

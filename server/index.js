@@ -43,10 +43,9 @@ const models = new Models(DB_PATH);
 	//END POINTS
 	app.get('/search/model=:model', async (req, res) => {
 		const model = req.params.model
-	
 		//Holds value of the query param 'searchquery' 
-    const searchQuery = req.query.searchquery;
-
+    let searchQuery = req.query.searchquery;
+    
     if (searchQuery != null) {
     	res.json(await search.searchModel(model, searchQuery))
     }

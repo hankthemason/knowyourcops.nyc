@@ -13,7 +13,7 @@ import { values } from 'lodash'
 
 const useStyles = makeStyles({
   table: {
-    maxWidth: 400,
+    maxWidth: 600,
   },
 });
 
@@ -21,36 +21,38 @@ export const SimpleTable = props => {
 
 	const { title, headers, data } = props
 	const classes = useStyles()
-	console.log(data)
 
 	return (
-			<Table className={classes.table} aria-label={title}>
-				<TableHead>
-        	<TableRow>
-        		{headers.map(e => (
-        			<TableCell>{e}</TableCell>
-        			)
-        		)}
-        	</TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map(e => (
+    <div>
+    <h2>{title}</h2>
 
-            <TableRow key={e.id}>
-            	{Object.entries(e).map(obj => (
-            		obj[0] != 'id' ?
-            		obj[0] === 'fullName' ?
-            		<TableCell component="th" scope="row">
+    
+		<Table className={classes.table} aria-label={title}>
+		  <TableHead>
+        <TableRow>
+        	{headers.map(e => (
+        		<TableCell>{e}</TableCell>
+        	)
+        )}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {data.map(e => (
+          <TableRow key={e.id}>
+            {Object.entries(e).map(obj => (
+            	obj[0] != 'id' ?
+            	obj[0] === 'fullName' ?
+            	  <TableCell component="th" scope="row">
             			<Link to={`/cop/${e.id}`}>{obj[1]}</Link>
 	            	</TableCell> :
 	            	<TableCell component="th" scope="row">
 	            		{obj[1]}
 	            	</TableCell> : null	        
-            	))}
-            </TableRow>
-          ))}
-        </TableBody>
-			</Table>
-
+              ))}
+          </TableRow>
+        ))}
+      </TableBody>
+		</Table>
+  </div>
 	)
 }

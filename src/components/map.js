@@ -7,10 +7,10 @@ import { values } from 'lodash'
 
 const useStyles = makeStyles(theme => ({
 	selected: {
-		fill: theme.palette.primary.main,
+		fill: theme.palette.primary.light,
 	},
 	unselected: {
-		fill: theme.palette.background.secondary,
+		fill: 'transparent',
 	}
 }))
 

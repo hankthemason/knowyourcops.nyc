@@ -15,9 +15,10 @@ export const CommandUnitWithoutComplaints = props => {
   const mapDataPoint = ''
   const mapFloat = 'right'
 
-  const tableTitle = 'Officers Most Recently Listed In This Unit'
-  const headers = ['Full Name', 'Officer Details']
+  const tableTitle = 'Officers Assigned to This Unit As Of July 2020:'
+  const headers = ['Full Name', 'Badge Number', 'Officer Details']
   const data = cops.map(e => {
+    if (e.shield_no < 1) e.shield_no = null
     const fullName = `${e.first_name} ${e.last_name}`
     let fullGender
     const genderInitial = e.gender.toLowerCase()
@@ -31,6 +32,7 @@ export const CommandUnitWithoutComplaints = props => {
     return {
       id: e.id,
       fullName: fullName,
+      badgeNumber: e.shield_no,
       officerDetails: e.ethnicity + ' ' + fullGender
     }
   })
@@ -39,7 +41,7 @@ export const CommandUnitWithoutComplaints = props => {
   <div>
     <PrecinctsMap height={400} width={400} type={mapType} pageData={[c]} float={mapFloat}/>
     <p> Command Unit: {c.command_unit_full != null ? c.command_unit_full : c.unit_id } </p>
-    <p> Associated Precinct: {c.precinct}</p>
+    {c.precinct != 'null' ? <p> Associated Precinct: {c.precinct}</p> : null }
     <p> Note: this command unit is not directly associated with any complaints in the database.</p>
     <SimpleTable title={tableTitle} headers={headers} data={data} />
   </div>

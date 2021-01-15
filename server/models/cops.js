@@ -540,10 +540,24 @@ export class Cops {
 	}
 
 	async search(searchQuery) {
+		let results
+		if (searchQuery.includes(' ')) {
+			searchQuery = searchQuery.split(' ')
+			results = await this.searchFullName(searchQuery)
+		} else if (!isNaN(parseInt(searchQuery))) {
+			results = await this.searchBadgeNumber(parseInt(searchQuery))
+		} else {
+			results = await this.searchSingleName(searchQuery)
+		}
+		console.log(results)
+		return results
+	}		
+
+	async searchSingleName(searchQuery) {
 		try {
 			const results = {
 				type: 'cop',
-				identifier: ['last_name'],
+				identifier: ['last_name', 'shield_no'],
 				display: ['first_name', 'last_name']
 			}
 			results.results = await this.db.all(`
@@ -560,7 +574,57 @@ export class Cops {
 		} catch(error) {
 			console.error(error)
 		}
-	}		
+	}
+
+	async searchBadgeNumber(searchQuery) {
+		try {
+			const results = {
+				type: 'cop',
+				identifier: ['last_name', 'shield_no'],
+				display: ['first_name', 'last_name']
+			}
+			results.results = await this.db.all(`
+					SELECT 
+						*
+					FROM 
+						cops
+					WHERE
+						shield_no == ${searchQuery}
+			`)
+			return results
+		} catch(error) {
+			console.error(error)
+		}
+	}
+
+	async searchFullName(searchQuery) {
+		try {
+			const results = {
+				type: 'cop',
+				identifier: ['name'],
+				display: ['first_name', 'last_name']
+			}
+			results.results = await this.db.all(`
+					SELECT 
+						*
+					FROM 
+						cops
+					WHERE (
+						last_name LIKE '%${searchQuery[1]}%'
+							OR
+						last_name LIKE '%${searchQuery[0]}%'
+					)
+					AND (
+						first_name LIKE '%${searchQuery[0]}%'
+					OR
+						first_name LIKE '%${searchQuery[1]}%'
+					)
+			`)
+			return results
+		} catch(error) {
+			console.error(error)
+		}
+	}
 
 	async augment(csvPath, rankAbbrevs) {
 		await this.addCommandUnitFullColumn();

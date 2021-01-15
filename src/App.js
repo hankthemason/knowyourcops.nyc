@@ -78,13 +78,11 @@ function App() {
             </ComplaintsProvider>
           </Route>
           <Route path="/precinctsMap">
-            
             <MapsProvider>
             <CommandUnitsProvider>
               <MainMap />
             </CommandUnitsProvider>
             </MapsProvider>
-            
           </Route>
         </Switch>
       </Router>

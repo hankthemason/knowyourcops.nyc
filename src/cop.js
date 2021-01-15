@@ -12,13 +12,20 @@ export const CopPage = (props) => {
   const { cop, setCopViewConfig, getCopViewConfig } = useCop();
 
   const { orderByOptions } = getCopViewConfig()
-
+  
 	let name = cop.first_name + ' ' + cop.last_name;
 	let numAllegations = cop.num_allegations;
 	let complaints = cop.num_complaints
 	let allegationsSubstantiated = cop.num_substantiated
 	let percentageSubstantiated = cop.substantiated_percentage
 	let ethnicity = cop.ethnicity
+  let gender = cop.gender
+  if (cop.gender.toLowerCase() === 'f') {
+    gender = 'Female'
+  } else if (cop.gender.toLowerCase() === 'm') {
+    gender = 'Male'
+  }
+  let badgeNumber = cop.shield_no
   let rank = cop.rank_full
   let assignment_abbrev = cop.command_unit
   let assignment_full = cop.command_unit_full
@@ -111,6 +118,9 @@ export const CopPage = (props) => {
       <PrecinctsMap height={400} width={400} pageData={locationStatsArr} type={mapType} dataPoint={mapDataPoint} float={mapFloat} />
 			<p> Full name: {name}</p>
 			<p> Ethnicity: {ethnicity}</p>
+      <p> Gender: {gender}</p>
+      {badgeNumber > 0 ?
+      <p> Badge Number: {badgeNumber}</p> : null}
 			<p> Number of allegations: {numAllegations} </p>
 			<p> Number of complaints: {complaints} </p>
 			<p> Number of allegations substantiated: {allegationsSubstantiated} </p>

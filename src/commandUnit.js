@@ -146,7 +146,7 @@ export const CommandUnitPage = props => {
 		<div>
       <PrecinctsMap height={400} width={400} type={mapType} pageData={[c]} float={mapFloat}/>
 			<p> Command Unit: {c.command_unit_full != null ? c.command_unit_full : c.unit_id } </p>
-			<p> Associated Precinct: {c.precinct}</p>
+      {c.precinct != 'null' ? <p> Associated Precinct: {c.precinct}</p> : null}
 			<p> Number of allegations:  {c.num_allegations}</p>
 			<p> Number of complaints:  {c.num_complaints}</p>
 			<p> Number of allegations substantiated: {c.num_substantiated}  </p>
