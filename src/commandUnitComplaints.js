@@ -38,8 +38,6 @@ export const CommandUnitComplaintsTable = props => {
 
 	let complaintsTableViewConfig = getCommandUnitViewConfig().complaintsTable
 
-	console.log(complaintsTableViewConfig)
-
 	const monthNames = [
 		'January',
 		'February',

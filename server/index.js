@@ -4,6 +4,7 @@ import { Models } from './models'
 import { Search } from './search'
 import { jsonGetter } from './jsonGetter'
 import { fileWriter } from './fileWriter'
+import { augmentGeoJson } from './scripts/augmentGeoJson'
 
 const csv = 'ccrb_data/data.csv';
 const DB_PATH = './db/ccrb.db';
@@ -11,7 +12,7 @@ const commandCsv = 'ccrb_data/command_abrevs_cleaned.csv'
 const allegationTypesCsv = 'ccrb_data/FADO-Table 1.csv'
 const rankAbbrevsCsv = 'ccrb_data/Rank Abbrevs-Table 1.csv'
 const nypdGeo = 'map_data/nypd_geo.geojson'
-const allegationsPath = './files/allegations.json'
+const mapPath = './files/nypd_geo.geojson'
 
 const port = 3001
 
@@ -35,10 +36,6 @@ const models = new Models(DB_PATH);
 	
 	const search = new Search(models)
 
-	const alleg = await models.allegations.read()
-
-	fileWriter(alleg, allegationsPath)
-
 	app.get('/', async (req, res) => {
 		res.send('hello')
 	})
@@ -46,10 +43,9 @@ const models = new Models(DB_PATH);
 	//END POINTS
 	app.get('/search/model=:model', async (req, res) => {
 		const model = req.params.model
-	
 		//Holds value of the query param 'searchquery' 
-    const searchQuery = req.query.searchquery;
-
+    let searchQuery = req.query.searchquery;
+    
     if (searchQuery != null) {
     	res.json(await search.searchModel(model, searchQuery))
     }
@@ -59,8 +55,13 @@ const models = new Models(DB_PATH);
 		res.json(await models.commandUnits.read(req.params.orderBy, req.params.order, req.params.page, req.params.pageSize));
 	})
 
+	//right now the only components using this point are the map components
 	app.get('/command_units', async (req, res) => {
 		res.json(await models.commandUnits.readAll());
+	})
+
+	app.get('/command_units_with_precincts', async (req, res) => {
+		res.json(await models.commandUnits.commandUnitsWithPrecincts());
 	})
 
 	app.get('/precincts', async (req, res) => {
@@ -94,10 +95,6 @@ const models = new Models(DB_PATH);
 
 	app.get('/substantiated_percentage/id=:id', async (req, res) => {
 		res.json(await models.cops.getSubstantiatedPercentage(req.params.id))
-	})
-
-	app.get('/ethnicity_and_gender_percentages', async (req, res) => {
-		res.json(await models.cops.getEthnicityAndGenderPercentages())
 	})
 
 	app.get('/cop_at_time_of_complaint', async (req, res) => {
@@ -138,10 +135,6 @@ const models = new Models(DB_PATH);
 		res.json(await models.cops.readCop(req.params.id))
 	})
 
-	app.get('/copp/id=:id', async (req, res) => {
-		res.json(await models.cops.readCopp(req.params.id))
-	})
-
 	app.get('/cop_at_time_of_complaint/id=:id', async (req, res) => {
 		res.json(await models.cops.readCopAtTimeOfComplaint(req.params.id))
 	})
@@ -152,6 +145,11 @@ const models = new Models(DB_PATH);
 
 	app.get('/command_unit/id=:id/cops', async (req, res) => {
 		res.json(await models.commandUnits.getCops(req.params.id))
+	})
+
+	//this is to get all the cops associated with a command unit that has now complaints directly associated with it
+	app.get('/command_unit/complaints=0/id=:id/cops', async (req, res) => {
+		res.json(await models.commandUnits.getCopsForCommandUnitWithoutComplaints(req.params.id))
 	})
 
 	app.get('/complaints/orderBy=:orderBy/order=:order/page=:page/pageSize=:pageSize', async (req, res) => {

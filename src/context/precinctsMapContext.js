@@ -25,16 +25,10 @@ export const PrecinctsMapProvider = props => {
 		.then(result => result.json())
 		.then(mapData => setMapData(mapData))
 
-		fetch('/command_units')
+		fetch('/command_units_with_precincts')
 		.then(result => result.json())
 		.then(commandUnits => setCommandUnits(commandUnits))
 	}, [])
-
-	if (mapData) {
-		mapData.features.map(e => {
-			e.properties.precinctString = e.properties.precinct.toString().padStart(3, '0') + " PCT"
-		})
-	}
 
 	return (
 		<PrecinctsMapContext.Provider value={{mapData, commandUnits}}>

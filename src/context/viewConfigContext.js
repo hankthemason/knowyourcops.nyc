@@ -23,10 +23,11 @@ export const ViewConfigProvider = props => {
 	//			componentState2: 'state'
 	//		}	
 	//	}
-	const setViewConfig = componentConfig => {
+	const setViewConfig = (componentConfig, componentName) => {
 		setConfig({
 			...config,
 			...componentConfig,
+			currentView: componentName
 		})
 	}
 
@@ -34,25 +35,15 @@ export const ViewConfigProvider = props => {
 		return config[componentConfig]
 	}
 
-	const [innerContext, setInnerContext] = useState()
-	const [order, setOrder] = useState('DESC')
-	const [page, setPage] = useState(1)
-
-	const toggleOrder = () => {
-		setOrder(order === 'ASC' ? 'DESC' : 'ASC')
+	const getCurrentView = () => {
+		return config.currentView
 	}
 
-	const [orderBy, setOrderBy] = useState(null)
+	const setCurrentView = componentName => {
+		config.currentView = componentName
+	}
 
-	const [pageSize, setPageSize] = useState(null)
-
-	const [subTableOrder, setSubTableOrder] = useState(null)
-
-	const [subTableOrderBy, setSubTableOrderBy] = useState(null)
-
-	const [currentUnit, setCurrentUnit] = useState(null)
-
-	const viewConfig = { setViewConfig, getViewConfig }
+	const viewConfig = { setViewConfig, getViewConfig, getCurrentView, setCurrentView }
 
 	// useEffect(() => {
 	// 	const loadedViewConfig = window.sessionStorage.getItem('viewConfig');
@@ -69,8 +60,6 @@ export const ViewConfigProvider = props => {
 	// useEffect(() => {
 	// 	window.sessionStorage.setItem('viewConfig', JSON.stringify(viewConfig))
 	// }, [viewConfig])
-
-	
 
 	return (
 		<ViewConfigContext.Provider value={viewConfig}>

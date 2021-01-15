@@ -26,3 +26,4 @@ yarn-error.log*
 /db
 /ccrb_data
 /dist
+/files

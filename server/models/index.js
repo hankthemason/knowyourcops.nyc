@@ -78,7 +78,6 @@ export class Models {
 		for (const result of results) {
 			allegationTypes.push(result.['Allegation type'])
 		}
-		console.log(allegationTypes)
 		return allegationTypes;
 	}
 }

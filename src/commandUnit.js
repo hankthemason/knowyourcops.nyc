@@ -1,17 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useCommandUnit } from './context/commandUnitContext'; 
 import { BarChart } from './components/barChart'
 import { LineChart } from './components/lineChart'
 import { pick, values, reduce } from 'lodash';
 import { CommandUnitComplaintsTable } from './commandUnitComplaints'
-import { CopsTable } from './cops'
 import { PaginatedSortTable } from './components/paginatedSortTable'
+import { PrecinctsMap } from './components/map'
+import { CommandUnitWithoutComplaints } from './commandUnitWithoutComplaints.js'
 
 export const CommandUnitPage = props => {
 
 	const { commandUnit: c, 
           setCommandUnitViewConfig, 
-          getCommandUnitViewConfig } = useCommandUnit()
+          getCommandUnitViewConfig, 
+          commandUnitWithoutComplaints,
+          commandUnitWithoutComplaintsCops } = useCommandUnit()
+  
+  if (commandUnitWithoutComplaints != undefined) {
+    return (
+      <CommandUnitWithoutComplaints data={{commandUnitWithoutComplaints, commandUnitWithoutComplaintsCops}} />
+      )
+  }
 
   const complaintsTableExists = getCommandUnitViewConfig() != undefined
 
@@ -21,8 +30,6 @@ export const CommandUnitPage = props => {
   if (complaintsTableExists) {
      complaintsTableOrderByOptions = getCommandUnitViewConfig().complaintsTable.orderByOptions
   }
-
-  //rewrite these functions so that they don't overwrite the viewConfig
 
   const getCopsTableViewConfig = () => {
     return getCommandUnitViewConfig().copsTable
@@ -45,10 +52,6 @@ export const CommandUnitPage = props => {
       complaintsTable: {object}
     })
   }
-
-
-
-  const [id, setId] = useState(null)
 
   const raceData = pick(c, ['black', 
                         		'hispanic', 
@@ -135,10 +138,15 @@ export const CommandUnitPage = props => {
     }
   ]
 
+  const mapType = 'commandUnit'
+  const mapDataPoint = ''
+  const mapFloat = 'right'
+
 	return (
 		<div>
+      <PrecinctsMap height={400} width={400} type={mapType} pageData={[c]} float={mapFloat}/>
 			<p> Command Unit: {c.command_unit_full != null ? c.command_unit_full : c.unit_id } </p>
-			<p> Associated Precinct: {c.precinct}</p>
+      {c.precinct != 'null' ? <p> Associated Precinct: {c.precinct}</p> : null}
 			<p> Number of allegations:  {c.num_allegations}</p>
 			<p> Number of complaints:  {c.num_complaints}</p>
 			<p> Number of allegations substantiated: {c.num_substantiated}  </p>

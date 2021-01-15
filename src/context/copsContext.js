@@ -16,46 +16,56 @@ export const CopsProvider = (props) => {
 
 	const viewConfigName = 'copsViewConfig';
 
-	const { setViewConfig, getViewConfig } = useViewConfig();
+	const componentName = 'cops'
 
-	const setCopsViewConfig = (viewConfig) => setViewConfig({[viewConfigName]: viewConfig})
+	const { setViewConfig, getViewConfig, getCurrentView } = useViewConfig();
 
-	const getCopsViewConfig = () => getViewConfig(viewConfigName)
+	let currentView = getCurrentView()
 
-	const viewConfigExists = getCopsViewConfig() != undefined
+	const setCopsViewConfig = (viewConfig) => setViewConfig({[viewConfigName]: viewConfig}, componentName)
+
+	const getCopsViewConfig = () => {
+		return getViewConfig(viewConfigName)
+	}
 
 	useEffect(() => {
-		setCopsViewConfig({
-			...DefaultViewConfig,
-			orderBy: {
-					id: 0,
-					title: 'Number of Allegations',
-					value: 'num_allegations'
-				},
-			orderByOptions: [
-				{
-					id: 0,
-					title: 'Number of Allegations',
-					value: 'num_allegations'
-				},
-				{
-					id: 1,
-					title: 'Name',
-					value: 'last_name'
-				},
-				{
-					id: 2,
-					title: 'Command Unit',
-					value: 'command_unit_full'
-				},
-				{
-					id: 3,
-					title: 'Number of Substantiated Allegations',
-					value: 'num_substantiated'
-				}
-			] 
-		})
-	}, [viewConfigExists]);
+		//case 1: you are navigating from a different part of the site (so far there are 3)
+		//case 2: no viewConfig has been made yet and you need the default
+		if (currentView != componentName || getCopsViewConfig() === undefined) {
+			setCopsViewConfig({
+				...DefaultViewConfig,
+				orderBy: {
+						id: 0,
+						title: 'Number of Allegations',
+						value: 'num_allegations'
+					},
+				orderByOptions: [
+					{
+						id: 0,
+						title: 'Number of Allegations',
+						value: 'num_allegations'
+					},
+					{
+						id: 1,
+						title: 'Name',
+						value: 'last_name'
+					},
+					{
+						id: 2,
+						title: 'Command Unit',
+						value: 'command_unit_full'
+					},
+					{
+						id: 3,
+						title: 'Number of Substantiated Allegations',
+						value: 'num_substantiated'
+					}
+				] 
+			})
+		}
+	}, [])
+
+	const viewConfigExists = getCopsViewConfig() != undefined
 
 	const [cops, setCops] = useState(null)
 
@@ -63,6 +73,7 @@ export const CopsProvider = (props) => {
 	//paginate component
 	const [total, setTotal] = useState(0)
 
+	// maybe don't do a fetch every time to get the total number of rows?
 	useEffect(() => {
 		fetch(`/total_rows/table=cops`)
 		.then(result => result.json())
@@ -70,9 +81,9 @@ export const CopsProvider = (props) => {
 	}, [])
 
 	const viewConfig = getCopsViewConfig()
-
+	
 	useEffect(() => {
-		if (viewConfigExists) {
+		if (viewConfigExists && currentView === componentName) {
 		  fetch(`/cops/orderBy=${viewConfig.orderBy.value}/order=${viewConfig.order}/page=${viewConfig.page}/pageSize=${viewConfig.pageSize.value}`)
 		  .then(result => result.json())
 		  .then(cops => setCops(cops))
@@ -80,6 +91,8 @@ export const CopsProvider = (props) => {
   }, [viewConfig])
 
 	const copsConfig = { cops, total, setCopsViewConfig, getCopsViewConfig }
+
+	//console.log(viewConfig)
 
 	//const copsViewConfig = { total, page, setPage, pageSize, setPageSize, pageSizeOptions, orderBy, setOrderBy, orderByOptions, order, setOrder, toggleOrder }
 

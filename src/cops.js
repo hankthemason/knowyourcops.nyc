@@ -70,23 +70,26 @@ export const CopsTable = props => {
 
   let history = useHistory()
 
-  let model = 'cops'
+  const model = 'cops'
   
 	function search(v) {
-		history.push(`/search/model=${model}?searchquery=${v}`);
+		history.push(`/search/model=${model}?searchquery=${v}`)
 	}
+
+	const placeHolder = 'search by first or last name, full name, or badge #'
 
 	return (
 		<div>
+			<SearchBar handler={search} placeHolder={placeHolder}/>
 			<Button display={order === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
 			<DropDown options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>
-			<SearchBar handler={search} placeHolder='search for a cop'/> 
 			<table className={classes.table}>
 				<caption>Cops Table</caption>
 				<thead className={classes.thead}>
 					<tr>
 						<th>name</th>
 						<th>command unit</th>
+						<th>badge number</th>
 						<th>number of allegations</th>
 						<th>allegations substantiated</th>
 						<th>ethnicity</th>
@@ -100,6 +103,9 @@ export const CopsTable = props => {
 							</td>
 							<td>
 								{`${entry.command_unit_full ? entry.command_unit_full : entry.command_unit }`}
+							</td>
+							<td style={{textAlign: "center"}}>
+								{entry.shield_no > 0 ? entry.shield_no : null}
 							</td>
 							<td style={{textAlign: "center"}}>
 								{`${entry.num_allegations}`}

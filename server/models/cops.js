@@ -197,53 +197,6 @@ export class Cops {
 		}
 	}
 
-	// async getComplaints(id) {
-	// 	try {
-	// 		const result = await this.db.all(`
-	// 			SELECT
-	// 				complaints.*,
-	// 				COUNT(CASE WHEN a.complaint_id = complaints.id THEN 1 END) AS num_allegations_on_complaint,
-	// 				JSON_GROUP_ARRAY(JSON_OBJECT('allegation_id',
-	// 																			a.id,
-	// 																			'complaint_id',
-	// 																			a.complaint_id,
-	// 																			'cop_command_unit', 
-	// 																			a.cop_command_unit,
-	// 																			'precinct',
-	// 																			a.precinct,
-	// 																			'fado_type',
-	// 																			a.fado_type,
-	// 																			'description',
-	// 																			a.description,
-	// 																			'board_disposition',
-	// 																			a.board_disposition)) as allegations
-	// 			FROM
-	// 				cops
-	// 			JOIN
-	// 			 allegations a
-	// 			ON
-	// 				a.cop = cops.id
-	// 			JOIN
-	// 				complaints
-	// 			ON
-	// 				complaints.id = a.complaint_id
-	// 			WHERE
-	// 				cops.id = '${id}'
-	// 			GROUP BY
-	// 				complaints.id
-	// 		`)
-	// 		//the allegations propery is not correctly formatted as a JSON object
-	// 		result.map(e => {
-	// 			e.allegations = JSON.parse(e.allegations)
-	// 			e.date_received = new Date(e.date_received + ' 12:00:00 GMT-0400')
-	// 			e.date_closed = new Date(e.date_closed + ' 12:00:00 GMT-0400')
-	// 		})
-	// 		return result
-	// 	} catch (error) {
-	// 		console.error(error)
-	// 	}
-	// }
-
 	//updated to include join with cop_at_time_of_complaint
 	async getComplaints(id) {
 		try {
@@ -417,74 +370,8 @@ export class Cops {
 		}
 	}
 
-	async getEthnicityAndGenderPercentages() {
-		try {
-			const result = await this.db.all(`
-				SELECT
-					cop_id,
-					first_name,
-					last_name,
-					gender,
-					num_complaints,
-					ROUND(black * 1.0 / num_complaints * 1.0 * 100.0, 2) AS black_percentage,
-					ROUND(hispanic * 1.0 / num_complaints * 1.0 * 100.0, 2) AS hispanic_percentage,
-					ROUND(white * 1.0 / num_complaints * 1.0 * 100.0, 2) AS white_percentage,
-					ROUND(asian * 1.0 / num_complaints * 1.0 * 100.0, 2) AS asian_percentage,
-					ROUND(ethnicity_unknown * 1.0 / num_complaints * 1.0 * 100.0, 2) AS ethnicity_unknown_percentage,
-					ROUND(male * 1.0 / num_complaints * 1.0 * 100.0, 2) AS male_percentage,
-					ROUND(female * 1.0 / num_complaints * 1.0 * 100.0, 2) AS female_percentage,
-					ROUND(gender_unknown * 1.0 / num_complaints * 1.0 * 100.0, 2) AS gender_unknown_percentage
-				FROM (
-					SELECT
-						cop_id,
-						first_name,
-						last_name,
-						gender,
-						COUNT(*) as num_complaints,
-						COUNT(CASE WHEN complainant_ethnicity LIKE '%BLACK%' THEN 1 END) AS black,
-						COUNT(CASE WHEN complainant_ethnicity LIKE '%HISPANIC%' THEN 1 END) AS hispanic,
-						COUNT(CASE WHEN complainant_ethnicity LIKE '%WHITE%' THEN 1 END) AS white,
-						COUNT(CASE WHEN complainant_ethnicity LIKE '%ASIAN%' THEN 1 END) AS asian,
-						COUNT(CASE WHEN complainant_ethnicity LIKE '' THEN 1 END) AS ethnicity_unknown,
-						COUNT(CASE WHEN complainant_gender LIKE 'MALE%' THEN 1 END) AS male,
-						COUNT(CASE WHEN complainant_gender LIKE '%FEMALE%' THEN 1 END) AS female,
-						COUNT(CASE WHEN complainant_gender LIKE '' THEN 1 END) AS gender_unknown
-						FROM(
-							SELECT DISTINCT
-								*
-							FROM (
-								SELECT
-									cops.*,
-									cops.id as cop_id,
-									c.id as complaint_id,
-									c.complainant_ethnicity,
-									c.complainant_gender
-								FROM 
-									cops
-								INNER JOIN
-									allegations a
-								ON
-									a.cop = cops.id
-									INNER JOIN
-										complaints c
-									ON
-										c.id = a.complaint_id)
-								)
-							GROUP BY 
-								cop_id)
-				WHERE
-					num_complaints > 4
-				GROUP BY
-					cop_id
-			ORDER BY
-				female_percentage DESC
-				`)
-			return result
-		} catch (error) {
-			console.error(error)
-		}
-	}
-
+	//returns the total count of *complaints* a cop has in each precinct, 
+	//using the complaints.precinct row 
 	async getComplaintsLocations(id) {
 		try {
 			const result = await this.db.all(`
@@ -621,42 +508,6 @@ export class Cops {
 		}
 	}
 
-	async readCopp(id) {
-		try {
-			const result = await this.db.all(`
-				SELECT 
-					COUNT(DISTINCT CASE WHEN complainant_ethnicity LIKE '%black%' THEN id END) AS black
-				FROM(
-				SELECT
-					cop.rank AS cop_at_time_rank, 
-					cop.assignment AS cop_at_time_assignment,
-					complaints.*
-				FROM 
-					cops 
-				JOIN
-					cop_at_time_of_complaint cop
-				ON
-					cops.id = cop.cop_id
-				JOIN
-					allegations
-				ON
-					allegations.cop = cops.id
-				JOIN
-					complaints
-				ON
-					complaints.id = allegations.cop
-				WHERE
-					cops.id = (?)
-				GROUP BY
-					allegations.id)
-			`, id)
-			return result
-
-		} catch(error) {
-			console.error(error);
-		}
-	}
-
 	async readOne(id) {
 		try {
 			const result = await this.db.get(`
@@ -689,10 +540,24 @@ export class Cops {
 	}
 
 	async search(searchQuery) {
+		let results
+		if (searchQuery.includes(' ')) {
+			searchQuery = searchQuery.split(' ')
+			results = await this.searchFullName(searchQuery)
+		} else if (!isNaN(parseInt(searchQuery))) {
+			results = await this.searchBadgeNumber(parseInt(searchQuery))
+		} else {
+			results = await this.searchSingleName(searchQuery)
+		}
+		console.log(results)
+		return results
+	}		
+
+	async searchSingleName(searchQuery) {
 		try {
 			const results = {
 				type: 'cop',
-				identifier: ['last_name'],
+				identifier: ['last_name', 'shield_no'],
 				display: ['first_name', 'last_name']
 			}
 			results.results = await this.db.all(`
@@ -709,7 +574,57 @@ export class Cops {
 		} catch(error) {
 			console.error(error)
 		}
-	}		
+	}
+
+	async searchBadgeNumber(searchQuery) {
+		try {
+			const results = {
+				type: 'cop',
+				identifier: ['last_name', 'shield_no'],
+				display: ['first_name', 'last_name']
+			}
+			results.results = await this.db.all(`
+					SELECT 
+						*
+					FROM 
+						cops
+					WHERE
+						shield_no == ${searchQuery}
+			`)
+			return results
+		} catch(error) {
+			console.error(error)
+		}
+	}
+
+	async searchFullName(searchQuery) {
+		try {
+			const results = {
+				type: 'cop',
+				identifier: ['name'],
+				display: ['first_name', 'last_name']
+			}
+			results.results = await this.db.all(`
+					SELECT 
+						*
+					FROM 
+						cops
+					WHERE (
+						last_name LIKE '%${searchQuery[1]}%'
+							OR
+						last_name LIKE '%${searchQuery[0]}%'
+					)
+					AND (
+						first_name LIKE '%${searchQuery[0]}%'
+					OR
+						first_name LIKE '%${searchQuery[1]}%'
+					)
+			`)
+			return results
+		} catch(error) {
+			console.error(error)
+		}
+	}
 
 	async augment(csvPath, rankAbbrevs) {
 		await this.addCommandUnitFullColumn();
