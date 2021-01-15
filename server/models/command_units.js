@@ -219,7 +219,6 @@ export class CommandUnits {
 
 	async readCommandUnit(id) {
 		try {
-			console.log(typeof(id))
 			const result = await this.db.all(`
 				SELECT
 				*,
@@ -396,6 +395,7 @@ export class CommandUnits {
 		}
 	}
 
+	//get all cops who have an allegation against them while working at command_unit.id = id
 	async getCops(id) {
 		try {
 			const results = await this.db.all(`
@@ -431,6 +431,42 @@ export class CommandUnits {
 					cop_id
 				ORDER BY
 					num_allegations DESC
+				`, id)
+			return results
+		} catch(error) {
+			console.error(error)
+		}
+	}
+
+	//cops who have command_unit.unit_id = id listed as "rank now"
+	async getCopsForCommandUnitWithoutComplaints(id) {
+		try {
+			const results = await this.db.all(`
+				SELECT
+					first_name,
+					last_name,
+					cop_id AS id,
+					ethnicity, 
+					gender
+				FROM
+					(
+				SELECT
+					command_units.*,
+					c.id AS cop_id,
+					c.first_name,
+					c.last_name,
+					c.ethnicity,
+					c.gender
+				FROM 
+					command_units
+				JOIN
+					cops c
+				ON
+					c.command_unit = command_units.unit_id
+				WHERE
+					command_units.id = (?))
+				GROUP BY
+					cop_id
 				`, id)
 			return results
 		} catch(error) {

@@ -1,18 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useCommandUnit } from './context/commandUnitContext'; 
 import { BarChart } from './components/barChart'
 import { LineChart } from './components/lineChart'
 import { pick, values, reduce } from 'lodash';
 import { CommandUnitComplaintsTable } from './commandUnitComplaints'
-import { CopsTable } from './cops'
 import { PaginatedSortTable } from './components/paginatedSortTable'
 import { PrecinctsMap } from './components/map'
+import { CommandUnitWithoutComplaints } from './commandUnitWithoutComplaints.js'
 
 export const CommandUnitPage = props => {
 
 	const { commandUnit: c, 
           setCommandUnitViewConfig, 
-          getCommandUnitViewConfig } = useCommandUnit()
+          getCommandUnitViewConfig, 
+          commandUnitWithoutComplaints,
+          commandUnitWithoutComplaintsCops } = useCommandUnit()
+  
+  if (commandUnitWithoutComplaints != undefined) {
+    return (
+      <CommandUnitWithoutComplaints data={{commandUnitWithoutComplaints, commandUnitWithoutComplaintsCops}} />
+      )
+  }
 
   const complaintsTableExists = getCommandUnitViewConfig() != undefined
 
@@ -22,8 +30,6 @@ export const CommandUnitPage = props => {
   if (complaintsTableExists) {
      complaintsTableOrderByOptions = getCommandUnitViewConfig().complaintsTable.orderByOptions
   }
-
-  //rewrite these functions so that they don't overwrite the viewConfig
 
   const getCopsTableViewConfig = () => {
     return getCommandUnitViewConfig().copsTable
@@ -46,10 +52,6 @@ export const CommandUnitPage = props => {
       complaintsTable: {object}
     })
   }
-
-
-
-  const [id, setId] = useState(null)
 
   const raceData = pick(c, ['black', 
                         		'hispanic', 

@@ -20,7 +20,6 @@ export const useCommandUnit = () => {
 }
 
 const normalizeData = commandUnit => {
-	console.log(commandUnit)
 
 	commandUnit.complaintsWithAllegations.map(e => {
 		e.date_received = new Date(e.date_received)
@@ -64,6 +63,8 @@ export const CommandUnitProvider = (props) => {
 	const getCommandUnitViewConfig = () => getViewConfig(viewConfigName)
 
 	const [commandUnit, setCommandUnit] = useState();
+
+	const [commandUnitWithoutComplaints, setCommandUnitWithoutComplaints] = useState()
 
 	const viewConfigExists = getCommandUnitViewConfig() != undefined
 
@@ -152,6 +153,7 @@ export const CommandUnitProvider = (props) => {
 
 	const [incompleteCommandUnit, setIncompleteCommandUnit] = useState(null)
 
+	//if commandUnit is in the already-fetched list of commandUnits, no need for another fetch
 	useEffect(() => {
 		const commandUnit = commandUnits.find(obj => {
 				return obj.id === parseInt(id)
@@ -168,6 +170,7 @@ export const CommandUnitProvider = (props) => {
 	const [complaintsDates, setComplaintsDates] = useState(null)
 	const [complaintsWithAllegations, setComplaintsWithAllegations] = useState(null)
 	const [cops, setCops] = useState(null)
+	const [commandUnitWithoutComplaintsCops, setCommandUnitWithoutComplaintsCops] = useState(null)
 
 	useEffect(() => {
     fetch(`/command_unit_complaints/years/id=${id}`)
@@ -185,7 +188,7 @@ export const CommandUnitProvider = (props) => {
 		if (complaintsDates === null || 
 				complaintsWithAllegations === null ||
 				cops === null) return
-		if (incompleteCommandUnit !== null) {
+		if (incompleteCommandUnit !== null && complaintsWithAllegations.length) {
 			setCommandUnit(normalizeData({
 				...incompleteCommandUnit, 
 				yearlyStats: complaintsDates,
@@ -193,13 +196,24 @@ export const CommandUnitProvider = (props) => {
 				cops: cops
 			}))
 		}
+		if (incompleteCommandUnit && !complaintsDates.length && !complaintsWithAllegations.length && !cops.length) {
+			setCommandUnitWithoutComplaints(incompleteCommandUnit)	
+		}
 	}, [incompleteCommandUnit, complaintsDates, complaintsWithAllegations, cops])
 
-	const commandUnitConfig = { commandUnit, setCommandUnitViewConfig, getCommandUnitViewConfig }
-	
+	useEffect(() => {
+		if (commandUnitWithoutComplaints != undefined) {
+			fetch(`/command_unit/complaints=0/id=${id}/cops`)
+			.then(result => result.json())
+			.then(commandUnitWithoutComplaintsCops => setCommandUnitWithoutComplaintsCops(commandUnitWithoutComplaintsCops))
+		}
+	}, [commandUnitWithoutComplaints])
+
+	const commandUnitConfig = { commandUnit, setCommandUnitViewConfig, getCommandUnitViewConfig, commandUnitWithoutComplaints, commandUnitWithoutComplaintsCops }
+
 	return (
 		<CommandUnitContext.Provider value={ commandUnitConfig }>
-			{ commandUnit ? props.children : null}
+			{ commandUnit || (commandUnitWithoutComplaints && commandUnitWithoutComplaintsCops) ? props.children : null}
 		</CommandUnitContext.Provider>
 	)
 }

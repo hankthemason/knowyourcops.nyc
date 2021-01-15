@@ -2,7 +2,7 @@ import React, {useState, useEffect } from 'react';
 import { CopComplaintsTable } from './copComplaints'
 import { BarChart } from './components/barChart'
 import { LineChart } from './components/lineChart'
-import { pick, values, reduce } from 'lodash';
+import { pick, reduce } from 'lodash';
 import { useCop } from './context/copContext';
 import { Link } from 'react-router-dom'
 import { PrecinctsMap } from './components/map'

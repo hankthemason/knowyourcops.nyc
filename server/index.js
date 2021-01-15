@@ -148,6 +148,11 @@ const models = new Models(DB_PATH);
 		res.json(await models.commandUnits.getCops(req.params.id))
 	})
 
+	//this is to get all the cops associated with a command unit that has now complaints directly associated with it
+	app.get('/command_unit/complaints=0/id=:id/cops', async (req, res) => {
+		res.json(await models.commandUnits.getCopsForCommandUnitWithoutComplaints(req.params.id))
+	})
+
 	app.get('/complaints/orderBy=:orderBy/order=:order/page=:page/pageSize=:pageSize', async (req, res) => {
 		res.json(await models.complaints.read(req.params.orderBy, req.params.order, req.params.page, req.params.pageSize));
 	})
