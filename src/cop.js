@@ -32,10 +32,12 @@ export const CopPage = (props) => {
 
   let raceData;
 
-	raceData = pick(cop, ['black', 
-                        'hispanic', 
-                        'asian', 
-                        'white', 
+	raceData = pick(cop, ['american_indian',
+                        'asian',
+                        'black', 
+                        'hispanic',  
+                        'white',
+                        'other_ethnicity', 
                         'ethnicity_unknown'])
 
   let genderData;

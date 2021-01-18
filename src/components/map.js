@@ -22,6 +22,13 @@ export const PrecinctsMap = props => {
 	//get the page-specific data
 	const { height, width, type, dataPoint, pageData, float } = props
 	
+	let tooltipLabel
+	if (dataPoint === 'num_allegations') {
+		tooltipLabel = 'Allegations'
+	} else if (dataPoint === 'num_complaints') {
+		tooltipLabel = 'Complaints'
+	}
+
 	let sequentialScale
 	let max
 
@@ -143,9 +150,9 @@ export const PrecinctsMap = props => {
 		        if (type === 'heat') {
 			        match ? 
 			       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-			       								+ "<br>" + `${dataPoint}: ` + match[dataPoint]) : 
+			       								+ "<br>" + `${tooltipLabel}: ` + match[dataPoint]) : 
 			       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-			       								+ "<br>" + `${dataPoint}: ` + 0)
+			       								+ "<br>" + `${tooltipLabel}: ` + 0)
 		       	} else if (type === 'commandUnit') {
 		       		tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>")
 		       	}
