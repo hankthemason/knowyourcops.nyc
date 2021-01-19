@@ -100,11 +100,7 @@ const models = new Models(DB_PATH);
 	app.get('/cop_at_time_of_complaint', async (req, res) => {
 		res.json(await models.copAtTimeOfComplaint.read())
 	})
-
-	app.get('/cop_complaints/complainant_info/id=:id', async (req, res) => {
-		res.json(await models.cops.getComplaintsComplainants(req.params.id))
-	})
-
+	
 	app.get('/cop_complaints/locations/id=:id', async (req, res) => {
 		res.json(await models.cops.getComplaintsLocations(req.params.id))
 	})

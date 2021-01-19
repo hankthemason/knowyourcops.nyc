@@ -6,7 +6,6 @@ import { DropDown } from './components/dropdown';
 import { SearchBar } from './components/searchBar';
 import { Pagination } from './components/pagination';
 import { useCommandUnits } from './context/commandUnitsContext';
-import { values } from 'lodash'
 
 const useStyles = makeStyles(theme => ({
 	table: {

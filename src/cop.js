@@ -2,7 +2,7 @@ import React, {useState, useEffect } from 'react';
 import { CopComplaintsTable } from './copComplaints'
 import { BarChart } from './components/barChart'
 import { LineChart } from './components/lineChart'
-import { pick, reduce } from 'lodash';
+import { pick, reduce, keys } from 'lodash';
 import { useCop } from './context/copContext';
 import { Link } from 'react-router-dom'
 import { PrecinctsMap } from './components/map'
@@ -40,11 +40,31 @@ export const CopPage = (props) => {
                         'other_ethnicity', 
                         'ethnicity_unknown'])
 
+  const raceDataLabels = keys(raceData).map(e => {
+    if (e === 'american_indian') e = 'American Indian'
+    else if (e === 'other_ethnicity') e = 'Other'
+    else if (e === 'ethnicity_unknown') e = 'Unknown'
+    return e = e.charAt(0).toUpperCase() + e.slice(1)
+  })
+
   let genderData;
 
   genderData = pick(cop, ['male', 
-                          'female', 
+                          'female',
+                          'trans_male',
+                          'trans_female',
+                          'gender_non_conforming',
                           'gender_unknown'])
+
+  const genderDataLabels = keys(genderData).map(e => {
+    if (e === 'trans_male') e = 'Male (trans)'
+    else if (e === 'trans_female') e = 'Female (trans)'
+    else if (e === 'gender_non_conforming') e = 'Gender Non-conforming'
+    else if (e === 'gender_unknown') e = 'Unknown'
+    return e = e.charAt(0).toUpperCase() + e.slice(1)
+  })
+  console.log(genderDataLabels)
+
 
   //rather than make a separate API call for allegations,
   //derive them from complaints
@@ -95,8 +115,7 @@ export const CopPage = (props) => {
       sortable: true
     }
   })
-  headCells.push({ id: 4, title: 'Complainant Details', value: 'complainant_details', sortable: false })
-
+  
   cop.complaintsWithAllegations.map(e => {
     e.date_received = new Date(e.date_received)
     e.date_closed = new Date(e.date_closed)
@@ -141,8 +160,8 @@ export const CopPage = (props) => {
         ))}
       </p>
 			{percentageSubstantiated != null ? <p>Percentage of allegations substantiated: {percentageSubstantiated}% </p> : null}
-			<BarChart data={raceData} title='Complaints by complainant ethnicity'/>
-			<BarChart data={genderData} title='Complaints by complainant gender'/> 
+			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
+			<BarChart data={genderData} labels={genderDataLabels} title='Allegations by complainant gender'/> 
 			<BarChart data={cop.locationStats} title='Complaints by location'/>
 			<LineChart data={cop.yearlyStats} title='Complaints by year'/>
       <div>

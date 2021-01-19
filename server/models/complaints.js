@@ -11,9 +11,6 @@ export class Complaints {
 			precinct INTEGER,
 			contact_reason TEXT,
 			outcome_description TEXT,
-			complainant_ethnicity TEXT,
-			complainant_gender TEXT,
-			complainant_age_incident INTEGER,
 			FOREIGN KEY(precinct) REFERENCES precincts(id)
 			);`
 		)
@@ -36,20 +33,14 @@ export class Complaints {
 						date_closed, 
 						precinct, 
 						contact_reason, 
-						outcome_description,  
-						complainant_ethnicity,
-						complainant_gender, 
-						complainant_age_incident)
+						outcome_description)
 				VALUES(
 					'${complaint.complaint_id}', 
 					'${complaint.year_received}-${month_received}-01', 
 					'${complaint.year_closed}-${month_closed}-01',
 					'${complaint.precinct}', 
 					'${complaint.contact_reason}', 
-					'${complaint.outcome_description}',
-					'${complaint.complainant_ethnicity}', 
-					'${complaint.complainant_gender}',
-					'${complaint.complainant_age_incident}')`)
+					'${complaint.outcome_description}')`)
 		} catch(error) {
 			if (error && !error.message.match(/SQLITE_CONSTRAINT:.*/)) {
 				console.log(error.message)

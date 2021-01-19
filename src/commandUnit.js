@@ -2,7 +2,7 @@ import React from 'react';
 import { useCommandUnit } from './context/commandUnitContext'; 
 import { BarChart } from './components/barChart'
 import { LineChart } from './components/lineChart'
-import { pick, values, reduce } from 'lodash';
+import { pick, values, reduce, keys } from 'lodash';
 import { CommandUnitComplaintsTable } from './commandUnitComplaints'
 import { PaginatedSortTable } from './components/paginatedSortTable'
 import { PrecinctsMap } from './components/map'
@@ -53,11 +53,21 @@ export const CommandUnitPage = props => {
     })
   }
 
-  const raceData = pick(c, ['black', 
+  const raceData = pick(c, ['american_indian',
+                            'asian', 
+                            'black', 
                         		'hispanic', 
-                        		'asian', 
                         		'white', 
+                            'other_ethnicity',
                         		'ethnicity_unknown'])
+
+  const raceDataLabels = keys(raceData).map(e => {
+    if (e === 'american_indian') e = 'American Indian'
+    else if (e === 'other_ethnicity') e = 'Other'
+    else if (e === 'ethnicity_unknown') e = 'Unknown'
+    return e = e.charAt(0).toUpperCase() + e.slice(1)
+  })
+  console.log(raceDataLabels)
 
 	const genderData = pick(c, ['male', 
                           		'female', 
@@ -100,7 +110,6 @@ export const CommandUnitPage = props => {
       sortable: true
     }
   })
-  complaintsTableHeadCells.push({ id: 4, title: 'Complainant Details', value: 'complainant_details', sortable: false })
   
   c.complaintsWithAllegations.map(e => {
     e.date_received = new Date(e.date_received)
@@ -150,8 +159,8 @@ export const CommandUnitPage = props => {
 			<p> Number of allegations:  {c.num_allegations}</p>
 			<p> Number of complaints:  {c.num_complaints}</p>
 			<p> Number of allegations substantiated: {c.num_substantiated}  </p>
-			<BarChart data={raceData} title='Complaints by complainant ethnicity'/>
-			<BarChart data={genderData} title='Complaints by complainant gender'/>
+			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
+			<BarChart data={genderData} title='Allegations by complainant gender'/>
 			<LineChart data={c.yearlyStats} title='Complaints by year'/>
 			<BarChart data={allegationsByFado} title='Allegations by FADO type' />
       <BarChart data={allegationsByDescription} title='Allegations by description' />

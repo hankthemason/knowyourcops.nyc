@@ -117,15 +117,6 @@ export const CommandUnitComplaintsTable = props => {
 		      	{row.precinct}
 		      </TableCell>
 		      <TableCell align="center">{row.num_allegations_on_complaint}</TableCell>
-		      <TableCell align="right">{
-		      	((row.complainant_ethnicity || row.complainant_gender || row.complainant_age_incident) ? 
-		      		(row.complainant_ethnicity.toLowerCase() != 'unknown' && (row.complainant_gender.toLowerCase() === 'male' || 'female') ?
-								`${row.complainant_ethnicity} ${row.complainant_gender.toLowerCase()}` + 
-										(row.complainant_age_incident != null && typeof(row.complainant_age_incident) === 'number' ? `, ${row.complainant_age_incident}` : '') 
-								: null) 
-		      		: null
-		      	)}
-		      </TableCell>
 		    </TableRow>
 		    <TableRow>
 		      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -140,6 +131,7 @@ export const CommandUnitComplaintsTable = props => {
 		                	<TableCell>Officer</TableCell>
 		                  <TableCell>Description</TableCell>
 		                  <TableCell>Fado Type</TableCell>
+		                  <TableCell>Complainant Description</TableCell>
 		                  <TableCell align="right">Board Decision</TableCell>
 		                </TableRow>
 		              </TableHead>
@@ -153,6 +145,15 @@ export const CommandUnitComplaintsTable = props => {
 		                      {allegationRow.description}
 		                    </TableCell>
 		                    <TableCell>{allegationRow.fado_type}</TableCell>
+		                    <TableCell align="left">{
+								      	((allegationRow.complainant_ethnicity || allegationRow.complainant_gender || allegationRow.complainant_age_incident) ? 
+								      		(allegationRow.complainant_ethnicity.toLowerCase() != 'unknown' && (allegationRow.complainant_gender.toLowerCase() === 'male' || 'female') ?
+														`${allegationRow.complainant_ethnicity} ${allegationRow.complainant_gender.toLowerCase()}` + 
+																(allegationRow.complainant_age_incident != null && typeof(allegationRow.complainant_age_incident) === 'number' ? `, ${allegationRow.complainant_age_incident}` : '') 
+														: null) 
+								      		: null
+								      	)}
+		      							</TableCell>
 		                    <TableCell align="right">{allegationRow.board_disposition}</TableCell>
 		                  </TableRow>
 		                ))}

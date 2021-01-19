@@ -4,9 +4,9 @@ import { Bar } from 'react-chartjs-2'
 import { keys, values } from 'lodash'
 
 export const BarChart = (props) => {
-  const {data, title} = props;
+  const {data, title, labels} = props;
+  const chartLabels = labels !== undefined ? labels : keys(data) 
 
-  let chartLabels = keys(data)
   let chartData = values(data)
   const yScaleMax = Math.max(...chartData) % 2 === 1 ? Math.max(...chartData) + 5 : Math.max(...chartData) + 4
   
