@@ -2,8 +2,21 @@ import React, {useState} from 'react';
 import ReactPaginate from 'react-paginate';
 import { useCops } from '../context/copsContext';
 import { useViewConfig } from '../context/viewConfigContext'
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+	pagination: {
+		'.li & .active': {
+			a: {
+				backgroundColor: theme.palette.background.secondary
+			}
+		}
+	}
+}))
 
 export const Pagination = props => {
+
+	const classes = useStyles()
 	//const { copsConfig } = useCops();
 	const { viewConfig } = useViewConfig();
 
@@ -30,7 +43,7 @@ export const Pagination = props => {
 			<p>
 				{"Page :"}
 			</p>
-			<ReactPaginate
+			<ReactPaginate className={classes.pagination}
         previousLabel={"prev"}
         nextLabel={"next"}
         breakLabel={"..."}
