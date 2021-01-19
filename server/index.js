@@ -89,10 +89,6 @@ const models = new Models(DB_PATH);
 		res.json(await models.cops.read(req.params.orderBy, req.params.order, req.params.page, req.params.pageSize));
 	})
 
-	app.get('/cops/id=:id', async (req, res) => {
-		res.json(await models.cops.readOne(req.params.id))
-	})
-
 	app.get('/substantiated_percentage/id=:id', async (req, res) => {
 		res.json(await models.cops.getSubstantiatedPercentage(req.params.id))
 	})
@@ -100,7 +96,7 @@ const models = new Models(DB_PATH);
 	app.get('/cop_at_time_of_complaint', async (req, res) => {
 		res.json(await models.copAtTimeOfComplaint.read())
 	})
-	
+
 	app.get('/cop_complaints/locations/id=:id', async (req, res) => {
 		res.json(await models.cops.getComplaintsLocations(req.params.id))
 	})

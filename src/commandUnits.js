@@ -71,11 +71,13 @@ export const CommandUnitsTable = props => {
 		history.push(`/search/model=${model}?searchquery=${v}`);
 	}
 
+	const placeHolder = 'search for a command unit by its name or precinct number'
+
 	return (
 		<div>
 			<Button display={order === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
 			<DropDown options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>	
-			<SearchBar handler={search} placeHolder='search for a command unit'/> 		
+			<SearchBar handler={search} placeHolder={placeHolder}/> 		
 			<table>
 				<caption>Command Units Table</caption>
 				<thead className={useStyles().thead}>

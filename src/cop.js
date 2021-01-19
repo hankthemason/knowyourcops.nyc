@@ -63,8 +63,6 @@ export const CopPage = (props) => {
     else if (e === 'gender_unknown') e = 'Unknown'
     return e = e.charAt(0).toUpperCase() + e.slice(1)
   })
-  console.log(genderDataLabels)
-
 
   //rather than make a separate API call for allegations,
   //derive them from complaints

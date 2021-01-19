@@ -15,6 +15,7 @@ export const useSearch = () => {
 }
 
 export const SearchProvider = (props) => {
+	console.log('in the sp')
 
 	const [ searchResults, setSearchResults ] = useState()
 
@@ -29,7 +30,7 @@ export const SearchProvider = (props) => {
     fetch(`/search/model=${model}?searchquery=${keyword}`)
     .then(result => result.json())
     .then(searchResults => setSearchResults(searchResults))
-  }, [])
+  }, [keyword])
 
 	return (
 		<SearchContext.Provider value={searchResults}>
