@@ -7,7 +7,7 @@ export const SearchBar = props => {
 	const [searchQuery, setSearchQuery] = useState(null)
 
 	const BarStyling = 
-		{width:"20rem",background:"#F2F1F9", border:"none", padding:"0.5rem"};
+		{width:"20rem",background:"#F2F1F9",border: "thin solid black",padding:"0.5rem"};
 
 	function handleSearch(event) {
 		if (event.keyCode === 13) {
@@ -27,7 +27,7 @@ export const SearchBar = props => {
 	}
 
 	return (
-		<div>
+		<div className='search-bar'>
 		<form onSubmit={handleOnSubmit}>
   		<input 
   			type="text" 
@@ -35,7 +35,7 @@ export const SearchBar = props => {
   			placeholder={placeHolder}
   			onChange={handleSearchQueryChange}
   		/>
-  		<input type="submit" />
+  		<input type="submit" style={{marginLeft: '.25rem'}} />
 		</form>	
     </div> 
   );

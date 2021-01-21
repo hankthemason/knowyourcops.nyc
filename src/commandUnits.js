@@ -7,16 +7,6 @@ import { SearchBar } from './components/searchBar';
 import { Pagination } from './components/pagination';
 import { useCommandUnits } from './context/commandUnitsContext';
 
-const useStyles = makeStyles(theme => ({
-	table: {
-		fontFamily: theme.typography.fontFamily
-		//borderCollapse: "collapse"
-	},
-	thead: {
-		backgroundColor: theme.palette.background.secondary
-	}
-}))
-
 export const CommandUnitsTable = props => {
 
 	const { commandUnits, 
@@ -71,21 +61,39 @@ export const CommandUnitsTable = props => {
 		history.push(`/search/model=${model}?searchquery=${v}`);
 	}
 
-	const placeHolder = 'search for a command unit by its name or precinct number'
+	const placeHolder = 'search for unit by name or precinct number'
+
+	const headers = [
+			{label: 'name',
+				type: 'text'},
+			{label: 'abbreviation',
+				type: 'text'},
+			{label: 'associated precinct',
+				type: 'numeric'},
+			{label: 'no. allegations',
+				type: 'numeric'},
+			{label: 'allegations substantiated',
+				type: 'numeric'}
+	]
+
+	const headerClasses = {
+		text: 'text-header',
+		numeric: 'num-header'
+	}
 
 	return (
-		<div>
+		<div className='page-container'>
+			<SearchBar handler={search} placeHolder={placeHolder}/> 
+			<h1 className='table-title'>Command Units with Allegations</h1>
+			<div className='sort-div'>Sort by: </div>
+			<DropDown options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>
 			<Button display={order === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
-			<DropDown options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>	
-			<SearchBar handler={search} placeHolder={placeHolder}/> 		
-			<table>
-				<caption>Command Units Table</caption>
-				<thead className={useStyles().thead}>
+			<table id='main-table'>
+				<thead>
 					<tr>
-						<th>Full Name</th>
-						<th>Abbreviation</th>
-						<th>Associated Precinct</th>
-						<th>Number of Allegations</th>
+						{headers.map(e => (
+							<th className={headerClasses[e.type]}>{e.label}</th>
+						))}
 					</tr>		
 				</thead>
 				<tbody>
@@ -106,12 +114,15 @@ export const CommandUnitsTable = props => {
 								<td style={{textAlign: "center"}}>
 									{entry.num_allegations}
 								</td>
+								<td style={{textAlign: "center"}}>
+									{entry.num_substantiated}
+								</td>
 							</tr>
 						) : null
 					))}
 				</tbody>
 			</table>
-		<div className="">
+		<div className="pagination-text">
         {"Items per Page: "}
         <DropDown 
         	id="itemsPerPageDropdown"

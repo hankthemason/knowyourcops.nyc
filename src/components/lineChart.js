@@ -24,8 +24,8 @@ export const LineChart = (props) => {
 		    label: "Complaints by year",
 		    data: [...dataValues],
 		    fill: false,
-		    backgroundColor: "rgba(75,192,192,0.2)",
-		    borderColor: 'rgba(54, 162, 235, 0.6)',
+        pointBackgroundColor: '#123456',
+		    borderColor: '#ABCDEF',
 		    lineTension: 0
 		  }
 		]

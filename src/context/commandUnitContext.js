@@ -26,12 +26,22 @@ const normalizeData = commandUnit => {
 		e.date_closed = new Date(e.date_closed)
 	})
 
+	commandUnit.cops.map(e => {
+		let genderFull = ''
+		if (e.gender === 'M') {
+			genderFull = 'Male'
+		} else if (e.gender === 'F') {
+			genderFull = 'Female'
+		}
+		e.cop_details = `${e.ethnicity} ${genderFull}`
+	})
+
 	let yearlyStats = commandUnit.yearlyStats
 
 	if (yearlyStats.length === 1) {
 		yearlyStats.splice(0, 0, ({year: yearlyStats[0].year-1, count: 0}))
 		yearlyStats.push({year: yearlyStats[1].year+1, count: 0})
-	} 
+	}
 
 	const allYears = reduce(map(
 		yearlyStats ? range(yearlyStats[0].year, yearlyStats[yearlyStats.length-1].year+1) : [], 
@@ -127,22 +137,26 @@ export const CommandUnitProvider = (props) => {
 					{
 						id: 0,
 						title: 'Date Received',
-						value: 'date_received'
+						value: 'date_received',
+						type: 'text'
 					},
 					{
 						id: 1,
 						title: 'Date Closed',
-						value: 'date_closed'
+						value: 'date_closed',
+						type: 'text',
 					},
 					{
 						id: 2,
 						title: 'Precinct',
-						value: 'precinct'
+						value: 'precinct',
+						type: 'numeric'
 					},
 					{
 						id: 3,
-						title: 'Number of Allegations on Complaint',
-						value: 'num_allegations_on_complaint'
+						title: 'No. Allegations on Complaint',
+						value: 'num_allegations_on_complaint',
+						type: 'numeric'
 					}
 				]
 			}

@@ -9,12 +9,13 @@ import { SearchBar } from './components/searchBar';
 import { Pagination } from './components/pagination';
 
 const useStyles = makeStyles(theme => ({
-	table: {
+	mainTable: {
 		fontFamily: theme.typography.fontFamily
 		//borderCollapse: "collapse"
 	},
 	thead: {
-		backgroundColor: theme.palette.background.secondary
+		backgroundColor: theme.palette.primary.main,
+		color: 'white'
 	}
 }))
 
@@ -78,21 +79,41 @@ export const CopsTable = props => {
 
 	const placeHolder = 'search by first or last name, full name, or badge #'
 
+	const headers = [
+			{label: 'name',
+				type: 'text'},
+			{label: 'command unit',
+				type: 'text'},
+			{label: 'badge no.',
+				type: 'numeric'},
+			{label: 'no. allegations',
+				type: 'numeric'},
+			{label: 'allegations substantiated',
+				type: 'numeric'},
+			{label: 'ethnicity',
+				type: 'text'},
+	]
+
+	const headerClasses = {
+		text: 'text-header',
+		numeric: 'num-header'
+	}
+
 	return (
-		<div>
+		<div className='page-container'>
 			<SearchBar handler={search} placeHolder={placeHolder}/>
-			<Button display={order === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
-			<DropDown options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>
-			<table className={classes.table}>
-				<caption>Cops Table</caption>
+			<h1 className='table-title'>Officers with Allegations</h1>
+			<div className='sort-div'>Sort by: </div>
+			<DropDown style={{display: 'inline-block'}} options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>
+			<Button style={{display: 'inline-block'}} display={order === 'asc' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
+			<table className={classes.mainTable} id='main-table'>
 				<thead className={classes.thead}>
 					<tr>
-						<th>name</th>
-						<th>command unit</th>
-						<th>badge number</th>
-						<th>number of allegations</th>
-						<th>allegations substantiated</th>
-						<th>ethnicity</th>
+						{headers.map(e => (
+						<th className={headerClasses[e.type]}>
+							{e.label}
+						</th>
+						))}
 					</tr>
 				</thead>
 				<tbody>
@@ -121,7 +142,7 @@ export const CopsTable = props => {
 					)}
 				</tbody>
 			</table>
-			<div className="">
+			<div className="pagination-text">
         {"Items per Page: "}
         <DropDown 
         	id="itemsPerPageDropdown"

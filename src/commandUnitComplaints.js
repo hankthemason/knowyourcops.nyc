@@ -20,7 +20,6 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import TablePagination from '@material-ui/core/TablePagination';
 
-
 export const CommandUnitComplaintsTable = props => {
 
 	let { commandUnit, setCommandUnitViewConfig: setCUVC, getCommandUnitViewConfig } = useCommandUnit();
@@ -79,16 +78,30 @@ export const CommandUnitComplaintsTable = props => {
 
 	const useStyles = makeStyles({
 		table: {
-		  maxWidth: 800,
+		  maxWidth: '60%',
 		},
+		tableRow: {
+    	height: '2px'
+  	},
+  	tableCell: {
+    	padding: "0px 16px"
+  	}
 	});
 
 	const useRowStyles = makeStyles({
 	  root: {
 	    '& > *': {
-	      borderBottom: 'unset',
+	    	height: 4,
+	      borderBottom: 'unset'
 	    },
 	  },
+	  tableCell: {
+	  	padding: "0px 16px"
+	  },
+	  tableRow: {
+	  	height: 25,
+	  	borderBottom: 0
+	  }
 	});
 	
 	const classes = useStyles();
@@ -102,7 +115,7 @@ export const CommandUnitComplaintsTable = props => {
 		return (
 		  <React.Fragment>
 		    <TableRow className={rowClasses.root}>
-		      <TableCell>
+		      <TableCell className={rowClasses.tableCell}>
 		        <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
 		          {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
 		        </IconButton>
@@ -110,15 +123,15 @@ export const CommandUnitComplaintsTable = props => {
 		      <TableCell component="th" scope="row">
 		        {monthNames[moment(row.date_received).month()]} {moment(row.date_received).year()}
 		      </TableCell>
-		      <TableCell align="right">
+		      <TableCell align="left">
 		      	{monthNames[moment(row.date_closed).month()]} {moment(row.date_closed).year()}
 		      </TableCell>
-		      <TableCell align="right">
+		      <TableCell align="center">
 		      	{row.precinct}
 		      </TableCell>
 		      <TableCell align="center">{row.num_allegations_on_complaint}</TableCell>
 		    </TableRow>
-		    <TableRow>
+		    <TableRow style={{backgroundColor: 'rgb(204, 224, 245, .2)'}}>
 		      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
 		        <Collapse in={open} timeout="auto" unmountOnExit>
 		          <Box margin={1}>
@@ -231,7 +244,7 @@ export const CommandUnitComplaintsTable = props => {
  	// }
 
   return (
-    <TableContainer component={Paper}>
+  	<div>
       <Table className={classes.table} stylesaria-label="collapsible table">
         <TableHead rowcount={rows.length}>
           <TableRow>
@@ -242,6 +255,7 @@ export const CommandUnitComplaintsTable = props => {
 		          <TableCell
 		            key={headCell.id}
 		            sortDirection={orderBy.value === headCell.value ? order : false}
+		            style={{textAlign: headCell.type === 'numeric' ? 'center' : 'left'}}
 		          >
 		            <TableSortLabel
 		              active={orderBy.value === headCell.value}
@@ -285,7 +299,7 @@ export const CommandUnitComplaintsTable = props => {
    							alignItems: 'left',
    							padding:'0px'}}
       />
-    </TableContainer>
+    </div>
   )
 }
 

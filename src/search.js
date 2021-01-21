@@ -27,7 +27,7 @@ export const Search = props => {
 	const display = searchResults.display
 	
 	return (
-		<div>
+		<div className="page-container">
 			<SearchBar handler={search} placeHolder={placeHolder}/>
 			<h1>Search results: </h1>
 			<ul>

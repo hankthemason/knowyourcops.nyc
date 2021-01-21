@@ -9,7 +9,8 @@ export const DefaultTheme = createMuiTheme({
     },
     background: {
     	default: '#ffffff',
-    	secondary: '#D2E3F3'
+    	secondary: '#D2E3F3',
+      ternary: '#367fbf'
     }
   },
   typography: {

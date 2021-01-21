@@ -84,22 +84,22 @@ export const CopComplaintsTable = props => {
 		      <TableCell component="th" scope="row">
 		        {monthNames[moment(row.date_received).month()]} {moment(row.date_received).year()}
 		      </TableCell>
-		      <TableCell align="right">
+		      <TableCell align="left">
 		      	{monthNames[moment(row.date_closed).month()]} {moment(row.date_closed).year()}
 		      </TableCell>
-		      <TableCell align="right">
+		      <TableCell align="center">
 		      	{row.precinct}
 		      </TableCell>
 		      <TableCell align="center">{row.num_allegations_on_complaint}</TableCell>
 		    </TableRow>
-		    <TableRow>
+		    <TableRow style={{backgroundColor: 'rgb(204, 224, 245, .2)'}}>
 		      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
 		        <Collapse in={open} timeout="auto" unmountOnExit>
 		          <Box margin={1}>
 		            <Typography variant="h6" gutterBottom component="div">
 		              Allegations
 		            </Typography>
-		            <Table size="small" aria-label="allegations">
+		            <Table size="small" aria-label="allegations" >
 		              <TableHead>
 		                <TableRow>
 		                  <TableCell>Description</TableCell>

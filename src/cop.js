@@ -133,7 +133,7 @@ export const CopPage = (props) => {
   const mapFloat = 'right'
 
 	return (
-		<div>
+		<div className='pageContainer'>
       <PrecinctsMap height={400} width={400} pageData={locationStatsArr} type={mapType} dataPoint={mapDataPoint} float={mapFloat} />
 			<p> Full name: {name}</p>
 			<p> Ethnicity: {ethnicity}</p>
@@ -164,7 +164,7 @@ export const CopPage = (props) => {
 			<LineChart data={cop.yearlyStats} title='Complaints by year'/>
       <div>
         <BarChart data={allegationsByFado} title='Allegations by FADO type' />
-        <BarChart data={allegationsByDescription} title='Allegations by description' />
+        <BarChart data={allegationsByDescription} padding={true} title='Allegations by description' />
         <h2>Complaints received: </h2>
         <CopComplaintsTable data={cop.complaintsWithAllegations} headCells={headCells} />              
       </div>

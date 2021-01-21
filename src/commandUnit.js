@@ -67,11 +67,20 @@ export const CommandUnitPage = props => {
     else if (e === 'ethnicity_unknown') e = 'Unknown'
     return e = e.charAt(0).toUpperCase() + e.slice(1)
   })
-  console.log(raceDataLabels)
+  console.log(c)
 
 	const genderData = pick(c, ['male', 
                           		'female', 
                           		'gender_unknown'])
+
+  const genderDataLabels = keys(genderData).map(e => {
+    if (e === 'trans_male') e = 'Male (trans)'
+    else if (e === 'trans_female') e = 'Female (trans)'
+    else if (e === 'gender_non_conforming') e = 'Gender Non-conforming'
+    else if (e === 'gender_unknown') e = 'Unknown'
+    return e = e.charAt(0).toUpperCase() + e.slice(1)
+  })
+
 
 	//rather than make a separate API call for allegations,
   //derive them from complaints
@@ -126,14 +135,14 @@ export const CommandUnitPage = props => {
     },
     {
       id: 1,
-      title: 'Number of Allegations (In This Unit)',
+      title: 'No. Allegations (In This Unit)',
       value: 'num_allegations',
       sortable: true,
       type: 'integer'
     },
     {
       id: 2,
-      title: 'Number of Complaints (In This Unit)',
+      title: 'No. Complaints (In This Unit)',
       value: 'num_complaints',
       sortable: true,
       type: 'integer'
@@ -152,7 +161,7 @@ export const CommandUnitPage = props => {
   const mapFloat = 'right'
 
 	return (
-		<div>
+		<div className='page-container'>
       <PrecinctsMap height={400} width={400} type={mapType} pageData={[c]} float={mapFloat}/>
 			<p> Command Unit: {c.command_unit_full != null ? c.command_unit_full : c.unit_id } </p>
       {c.precinct != 'null' ? <p> Associated Precinct: {c.precinct}</p> : null}
@@ -160,17 +169,20 @@ export const CommandUnitPage = props => {
 			<p> Number of complaints:  {c.num_complaints}</p>
 			<p> Number of allegations substantiated: {c.num_substantiated}  </p>
 			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
-			<BarChart data={genderData} title='Allegations by complainant gender'/>
+			<BarChart data={genderData} labels={genderDataLabels} title='Allegations by complainant gender'/>
 			<LineChart data={c.yearlyStats} title='Complaints by year'/>
 			<BarChart data={allegationsByFado} title='Allegations by FADO type' />
-      <BarChart data={allegationsByDescription} title='Allegations by description' />
+      <BarChart data={allegationsByDescription} title='Allegations by description' padding={true} />
       <h2>Complaints received: </h2>
+      <div>(click the arrow to show allegations on the complaint)</div>
       <CommandUnitComplaintsTable data={c.complaintsWithAllegations} headCells={complaintsTableHeadCells} />
+      <h2>Officers Associated With This Unit: </h2>
       <PaginatedSortTable 
         data={c.cops} 
         headCells={copsTableHeadCells} 
         viewConfigGetter={getCopsTableViewConfig}
-        viewConfigSetter={setCopsTableViewConfig} />
+        viewConfigSetter={setCopsTableViewConfig}
+        width='60%' />
 		</div>
 	)
 }

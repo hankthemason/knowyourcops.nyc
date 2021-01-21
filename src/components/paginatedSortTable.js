@@ -24,6 +24,7 @@ export const PaginatedSortTable = props => {
 
 	const { data: rows, 
 					headCells,
+					width,
 					viewConfigGetter: getTableViewConfig,
 					viewConfigSetter: setTableViewConfig } = props
 
@@ -75,34 +76,11 @@ export const PaginatedSortTable = props => {
     )
 	}
 
-	// const useStyles = makeStyles((theme) => ({
-	// 	root: {
-	// 	  width: '100%',
-	// 	},
-	// 	paper: {
-	// 	  marginBottom: theme.spacing(2),
-	// 	},
-	// 	table: {
-	// 	  maxWidth: 800,
-	// 	}
-	// }));
-
-	// const useRowStyles = makeStyles({
-	//   root: {
-	//     '& > *': {
-	//       borderBottom: 'unset',
-	//     },
-	//   },
-	// });
-	
-	//const classes = useStyles();
-
 	const getLastName = (fullName) => {
 		return fullName.split(' ')[1]
 	}
 
 	const array = rows.map(e => e.last_name)
-	//console.log(array.sort())
 
 	const sortFunction = (rows) => {
 		if (orderBy.type === 'string') {
@@ -138,13 +116,13 @@ export const PaginatedSortTable = props => {
   };
 
 	return (
-		<Paper>
-		<TableContainer >
+		<div>
       <Table
         //className={classes.table}
         aria-labelledby="tableTitle"
         //size={dense ? 'small' : 'medium'}
         aria-label="enhanced table"
+        style={{maxWidth: `${width}`}}
       >
         <EnhancedTableHead
           //classes={classes}
@@ -164,8 +142,8 @@ export const PaginatedSortTable = props => {
                 		{row.first_name + ' ' + row.last_name}
                 	</Link>
               	</TableCell>
-                <TableCell>{row.num_allegations}</TableCell>
-                <TableCell>{row.num_complaints}</TableCell>
+                <TableCell align="center">{row.num_allegations}</TableCell>
+                <TableCell align="center">{row.num_complaints}</TableCell>
                 <TableCell>{row.cop_details}</TableCell>
               </TableRow>
             );
@@ -173,7 +151,6 @@ export const PaginatedSortTable = props => {
         }
       </TableBody>
       </Table>
-      </TableContainer>
       <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
@@ -188,6 +165,6 @@ export const PaginatedSortTable = props => {
    							alignItems: 'left',
    							padding:'0px'}}
       />
-    </Paper>
+    </div>
   );
 }
