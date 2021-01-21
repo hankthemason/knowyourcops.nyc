@@ -15,7 +15,6 @@ export const useSearch = () => {
 }
 
 export const SearchProvider = (props) => {
-	console.log('in the sp')
 
 	const [ searchResults, setSearchResults ] = useState()
 

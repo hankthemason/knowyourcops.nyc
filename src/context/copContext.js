@@ -44,12 +44,6 @@ const normalizeData = cop => {
 		return {...accumulator, [value.precinct]: value.count}
 	}, {})
 
-	let tempCop = {
-		...cop,
-		yearlyStats: allYears,
-		locationStats: locationStats
-	}
-
 	return {
 		...cop, 
 		yearlyStats: allYears,
@@ -116,7 +110,7 @@ export const CopProvider = (props) => {
   		.catch(error => {
   			console.error(error)
   		})
-  		.then(incompleteCop => setIncompleteCop(incompleteCop[0]))
+  		.then(incompleteCop => setIncompleteCop(incompleteCop))
   		.catch(error => {
   			console.error(error)
   		})
@@ -146,10 +140,12 @@ export const CopProvider = (props) => {
 	}, [])
 
 	useEffect(() => {
-		if (incompleteCop === null || 
+		if (incompleteCop === undefined || 
 			complaintsLocations === null || 
 			complaintsDates === null || 
-			complaintsWithAllegations === null) return
+			complaintsWithAllegations === null) {
+			return
+		}
 		setCop(normalizeData({
 			...incompleteCop, 
 			locationStats: complaintsLocations,

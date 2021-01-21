@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom'
 import { PrecinctsMap } from './components/map'
 
 export const CopPage = (props) => {
-
   const { cop, setCopViewConfig, getCopViewConfig } = useCop();
 
   const { orderByOptions } = getCopViewConfig()
@@ -20,9 +19,9 @@ export const CopPage = (props) => {
 	let percentageSubstantiated = cop.substantiated_percentage
 	let ethnicity = cop.ethnicity
   let gender = cop.gender
-  if (cop.gender.toLowerCase() === 'f') {
+  if (cop.gender && cop.gender.toLowerCase() === 'f') {
     gender = 'Female'
-  } else if (cop.gender.toLowerCase() === 'm') {
+  } else if (cop.gender && cop.gender.toLowerCase() === 'm') {
     gender = 'Male'
   }
   let badgeNumber = cop.shield_no
@@ -60,7 +59,7 @@ export const CopPage = (props) => {
     if (e === 'trans_male') e = 'Male (trans)'
     else if (e === 'trans_female') e = 'Female (trans)'
     else if (e === 'gender_non_conforming') e = 'Gender Non-conforming'
-    else if (e === 'gender_unknown') e = 'Unknown'
+    else if (e === 'gender_unknown') e = 'Unknown or Refused'
     return e = e.charAt(0).toUpperCase() + e.slice(1)
   })
 
@@ -132,40 +131,62 @@ export const CopPage = (props) => {
   const mapDataPoint = 'num_complaints'
   const mapFloat = 'right'
 
+  console.log(cop.race_percentages)
+
 	return (
-		<div className='pageContainer'>
+		<div className='page-container'>
       <PrecinctsMap height={400} width={400} pageData={locationStatsArr} type={mapType} dataPoint={mapDataPoint} float={mapFloat} />
-			<p> Full name: {name}</p>
-			<p> Ethnicity: {ethnicity}</p>
-      <p> Gender: {gender}</p>
-      {badgeNumber > 0 ?
-      <p> Badge Number: {badgeNumber}</p> : null}
-			<p> Number of allegations: {numAllegations} </p>
-			<p> Number of complaints: {complaints} </p>
-			<p> Number of allegations substantiated: {allegationsSubstantiated} </p>
-      <p> Most Recent Rank: {rank} </p>
-      <p> {'All ranks held: ' + allRanksHeld.map(e => ' ' + e)}</p>
-      <p> {`Most Recent Assignment: `}  
-        <Link to={`/command_unit/${cop.command_unit_id}`}>
-        {assignment_full ? assignment_full : assignment_abbrev}
-        </Link>
-      </p>
-      
-      <p>{`All assignments: `} 
-        {Object.entries(allAssignments).map((item, index) => (
-          [(index ? ', ': ''),
-            <Link to={`/command_unit/${item[0]}`}>{item[1]}</Link>]
-        ))}
-      </p>
-			{percentageSubstantiated != null ? <p>Percentage of allegations substantiated: {percentageSubstantiated}% </p> : null}
+			<h1 id='individual-header' style={{display: 'inline-block', marginRight: '1rem'}}>{name}</h1>
+      {badgeNumber > 0 ? (<h2 id='badge-number'><i>badge #{badgeNumber}</i></h2>) : null}
+			<h4 id='officer-description'>{`${ethnicity} ${gender}`}</h4>
+      <ul class='individual-page-attributes'>
+        <li><strong>Most recent rank and assignment:</strong> {rank}, <Link to={`/command_unit/${cop.command_unit_id}`}>
+          {assignment_full ? assignment_full : assignment_abbrev}</Link>
+        </li>
+        <li>
+          <strong>All ranks held: </strong> 
+            {allRanksHeld.map((e, index) => (
+              (index ? ', ' : '') + e
+            ))}
+        </li>
+        <li>
+          <strong>All assignments: </strong>
+            {Object.entries(allAssignments).map((item, index) => (
+              [(index ? ', ': ''),
+              <Link to={`/command_unit/${item[0]}`}>{item[1]}</Link>]
+            ))}
+        </li>
+      </ul>
+      <ul class="individual-page-stats">
+        <li>
+          <span id='stats-span'>{numAllegations}</span> total allegations
+        </li>
+        <li>
+          <span id='stats-span'>{complaints}</span> total complaints
+        </li>
+        {percentageSubstantiated ? (
+        <li>
+          <span id='stats-span'>{percentageSubstantiated}%</span> allegations substantiated
+        </li>) : null}
+      </ul>
 			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
+      <ul className="individual-page-stats">
+        {Object.entries(cop.race_percentages).map((value, index) => (
+          <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
+        ))}
+      </ul>
 			<BarChart data={genderData} labels={genderDataLabels} title='Allegations by complainant gender'/> 
-			<BarChart data={cop.locationStats} title='Complaints by location'/>
+      <ul className="individual-page-stats">
+        {Object.entries(cop.gender_percentages).map((value, index) => (
+          <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
+        ))}
+      </ul>
+			<BarChart data={cop.locationStats} title='Complaints by Precinct'/>
 			<LineChart data={cop.yearlyStats} title='Complaints by year'/>
       <div>
         <BarChart data={allegationsByFado} title='Allegations by FADO type' />
         <BarChart data={allegationsByDescription} padding={true} title='Allegations by description' />
-        <h2>Complaints received: </h2>
+        <h1>Complaints received: </h1>
         <CopComplaintsTable data={cop.complaintsWithAllegations} headCells={headCells} />              
       </div>
 		</div>

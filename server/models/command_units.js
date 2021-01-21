@@ -76,26 +76,49 @@ export class CommandUnits {
 			const result = await this.db.all(`
 				SELECT
 				*,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(american_indian * 1.0 / num_complaints * 100.0, 2) END percentage_american_indian_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(asian * 1.0 / num_complaints * 100.0, 2) END percentage_asian_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(black * 1.0 / num_complaints * 100.0, 2) END percentage_black_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(hispanic * 1.0 / num_complaints * 100.0, 2) END percentage_hispanic_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(white * 1.0 / num_complaints * 100.0, 2) END percentage_white_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(other_ethnicity * 1.0 / num_complaints * 100.0, 2) END percentage_other_ethnicity_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(ethnicity_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_ethnicity_unknown_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(male * 1.0 / num_complaints * 100.0, 2) END percentage_male_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(female * 1.0 / num_complaints * 100.0, 2) END percentage_female_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(gender_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_gender_unknown_complainants
+				JSON_GROUP_ARRAY(JSON_OBJECT(
+					'American Indian',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(american_indian * 1.0 / num_complaints * 100.0, 2) END,
+					'Asian',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(asian * 1.0 / num_complaints * 100.0, 2) END,
+					'Black',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(black * 1.0 / num_complaints * 100.0, 2) END,
+					'Hispanic',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(hispanic * 1.0 / num_complaints * 100.0, 2) END,
+					'White',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(white * 1.0 / num_complaints * 100.0, 2) END,
+					'Other Ethnicity',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(other_ethnicity * 1.0 / num_complaints * 100.0, 2) END,
+					'Ethnicity Unknown',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(ethnicity_unknown * 1.0 / num_complaints * 100.0, 2) END
+				)) AS race_percentages,
+				JSON_GROUP_ARRAY(JSON_OBJECT(
+					'Female',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(female * 1.0 / num_complaints * 100.0, 2) END,
+					'Male',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(male * 1.0 / num_complaints * 100.0, 2) END,
+					'Female (trans)',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(trans_female * 1.0 / num_complaints * 100.0, 2) END,
+					'Male (trans)',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(trans_male * 1.0 / num_complaints * 100.0, 2) END,
+					'Gender-nonconforming',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(gender_non_conforming * 1.0 / num_complaints * 100.0, 2) END,
+					'Unknown/refused',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(gender_unknown * 1.0 / num_complaints * 100.0, 2) END
+				)) AS gender_percentages
 				FROM (
 				SELECT
 					command_units.*,
@@ -133,6 +156,8 @@ export class CommandUnits {
 				GROUP BY 
 					command_units.unit_id
 				)
+				GROUP BY
+					id
 				ORDER BY
 					${orderBy} ${order}
 				LIMIT
@@ -140,6 +165,10 @@ export class CommandUnits {
 				OFFSET
 					(?)
 			`, pageSize, offset)
+			result.map(e => {
+				e.race_percentages = JSON.parse(e.race_percentages)[0]
+				e.gender_percentages = JSON.parse(e.gender_percentages)[0]
+			})
 			return result
 		} catch(error) {
 			console.error(error);
@@ -151,25 +180,49 @@ export class CommandUnits {
 			const result = await this.db.all(`
 				SELECT
 				*,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(american_indian * 1.0 / num_complaints * 100.0, 2) END percentage_american_indian_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(asian * 1.0 / num_complaints * 100.0, 2) END percentage_asian_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(black * 1.0 / num_complaints * 100.0, 2) END percentage_black_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(hispanic * 1.0 / num_complaints * 100.0, 2) END percentage_hispanic_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(white * 1.0 / num_complaints * 100.0, 2) END percentage_white_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(other_ethnicity * 1.0 / num_complaints * 100.0, 2) END percentage_other_ethnicity_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(ethnicity_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_ethnicity_unknown_complainants,				CASE WHEN num_complaints > 4 THEN
-				ROUND(male * 1.0 / num_complaints * 100.0, 2) END percentage_male_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(female * 1.0 / num_complaints * 100.0, 2) END percentage_female_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(gender_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_gender_unknown_complainants
+				JSON_GROUP_ARRAY(JSON_OBJECT(
+					'American Indian',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(american_indian * 1.0 / num_complaints * 100.0, 2) END,
+					'Asian',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(asian * 1.0 / num_complaints * 100.0, 2) END,
+					'Black',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(black * 1.0 / num_complaints * 100.0, 2) END,
+					'Hispanic',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(hispanic * 1.0 / num_complaints * 100.0, 2) END,
+					'White',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(white * 1.0 / num_complaints * 100.0, 2) END,
+					'Other Ethnicity',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(other_ethnicity * 1.0 / num_complaints * 100.0, 2) END,
+					'Ethnicity Unknown',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(ethnicity_unknown * 1.0 / num_complaints * 100.0, 2) END
+				)) AS race_percentages,
+				JSON_GROUP_ARRAY(JSON_OBJECT(
+					'Female',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(female * 1.0 / num_complaints * 100.0, 2) END,
+					'Male',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(male * 1.0 / num_complaints * 100.0, 2) END,
+					'Female (trans)',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(trans_female * 1.0 / num_complaints * 100.0, 2) END,
+					'Male (trans)',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(trans_male * 1.0 / num_complaints * 100.0, 2) END,
+					'Gender-nonconforming',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(gender_non_conforming * 1.0 / num_complaints * 100.0, 2) END,
+					'Unknown/refused',
+					CASE WHEN num_complaints > 4 THEN
+					ROUND(gender_unknown * 1.0 / num_complaints * 100.0, 2) END
+				)) AS gender_percentages
 				FROM (
 				SELECT
 					command_units.*,
@@ -208,6 +261,10 @@ export class CommandUnits {
 					command_units.unit_id
 				)
 			`)
+			result.map(e => {
+				e.race_percentages = JSON.parse(e.race_percentages)[0]
+				e.gender_percentages = JSON.parse(e.gender_percentages)[0]
+			})
 			return result
 		} catch(error) {
 			console.error(error);

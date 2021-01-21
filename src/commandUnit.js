@@ -67,17 +67,19 @@ export const CommandUnitPage = props => {
     else if (e === 'ethnicity_unknown') e = 'Unknown'
     return e = e.charAt(0).toUpperCase() + e.slice(1)
   })
-  console.log(c)
 
 	const genderData = pick(c, ['male', 
-                          		'female', 
-                          		'gender_unknown'])
+                          'female',
+                          'trans_male',
+                          'trans_female',
+                          'gender_non_conforming',
+                          'gender_unknown'])
 
   const genderDataLabels = keys(genderData).map(e => {
     if (e === 'trans_male') e = 'Male (trans)'
     else if (e === 'trans_female') e = 'Female (trans)'
     else if (e === 'gender_non_conforming') e = 'Gender Non-conforming'
-    else if (e === 'gender_unknown') e = 'Unknown'
+    else if (e === 'gender_unknown') e = 'Unknown or Refused'
     return e = e.charAt(0).toUpperCase() + e.slice(1)
   })
 
@@ -160,23 +162,37 @@ export const CommandUnitPage = props => {
   const mapDataPoint = ''
   const mapFloat = 'right'
 
+  console.log(c)
+
 	return (
 		<div className='page-container'>
       <PrecinctsMap height={400} width={400} type={mapType} pageData={[c]} float={mapFloat}/>
-			<p> Command Unit: {c.command_unit_full != null ? c.command_unit_full : c.unit_id } </p>
-      {c.precinct != 'null' ? <p> Associated Precinct: {c.precinct}</p> : null}
-			<p> Number of allegations:  {c.num_allegations}</p>
-			<p> Number of complaints:  {c.num_complaints}</p>
-			<p> Number of allegations substantiated: {c.num_substantiated}  </p>
+			<h1 id='individual-header'>{c.command_unit_full != null ? c.command_unit_full : c.unit_id } </h1>
+      {c.precinct != 'null' && c.unit_id.endsWith('DET') ? <p> Associated Precinct: {c.precinct}</p> : null}
+      <ul class="individual-page-stats">
+			  <li><span id="stats-span">{c.num_allegations}</span> total allegations</li>
+			  <li><span id="stats-span">{c.num_complaints}</span> total complaints</li>
+			  <li><span id="stats-span">{c.substantiated_percentage}%</span> allegations substantiated</li>
+      </ul>
 			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
+      <ul className="individual-page-stats">
+        {Object.entries(c.race_percentages).map((value, index) => (
+          <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
+        ))}
+      </ul>
 			<BarChart data={genderData} labels={genderDataLabels} title='Allegations by complainant gender'/>
+      <ul className="individual-page-stats">
+        {Object.entries(c.gender_percentages).map((value, index) => (
+          <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
+        ))}
+      </ul>
 			<LineChart data={c.yearlyStats} title='Complaints by year'/>
 			<BarChart data={allegationsByFado} title='Allegations by FADO type' />
       <BarChart data={allegationsByDescription} title='Allegations by description' padding={true} />
-      <h2>Complaints received: </h2>
+      <h1>Complaints received: </h1>
       <div>(click the arrow to show allegations on the complaint)</div>
       <CommandUnitComplaintsTable data={c.complaintsWithAllegations} headCells={complaintsTableHeadCells} />
-      <h2>Officers Associated With This Unit: </h2>
+      <h1>Officers Associated With This Unit: </h1>
       <PaginatedSortTable 
         data={c.cops} 
         headCells={copsTableHeadCells} 
