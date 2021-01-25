@@ -175,7 +175,7 @@ export const CommandUnitProvider = (props) => {
 		if (commandUnit === undefined) {
 			fetch(`/command_unit/id=${id}`)
   		.then(result => result.json())
-  		.then(incompleteCommandUnit => setIncompleteCommandUnit(incompleteCommandUnit[0]))
+  		.then(incompleteCommandUnit => setIncompleteCommandUnit(incompleteCommandUnit))
 		} else {
 			setIncompleteCommandUnit(commandUnit)
 		}

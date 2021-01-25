@@ -70,7 +70,7 @@ export const CopComplaintsTable = props => {
 	function Row(props) {
 		const { row } = props;
 
-		const [open, setOpen] = React.useState(false);
+		const [open, setOpen] = useState(false);
 		const rowClasses = useRowStyles();
 
 		return (

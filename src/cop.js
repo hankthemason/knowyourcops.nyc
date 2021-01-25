@@ -6,11 +6,18 @@ import { pick, reduce, keys } from 'lodash';
 import { useCop } from './context/copContext';
 import { Link } from 'react-router-dom'
 import { PrecinctsMap } from './components/map'
+import { MuiSelect } from './components/muiSelect'
 
 export const CopPage = (props) => {
   const { cop, setCopViewConfig, getCopViewConfig } = useCop();
 
-  const { orderByOptions } = getCopViewConfig()
+  var firstLetterCap = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1)
+  }
+
+  const viewConfig = getCopViewConfig()
+  const orderByOptions = viewConfig.orderByOptions
+  const [yearlyStatsSelector, setYearlyStatsSelector] = useState(viewConfig.yearlyStatsSelector)
   
 	let name = cop.first_name + ' ' + cop.last_name;
 	let numAllegations = cop.num_allegations;
@@ -48,10 +55,10 @@ export const CopPage = (props) => {
 
   let genderData;
 
-  genderData = pick(cop, ['male', 
-                          'female',
-                          'trans_male',
+  genderData = pick(cop, ['female', 
+                          'male',
                           'trans_female',
+                          'trans_male',
                           'gender_non_conforming',
                           'gender_unknown'])
 
@@ -131,7 +138,20 @@ export const CopPage = (props) => {
   const mapDataPoint = 'num_complaints'
   const mapFloat = 'right'
 
-  console.log(cop.race_percentages)
+  const yearlyStatsHandler = (event) => {
+    const v = event.target.value
+    setCopViewConfig({
+      ...viewConfig,
+      yearlyStatsSelector: v
+    })
+  };
+
+  const [yearlyStats, setYearlyStats] = useState(cop.yearlyStats)
+  
+  useEffect(() => {
+    setYearlyStats(cop.yearlyStats)
+    setYearlyStatsSelector(viewConfig.yearlyStatsSelector)
+  }, [cop.yearlyStats])
 
 	return (
 		<div className='page-container'>
@@ -162,12 +182,12 @@ export const CopPage = (props) => {
           <span id='stats-span'>{numAllegations}</span> total allegations
         </li>
         <li>
+          <span id='stats-span'>{cop.num_substantiated}</span> allegations substantiated 
+          {percentageSubstantiated ? <span> (<span id='stats-span'>{percentageSubstantiated}%</span> substantiated)</span>: null}
+        </li>
+        <li>
           <span id='stats-span'>{complaints}</span> total complaints
         </li>
-        {percentageSubstantiated ? (
-        <li>
-          <span id='stats-span'>{percentageSubstantiated}%</span> allegations substantiated
-        </li>) : null}
       </ul>
 			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
       <ul className="individual-page-stats">
@@ -182,7 +202,8 @@ export const CopPage = (props) => {
         ))}
       </ul>
 			<BarChart data={cop.locationStats} title='Complaints by Precinct'/>
-			<LineChart data={cop.yearlyStats} title='Complaints by year'/>
+      <MuiSelect handler={yearlyStatsHandler} value={viewConfig.yearlyStatsSelector}/>
+			<LineChart data={yearlyStats} title={`${firstLetterCap(yearlyStatsSelector)} by year`}/>
       <div>
         <BarChart data={allegationsByFado} title='Allegations by FADO type' />
         <BarChart data={allegationsByDescription} padding={true} title='Allegations by description' />

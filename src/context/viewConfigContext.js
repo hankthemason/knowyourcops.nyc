@@ -23,6 +23,7 @@ export const ViewConfigProvider = props => {
 	//			componentState2: 'state'
 	//		}	
 	//	}
+
 	const setViewConfig = (componentConfig, componentName) => {
 		setConfig({
 			...config,

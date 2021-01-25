@@ -97,12 +97,20 @@ const models = new Models(DB_PATH);
 		res.json(await models.copAtTimeOfComplaint.read())
 	})
 
-	app.get('/cop_complaints/locations/id=:id', async (req, res) => {
-		res.json(await models.cops.getComplaintsLocations(req.params.id))
-	})
-
 	app.get('/cop_complaints/id=:id', async (req, res) => {
 		res.json(await models.cops.getComplaints(req.params.id))
+	})
+
+	app.get('/cop/yearly_stats/table=:table/id=:id', async(req, res) => {
+		res.json(await models.cops.getYearlyStats(req.params.table, req.params.id))
+	})
+
+	app.get('/cop/locations_stats/table=:table/id=:id', async (req, res) => {
+		res.json(await models.cops.getLocationStats(req.params.table, req.params.id))
+	})
+
+	app.get('/cop_allegations/years/id=:id', async (req, res) => {
+		res.json(await models.cops.getAllegationsByYear(req.params.id))
 	})
 
 	app.get('/cop_complaints/years/id=:id', async (req, res) => {

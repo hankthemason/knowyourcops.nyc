@@ -17,32 +17,19 @@ export const LineChart = (props) => {
   // })
   // console.log(dataKeys)
 	
-	const [lineData, setLineData] = useState({
-		labels: [...dataKeys],
-		datasets: [
-		  {
-		    label: "Complaints by year",
-		    data: [...dataValues],
-		    fill: false,
-        pointBackgroundColor: '#123456',
-		    borderColor: '#ABCDEF',
-		    lineTension: 0
-		  }
-		]
-	})
-
-	const [lineOptions, setLineOptions] = useState({
-	  options: {
-    	scales: {
-    		yAxes: [
-    			{
-    				ticks: {
+	const [lineData, setLineData] = useState()
+  const [lineOptions, setLineOptions] = useState({
+    options: {
+      scales: {
+        yAxes: [
+          {
+            ticks: {
               min: 0,
-    					suggestedMax: maxValue + 1,
-    					stepSize: 1
-    				}
-    			}
-    		],
+              suggestedMax: maxValue + 1,
+              stepSize: 1
+            }
+          }
+        ],
         // xAxes: [
         //   {
         //     ticks: {
@@ -50,21 +37,21 @@ export const LineChart = (props) => {
         //     }
         //   }
         // ]
-      	xAxes: [
-      		{
+        xAxes: [
+          {
             ticks: {
             },
-        		type: 'time',
-        		time: {
-        			unit: 'year',
+            type: 'time',
+            time: {
+              unit: 'year',
               displayFormats: { year: 'YYYY'}
-        		}
-      		}
-      	]
-    	},
-    	title: {
+            }
+          }
+        ]
+      },
+      title: {
         display: true,
-        text: props.title,
+        text: title,
         fontSize: 25
       },
       legend: {
@@ -73,8 +60,33 @@ export const LineChart = (props) => {
       },
       responsive: false,
       maintainAspectRatio: true
-  	}
-	})
+    }
+  })
+
+  useEffect(() => {
+    setLineData({
+      labels: [...dataKeys],
+      datasets: [
+        {
+          label: "Complaints by year",
+          data: [...dataValues],
+          fill: false,
+          pointBackgroundColor: '#123456',
+          borderColor: '#ABCDEF',
+          lineTension: 0 
+        }
+      ]
+    })
+    setLineOptions({
+      options: {
+        ...lineOptions.options,
+        title: {
+          ...lineOptions.options.title,
+          text: title
+        }
+      }
+    })
+  }, [data])
 
 	return (
 		<div className="LineChart">

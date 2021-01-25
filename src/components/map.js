@@ -173,7 +173,7 @@ export const PrecinctsMap = props => {
 	})
 
 return (
-	<div ref={containerRef} className="container" style={mapStyle()}>
+	<div ref={containerRef} className="map-container" style={mapStyle()}>
 	</div>
 		)
 }

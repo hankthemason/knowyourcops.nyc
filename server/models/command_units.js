@@ -78,46 +78,46 @@ export class CommandUnits {
 				*,
 				JSON_GROUP_ARRAY(JSON_OBJECT(
 					'American Indian',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(american_indian * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(american_indian * 1.0 / num_allegations * 100.0, 2) END,
 					'Asian',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(asian * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(asian * 1.0 / num_allegations * 100.0, 2) END,
 					'Black',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(black * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(black * 1.0 / num_allegations * 100.0, 2) END,
 					'Hispanic',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(hispanic * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(hispanic * 1.0 / num_allegations * 100.0, 2) END,
 					'White',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(white * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(white * 1.0 / num_allegations * 100.0, 2) END,
 					'Other Ethnicity',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(other_ethnicity * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(other_ethnicity * 1.0 / num_allegations * 100.0, 2) END,
 					'Ethnicity Unknown',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(ethnicity_unknown * 1.0 / num_complaints * 100.0, 2) END
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(ethnicity_unknown * 1.0 / num_allegations * 100.0, 2) END
 				)) AS race_percentages,
 				JSON_GROUP_ARRAY(JSON_OBJECT(
 					'Female',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(female * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(female * 1.0 / num_allegations * 100.0, 2) END,
 					'Male',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(male * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(male * 1.0 / num_allegations * 100.0, 2) END,
 					'Female (trans)',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(trans_female * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(trans_female * 1.0 / num_allegations * 100.0, 2) END,
 					'Male (trans)',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(trans_male * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(trans_male * 1.0 / num_allegations * 100.0, 2) END,
 					'Gender-nonconforming',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(gender_non_conforming * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(gender_non_conforming * 1.0 / num_allegations * 100.0, 2) END,
 					'Unknown/refused',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(gender_unknown * 1.0 / num_complaints * 100.0, 2) END
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(gender_unknown * 1.0 / num_allegations * 100.0, 2) END
 				)) AS gender_percentages
 				FROM (
 				SELECT
@@ -129,19 +129,19 @@ export class CommandUnits {
 					END substantiated_percentage,
 					COUNT(allegations.id) AS num_allegations,
 					COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%american indian%' THEN complaint_id END) AS american_indian,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%asian%' THEN complaint_id END) AS asian,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%black%' THEN complaint_id END) AS black,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%hispanic%' THEN complaint_id END) AS hispanic,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%white%' THEN complaint_id END) AS white,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE 'Other Race' THEN complaint_id END) AS other_ethnicity,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '' THEN complaint_id END) AS ethnicity_unknown,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE 'male%' THEN complaint_id END) AS male,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%female%' THEN complaint_id END) AS female,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Gender non-conforming%' THEN complaint_id END) AS gender_non_conforming,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transman%' THEN complaint_id END) AS trans_male,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transwoman%' THEN complaint_id END) AS trans_female,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '' THEN complaint_id END) AS gender_unknown,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%american indian%' THEN allegations.id END) AS american_indian,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%asian%' THEN allegations.id END) AS asian,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%black%' THEN allegations.id END) AS black,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%hispanic%' THEN allegations.id END) AS hispanic,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%white%' THEN allegations.id END) AS white,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE 'Other Race' THEN allegations.id END) AS other_ethnicity,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '' THEN allegations.id END) AS ethnicity_unknown,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE 'male%' THEN allegations.id END) AS male,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%female%' THEN allegations.id END) AS female,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Gender non-conforming%' THEN allegations.id END) AS gender_non_conforming,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transman%' THEN allegations.id END) AS trans_male,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transwoman%' THEN allegations.id END) AS trans_female,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '' THEN allegations.id END) AS gender_unknown,
 					COUNT(DISTINCT complaints.id) AS num_complaints
 				FROM 
 					command_units
@@ -182,46 +182,46 @@ export class CommandUnits {
 				*,
 				JSON_GROUP_ARRAY(JSON_OBJECT(
 					'American Indian',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(american_indian * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(american_indian * 1.0 / num_allegations * 100.0, 2) END,
 					'Asian',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(asian * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(asian * 1.0 / num_allegations * 100.0, 2) END,
 					'Black',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(black * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(black * 1.0 / num_allegations * 100.0, 2) END,
 					'Hispanic',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(hispanic * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(hispanic * 1.0 / num_allegations * 100.0, 2) END,
 					'White',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(white * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(white * 1.0 / num_allegations * 100.0, 2) END,
 					'Other Ethnicity',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(other_ethnicity * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(other_ethnicity * 1.0 / num_allegations * 100.0, 2) END,
 					'Ethnicity Unknown',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(ethnicity_unknown * 1.0 / num_complaints * 100.0, 2) END
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(ethnicity_unknown * 1.0 / num_allegations * 100.0, 2) END
 				)) AS race_percentages,
 				JSON_GROUP_ARRAY(JSON_OBJECT(
 					'Female',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(female * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(female * 1.0 / num_allegations * 100.0, 2) END,
 					'Male',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(male * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(male * 1.0 / num_allegations * 100.0, 2) END,
 					'Female (trans)',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(trans_female * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(trans_female * 1.0 / num_allegations * 100.0, 2) END,
 					'Male (trans)',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(trans_male * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(trans_male * 1.0 / num_allegations * 100.0, 2) END,
 					'Gender-nonconforming',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(gender_non_conforming * 1.0 / num_complaints * 100.0, 2) END,
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(gender_non_conforming * 1.0 / num_allegations * 100.0, 2) END,
 					'Unknown/refused',
-					CASE WHEN num_complaints > 4 THEN
-					ROUND(gender_unknown * 1.0 / num_complaints * 100.0, 2) END
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(gender_unknown * 1.0 / num_allegations * 100.0, 2) END
 				)) AS gender_percentages
 				FROM (
 				SELECT
@@ -233,19 +233,19 @@ export class CommandUnits {
 					END substantiated_percentage,
 					COUNT(allegations.id) AS num_allegations,
 					COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%american indian%' THEN complaint_id END) AS american_indian,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%asian%' THEN complaint_id END) AS asian,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%black%' THEN complaint_id END) AS black,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%hispanic%' THEN complaint_id END) AS hispanic,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%white%' THEN complaint_id END) AS white,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE 'Other Race' THEN complaint_id END) AS other_ethnicity,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '' THEN complaint_id END) AS ethnicity_unknown,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE 'male%' THEN complaint_id END) AS male,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%female%' THEN complaint_id END) AS female,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Gender non-conforming%' THEN complaint_id END) AS gender_non_conforming,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transman%' THEN complaint_id END) AS trans_male,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transwoman%' THEN complaint_id END) AS trans_female,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '' THEN complaint_id END) AS gender_unknown,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%american indian%' THEN allegations.id END) AS american_indian,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%asian%' THEN allegations.id END) AS asian,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%black%' THEN allegations.id END) AS black,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%hispanic%' THEN allegations.id END) AS hispanic,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%white%' THEN allegations.id END) AS white,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE 'Other Race' THEN allegations.id END) AS other_ethnicity,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '' THEN allegations.id END) AS ethnicity_unknown,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE 'male%' THEN allegations.id END) AS male,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%female%' THEN allegations.id END) AS female,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Gender non-conforming%' THEN allegations.id END) AS gender_non_conforming,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transman%' THEN allegations.id END) AS trans_male,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transwoman%' THEN allegations.id END) AS trans_female,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '' THEN allegations.id END) AS gender_unknown,
 					COUNT(DISTINCT complaints.id) AS num_complaints
 				FROM 
 					command_units
@@ -292,29 +292,52 @@ export class CommandUnits {
 
 	async readCommandUnit(id) {
 		try {
-			const result = await this.db.all(`
+			const result = await this.db.get(`
 				SELECT
 				*,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(american_indian * 1.0 / num_complaints * 100.0, 2) END percentage_american_indian_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(asian * 1.0 / num_complaints * 100.0, 2) END percentage_asian_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(black * 1.0 / num_complaints * 100.0, 2) END percentage_black_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(hispanic * 1.0 / num_complaints * 100.0, 2) END percentage_hispanic_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(white * 1.0 / num_complaints * 100.0, 2) END percentage_white_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(other_ethnicity * 1.0 / num_complaints * 100.0, 2) END percentage_other_ethnicity_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(ethnicity_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_ethnicity_unknown_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(male * 1.0 / num_complaints * 100.0, 2) END percentage_male_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(female * 1.0 / num_complaints * 100.0, 2) END percentage_female_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(gender_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_gender_unknown_complainants
+				JSON_GROUP_ARRAY(JSON_OBJECT(
+					'American Indian',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(american_indian * 1.0 / num_allegations * 100.0, 2) END,
+					'Asian',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(asian * 1.0 / num_allegations * 100.0, 2) END,
+					'Black',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(black * 1.0 / num_allegations * 100.0, 2) END,
+					'Hispanic',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(hispanic * 1.0 / num_allegations * 100.0, 2) END,
+					'White',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(white * 1.0 / num_allegations * 100.0, 2) END,
+					'Other Ethnicity',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(other_ethnicity * 1.0 / num_allegations * 100.0, 2) END,
+					'Ethnicity Unknown',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(ethnicity_unknown * 1.0 / num_allegations * 100.0, 2) END
+				)) AS race_percentages,
+				JSON_GROUP_ARRAY(JSON_OBJECT(
+					'Female',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(female * 1.0 / num_allegations * 100.0, 2) END,
+					'Male',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(male * 1.0 / num_allegations * 100.0, 2) END,
+					'Female (trans)',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(trans_female * 1.0 / num_allegations * 100.0, 2) END,
+					'Male (trans)',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(trans_male * 1.0 / num_allegations * 100.0, 2) END,
+					'Gender-nonconforming',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(gender_non_conforming * 1.0 / num_allegations * 100.0, 2) END,
+					'Unknown/refused',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(gender_unknown * 1.0 / num_allegations * 100.0, 2) END
+				)) AS gender_percentages
 				FROM (
 				SELECT
 					command_units.*,
@@ -325,19 +348,19 @@ export class CommandUnits {
 					END substantiated_percentage,
 					COUNT(allegations.id) AS num_allegations,
 					COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%american indian%' THEN complaint_id END) AS american_indian,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%asian%' THEN complaint_id END) AS asian,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%black%' THEN complaint_id END) AS black,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%hispanic%' THEN complaint_id END) AS hispanic,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%white%' THEN complaint_id END) AS white,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE 'Other Race' THEN complaint_id END) AS other_ethnicity,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '' THEN complaint_id END) AS ethnicity_unknown,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE 'male%' THEN complaint_id END) AS male,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%female%' THEN complaint_id END) AS female,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Gender non-conforming%' THEN complaint_id END) AS gender_non_conforming,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transman%' THEN complaint_id END) AS trans_male,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transwoman%' THEN complaint_id END) AS trans_female,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '' THEN complaint_id END) AS gender_unknown,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%american indian%' THEN allegations.id END) AS american_indian,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%asian%' THEN allegations.id END) AS asian,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%black%' THEN allegations.id END) AS black,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%hispanic%' THEN allegations.id END) AS hispanic,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%white%' THEN allegations.id END) AS white,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE 'Other Race' THEN allegations.id END) AS other_ethnicity,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '' THEN allegations.id END) AS ethnicity_unknown,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE 'male%' THEN allegations.id END) AS male,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%female%' THEN allegations.id END) AS female,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Gender non-conforming%' THEN allegations.id END) AS gender_non_conforming,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transman%' THEN allegations.id END) AS trans_male,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transwoman%' THEN allegations.id END) AS trans_female,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '' THEN allegations.id END) AS gender_unknown,
 					COUNT(DISTINCT complaints.id) AS num_complaints
 				FROM 
 					command_units
@@ -353,10 +376,12 @@ export class CommandUnits {
 					command_units.id = (?)
 				)
 			`, id)
-			if (result[0].id === null) {
+			if (result.id === null) {
 				const emptyUnit = await this.getEmptyCommandUnit(id)
 				return emptyUnit
 			}
+			result.race_percentages = JSON.parse(result.race_percentages)[0]
+			result.gender_percentages = JSON.parse(result.gender_percentages)[0]
 			return result
 		} catch(error) {
 			console.error(error);
@@ -598,22 +623,49 @@ export class CommandUnits {
 			const results = await this.db.all(`
 				SELECT
 				*,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(black * 1.0 / num_complaints * 100.0, 2) END percentage_black_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(hispanic * 1.0 / num_complaints * 100.0, 2) END percentage_hispanic_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(asian * 1.0 / num_complaints * 100.0, 2) END percentage_asian_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(white * 1.0 / num_complaints * 100.0, 2) END percentage_white_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(ethnicity_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_ethnicity_unknown_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(male * 1.0 / num_complaints * 100.0, 2) END percentage_male_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(female * 1.0 / num_complaints * 100.0, 2) END percentage_female_complainants,
-				CASE WHEN num_complaints > 4 THEN
-				ROUND(gender_unknown * 1.0 / num_complaints * 100.0, 2) END percentage_gender_unknown_complainants
+				JSON_GROUP_ARRAY(JSON_OBJECT(
+					'American Indian',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(american_indian * 1.0 / num_allegations * 100.0, 2) END,
+					'Asian',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(asian * 1.0 / num_allegations * 100.0, 2) END,
+					'Black',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(black * 1.0 / num_allegations * 100.0, 2) END,
+					'Hispanic',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(hispanic * 1.0 / num_allegations * 100.0, 2) END,
+					'White',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(white * 1.0 / num_allegations * 100.0, 2) END,
+					'Other Ethnicity',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(other_ethnicity * 1.0 / num_allegations * 100.0, 2) END,
+					'Ethnicity Unknown',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(ethnicity_unknown * 1.0 / num_allegations * 100.0, 2) END
+				)) AS race_percentages,
+				JSON_GROUP_ARRAY(JSON_OBJECT(
+					'Female',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(female * 1.0 / num_allegations * 100.0, 2) END,
+					'Male',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(male * 1.0 / num_allegations * 100.0, 2) END,
+					'Female (trans)',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(trans_female * 1.0 / num_allegations * 100.0, 2) END,
+					'Male (trans)',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(trans_male * 1.0 / num_allegations * 100.0, 2) END,
+					'Gender-nonconforming',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(gender_non_conforming * 1.0 / num_allegations * 100.0, 2) END,
+					'Unknown/refused',
+					CASE WHEN num_allegations > 4 THEN
+					ROUND(gender_unknown * 1.0 / num_allegations * 100.0, 2) END
+				)) AS gender_percentages
 				FROM (
 				SELECT
 					command_units.*,
@@ -624,17 +676,19 @@ export class CommandUnits {
 					END substantiated_percentage,
 					COUNT(allegations.id) AS num_allegations,
 					COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%black%' THEN complaint_id END) AS black,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%hispanic%' THEN complaint_id END) AS hispanic,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%asian%' THEN complaint_id END) AS asian,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%white%' THEN complaint_id END) AS white,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '' OR complainant_ethnicity LIKE 'Other Race' THEN complaint_id END) AS ethnicity_unknown,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE 'male%' THEN complaint_id END) AS male,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%female%' THEN complaint_id END) AS female,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Gender non-conforming%' THEN complaint_id END) AS gender_non_conforming,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transman%' THEN complaint_id END) AS trans_male,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transwoman%' THEN complaint_id END) AS trans_female,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '' THEN complaint_id END) AS gender_unknown,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%american indian%' THEN allegations.id END) AS american_indian,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%asian%' THEN allegations.id END) AS asian,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%black%' THEN allegations.id END) AS black,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%hispanic%' THEN allegations.id END) AS hispanic,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%white%' THEN allegations.id END) AS white,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE 'Other Race' THEN allegations.id END) AS other_ethnicity,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '' THEN allegations.id END) AS ethnicity_unknown,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE 'male%' THEN allegations.id END) AS male,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%female%' THEN allegations.id END) AS female,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Gender non-conforming%' THEN allegations.id END) AS gender_non_conforming,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transman%' THEN allegations.id END) AS trans_male,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transwoman%' THEN allegations.id END) AS trans_female,
+					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '' THEN allegations.id END) AS gender_unknown,
 					COUNT(DISTINCT complaints.id) AS num_complaints
 				FROM 
 					command_units
@@ -651,7 +705,13 @@ export class CommandUnits {
 				GROUP BY 
 					command_units.unit_id
 				)
+				GROUP BY 
+					id
 			`)
+			results.map(e => {
+				e.race_percentages = JSON.parse(e.race_percentages)[0]
+				e.gender_percentages = JSON.parse(e.gender_percentages)[0]
+			})
 			return results
 		} catch(error) {
 			console.error(error)

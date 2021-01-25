@@ -219,3 +219,11 @@ table {
   font-style: italic;
   margin-right: .2rem;
 }
+
+@media(max-width: 800px) {
+  .map-container {
+    margin: 0 auto !important;
+    float: none !important;
+    padding-right: 0 !important;
+  }
+}

@@ -57,48 +57,72 @@ export const CopProvider = (props) => {
 
 	const { setViewConfig, getViewConfig } = useViewConfig();
 
-	const setCopViewConfig = (viewConfig) => setViewConfig({[viewConfigName]: viewConfig})
-	const getCopViewConfig = () => getViewConfig(viewConfigName)
-
-	const viewConfigExists = getCopViewConfig() != undefined
-
-	useEffect(() => {
-		setCopViewConfig({
-			...DefaultViewConfig,
-			orderBy: {
-					id: 0,
-					title: 'Date Received',
-					value: 'date_received'
-				},
-			orderByOptions: [
-				{
-					id: 0,
-					title: 'Date Received',
-					value: 'date_received'
-				},
-				{
-					id: 1,
-					title: 'Date Closed',
-					value: 'date_closed'
-				},
-				{
-					id: 2,
-					title: 'Precinct',
-					value: 'precinct'
-				},
-				{
-					id: 3,
-					title: 'Number of Allegations on Complaint',
-					value: 'num_allegations_on_complaint'
-				}
-			]
-		})
-	}, [viewConfigExists])
+	const [incompleteCop, setIncompleteCop] = useState(null);
 
 	const { id } = useParams();
 	const { cops } = useCops();
 
-	const [incompleteCop, setIncompleteCop] = useState(null);
+	const setCopViewConfig = (viewConfig) => setViewConfig({[viewConfigName]: viewConfig})
+	const getCopViewConfig = () => getViewConfig(viewConfigName)
+	
+	const viewConfig = getCopViewConfig()
+	
+	const [yearlyStatsSelector, setYearlyStatsSelector] = useState('allegations')
+	const [locationStatsSelector, setLocationStatsSelector] = useState('allegations')
+
+	// let yearlyStatsSelector
+	// let locationStatsSelector
+	// if (viewConfig != undefined) {
+	// 	yearlyStatsSelector = viewConfig.yearlyStatsSelector
+	// 	locationStatsSelector = viewConfig.locationStatsSelector
+	// }
+
+	const viewConfigExists = getCopViewConfig() != undefined
+
+	useEffect(() => {
+		if (viewConfigExists === false) {
+			setCopViewConfig({
+				...DefaultViewConfig,
+				orderBy: {
+						id: 0,
+						title: 'Date Received',
+						value: 'date_received'
+					},
+				orderByOptions: [
+					{
+						id: 0,
+						title: 'Date Received',
+						value: 'date_received'
+					},
+					{
+						id: 1,
+						title: 'Date Closed',
+						value: 'date_closed'
+					},
+					{
+						id: 2,
+						title: 'Precinct',
+						value: 'precinct'
+					},
+					{
+						id: 3,
+						title: 'Number of Allegations on Complaint',
+						value: 'num_allegations_on_complaint'
+					}
+				],
+				yearlyStatsSelector: 'allegations',
+				locationStatsSelector: 'allegations'
+			})
+		}
+	}, [viewConfigExists])
+
+	useEffect(() => {
+		if (viewConfig != undefined && viewConfig.yearlyStatsSelector != undefined && viewConfig.locationStatsSelector != undefined) {
+			setYearlyStatsSelector(viewConfig.yearlyStatsSelector)
+			setLocationStatsSelector(viewConfig.locationStatsSelector)
+		}
+
+	}, [viewConfig])
 	
 	useEffect(() => {
 		const cop = cops.find(obj => {
@@ -128,16 +152,28 @@ export const CopProvider = (props) => {
   const [complaintsWithAllegations, setComplaintsWithAllegations] = useState(null)
 
 	useEffect(() => {
-		fetch(`/cop_complaints/locations/id=${id}`)
-    .then(result => result.json())
-    .then(complaintsLocations => setComplaintsLocations(complaintsLocations))
-    fetch(`/cop_complaints/years/id=${id}`)
-    .then(result => result.json())
-    .then(complaintsDates => setComplaintsDates(complaintsDates))
-     fetch(`/cop_complaints/allegations/id=${id}`)
-    .then(result => result.json())
-    .then(complaintsWithAllegations => setComplaintsWithAllegations(complaintsWithAllegations))
+   	
+   	fetch(`/cop_complaints/allegations/id=${id}`)
+  	.then(result => result.json())
+  	.then(complaintsWithAllegations => setComplaintsWithAllegations(complaintsWithAllegations))
+
 	}, [])
+
+	useEffect(() => {
+		if (yearlyStatsSelector != undefined) {
+    	fetch(`/cop/yearly_stats/table=${yearlyStatsSelector}/id=${id}`)
+    	.then(result => result.json())
+    	.then(complaintsDates => setComplaintsDates(complaintsDates))
+  	}
+	}, [yearlyStatsSelector])
+
+	useEffect(() => {
+		if (locationStatsSelector != undefined) {
+    	fetch(`/cop/locations_stats/table=${locationStatsSelector}/id=${id}`)
+    	.then(result => result.json())
+    	.then(complaintsLocations => setComplaintsLocations(complaintsLocations))
+  	}
+	}, [locationStatsSelector])
 
 	useEffect(() => {
 		if (incompleteCop === undefined || 

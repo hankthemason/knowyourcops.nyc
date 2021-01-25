@@ -68,10 +68,10 @@ export const CommandUnitPage = props => {
     return e = e.charAt(0).toUpperCase() + e.slice(1)
   })
 
-	const genderData = pick(c, ['male', 
-                          'female',
-                          'trans_male',
+	const genderData = pick(c, ['female', 
+                          'male',
                           'trans_female',
+                          'trans_male',
                           'gender_non_conforming',
                           'gender_unknown'])
 
@@ -171,8 +171,11 @@ export const CommandUnitPage = props => {
       {c.precinct != 'null' && c.unit_id.endsWith('DET') ? <p> Associated Precinct: {c.precinct}</p> : null}
       <ul class="individual-page-stats">
 			  <li><span id="stats-span">{c.num_allegations}</span> total allegations</li>
+        <li>
+          <span id='stats-span'>{c.num_substantiated}</span> allegations substantiated 
+          {c.substantiated_percentage ? <span> (<span id='stats-span'>{c.substantiated_percentage}%</span> substantiated)</span>: null}
+        </li>
 			  <li><span id="stats-span">{c.num_complaints}</span> total complaints</li>
-			  <li><span id="stats-span">{c.substantiated_percentage}%</span> allegations substantiated</li>
       </ul>
 			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
       <ul className="individual-page-stats">
