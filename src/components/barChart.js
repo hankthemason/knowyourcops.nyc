@@ -12,17 +12,7 @@ export const BarChart = (props) => {
   const yScaleMax = Math.max(...chartData) % 2 === 1 ? Math.max(...chartData) + 5 : Math.max(...chartData) + 4
   
   //set data
-  const [barData, setBarData] = useState({
-    labels: [...chartLabels],
-    datasets: [
-      {
-        label: '',
-        data: [...chartData],
-        backgroundColor: '#789ABC',
-        borderWidth: 3
-      }
-    ]
-  });
+  const [barData, setBarData] = useState()
   //set options
   const [barOptions, setBarOptions] = useState({
     options: {
@@ -44,7 +34,7 @@ export const BarChart = (props) => {
       },
       title: {
         display: true,
-        text: props.title,
+        text: title,
         fontSize: 25
       },
       legend: {
@@ -54,7 +44,33 @@ export const BarChart = (props) => {
       responsive: false,
       maintainAspectRatio: true
     }
-});
+  });
+
+  useEffect(() => {
+    setBarData({
+    labels: [...chartLabels],
+    datasets: [
+      {
+        label: '',
+        data: [...chartData],
+        backgroundColor: '#789ABC',
+        borderWidth: 3
+      }
+    ]
+    })
+  }, [data])
+
+  useEffect(() => {
+    setBarOptions({
+      options: {
+        ...barOptions.options,
+        title: {
+          ...barOptions.options.title,
+          text: title
+        }
+      }
+    })
+  }, [title])
 
   return (
     <div className="BarChart">

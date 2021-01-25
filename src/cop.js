@@ -18,6 +18,7 @@ export const CopPage = (props) => {
   const viewConfig = getCopViewConfig()
   const orderByOptions = viewConfig.orderByOptions
   const [yearlyStatsSelector, setYearlyStatsSelector] = useState(viewConfig.yearlyStatsSelector)
+  const [locationStatsSelector, setLocationStatsSelector] = useState(viewConfig.locationStatsSelector)
   
 	let name = cop.first_name + ' ' + cop.last_name;
 	let numAllegations = cop.num_allegations;
@@ -146,12 +147,29 @@ export const CopPage = (props) => {
     })
   };
 
+  const locationStatsHandler = (event) => {
+    const v = event.target.value
+    setCopViewConfig({
+      ...viewConfig,
+      locationStatsSelector: v
+    })
+  };
+
   const [yearlyStats, setYearlyStats] = useState(cop.yearlyStats)
   
   useEffect(() => {
     setYearlyStats(cop.yearlyStats)
     setYearlyStatsSelector(viewConfig.yearlyStatsSelector)
   }, [cop.yearlyStats])
+
+  const [locationStats, setLocationStats] = useState(cop.locationStats)
+  
+  useEffect(() => {
+    setLocationStats(cop.locationStats)
+    setLocationStatsSelector(viewConfig.locationStatsSelector)
+  }, [cop.locationStats])
+
+  console.log(locationStatsSelector)
 
 	return (
 		<div className='page-container'>
@@ -190,11 +208,13 @@ export const CopPage = (props) => {
               <span id='stats-span'>{complaints}</span> total complaints
             </li>
           </ul>
+          <MuiSelect handler={locationStatsHandler} value={viewConfig.locationStatsSelector}/>
         </div>
         <div className='map-parent'>
-          <PrecinctsMap height={400} width={400} pageData={locationStatsArr} type={mapType} dataPoint={mapDataPoint} float={mapFloat} />
+          <PrecinctsMap height={380} width={380} pageData={locationStatsArr} type={mapType} dataPoint={mapDataPoint} float={mapFloat} />
         </div>
       </div>
+      <BarChart data={cop.locationStats} title={`${firstLetterCap(locationStatsSelector)} by precinct`}/>
 			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
       <ul className="individual-page-stats">
         {Object.entries(cop.race_percentages).map((value, index) => (
@@ -207,7 +227,6 @@ export const CopPage = (props) => {
           <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
         ))}
       </ul>
-			<BarChart data={cop.locationStats} title='Complaints by Precinct'/>
       <MuiSelect handler={yearlyStatsHandler} value={viewConfig.yearlyStatsSelector}/>
 			<LineChart data={yearlyStats} title={`${firstLetterCap(yearlyStatsSelector)} by year`}/>
       <div>

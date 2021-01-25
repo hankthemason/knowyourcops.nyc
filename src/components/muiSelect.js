@@ -26,7 +26,7 @@ export const MuiSelect = props => {
         <option value={'allegations'}>Allegations</option>
         <option value={'complaints'}>Complaints</option>
       </NativeSelect>
-      <FormHelperText>Which data to visualize</FormHelperText>
+      <FormHelperText>Which data to visualize in this chart</FormHelperText>
     </FormControl>
   )
 }
