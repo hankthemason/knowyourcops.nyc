@@ -155,40 +155,46 @@ export const CopPage = (props) => {
 
 	return (
 		<div className='page-container'>
-      <PrecinctsMap height={400} width={400} pageData={locationStatsArr} type={mapType} dataPoint={mapDataPoint} float={mapFloat} />
-			<h1 id='individual-header' style={{display: 'inline-block', marginRight: '1rem'}}>{name}</h1>
-      {badgeNumber > 0 ? (<h2 id='badge-number'><i>badge #{badgeNumber}</i></h2>) : null}
-			<h4 id='officer-description'>{`${ethnicity} ${gender}`}</h4>
-      <ul class='individual-page-attributes'>
-        <li><strong>Most recent rank and assignment:</strong> {rank}, <Link to={`/command_unit/${cop.command_unit_id}`}>
-          {assignment_full ? assignment_full : assignment_abbrev}</Link>
-        </li>
-        <li>
+      <div className='parent' style={{display: 'flex', flexFlow: 'wrap', justifyContent: 'space-between'}}>
+        <div className='text-parent'>
+          <h1 id='individual-header' style={{display: 'inline-block', marginRight: '1rem'}}>{name}</h1>
+          {badgeNumber > 0 ? (<h2 id='badge-number'><i>badge #{badgeNumber}</i></h2>) : null}
+			    <h4 id='officer-description'>{`${ethnicity} ${gender}`}</h4>
+          <ul class='individual-page-attributes'>
+          <li><strong>Most recent rank and assignment:</strong> {rank}, <Link to={`/command_unit/${cop.command_unit_id}`}>
+            {assignment_full ? assignment_full : assignment_abbrev}</Link>
+          </li>
+          <li>
           <strong>All ranks held: </strong> 
             {allRanksHeld.map((e, index) => (
               (index ? ', ' : '') + e
             ))}
-        </li>
-        <li>
-          <strong>All assignments: </strong>
-            {Object.entries(allAssignments).map((item, index) => (
-              [(index ? ', ': ''),
-              <Link to={`/command_unit/${item[0]}`}>{item[1]}</Link>]
-            ))}
-        </li>
-      </ul>
-      <ul class="individual-page-stats">
-        <li>
-          <span id='stats-span'>{numAllegations}</span> total allegations
-        </li>
-        <li>
-          <span id='stats-span'>{cop.num_substantiated}</span> allegations substantiated 
-          {percentageSubstantiated ? <span> (<span id='stats-span'>{percentageSubstantiated}%</span> substantiated)</span>: null}
-        </li>
-        <li>
-          <span id='stats-span'>{complaints}</span> total complaints
-        </li>
-      </ul>
+          </li>
+          <li>
+            <strong>All assignments: </strong>
+              {Object.entries(allAssignments).map((item, index) => (
+                [(index ? ', ': ''),
+                <Link to={`/command_unit/${item[0]}`}>{item[1]}</Link>]
+              ))}
+          </li>
+          </ul>
+          <ul class="individual-page-stats">
+            <li>
+              <span id='stats-span'>{numAllegations}</span> total allegations
+            </li>
+            <li>
+              <span id='stats-span'>{cop.num_substantiated}</span> allegations substantiated 
+              {percentageSubstantiated ? <span> (<span id='stats-span'>{percentageSubstantiated}%</span> substantiated)</span>: null}
+            </li>
+            <li>
+              <span id='stats-span'>{complaints}</span> total complaints
+            </li>
+          </ul>
+        </div>
+        <div className='map-parent'>
+          <PrecinctsMap height={400} width={400} pageData={locationStatsArr} type={mapType} dataPoint={mapDataPoint} float={mapFloat} />
+        </div>
+      </div>
 			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
       <ul className="individual-page-stats">
         {Object.entries(cop.race_percentages).map((value, index) => (

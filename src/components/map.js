@@ -165,9 +165,7 @@ export const PrecinctsMap = props => {
 		       });
 	}, [])
 
-	let mapStyle = () => ({
-		marginBottom: '2rem',
-		paddingRight: "12rem", 
+	let mapStyle = () => ({ 
 		position: "relative", 
 		float: `${float}`
 	})
