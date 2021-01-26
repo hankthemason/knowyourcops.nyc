@@ -220,7 +220,7 @@ table {
   margin-right: .2rem;
 }
 
-@media(max-width: 1140px) {
+@media(max-width: 1214px) {
   .map-parent {
     order: 1;
     margin: 0 auto !important;
@@ -231,4 +231,16 @@ table {
     order: 2;
     align-self: center;
   }
+}
+
+.barChart {
+  height: auto;
+  width: 100%;
+  max-width: 600px;
+}
+
+.lineChart {
+  height: auto;
+  width: 100%;
+  max-width: 600px;
 }

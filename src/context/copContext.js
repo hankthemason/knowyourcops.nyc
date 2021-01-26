@@ -44,10 +44,17 @@ const normalizeData = cop => {
 		return {...accumulator, [value.precinct]: value.count}
 	}, {})
 
+	let locationStatsForMap = cop.mapStats
+
+	locationStatsForMap = reduce(locationStatsForMap, (accumulator, value) => {
+		return {...accumulator, [value.precinct]: value.count}
+	}, {})
+
 	return {
 		...cop, 
 		yearlyStats: allYears,
-		locationStats: locationStats
+		locationStats: locationStats,
+		mapStats: locationStatsForMap
 	}
 }
 
@@ -69,6 +76,7 @@ export const CopProvider = (props) => {
 	
 	const [yearlyStatsSelector, setYearlyStatsSelector] = useState('allegations')
 	const [locationStatsSelector, setLocationStatsSelector] = useState('allegations')
+	const [mapStatsSelector, setMapStatsSelector] = useState('allegations')
 
 	// let yearlyStatsSelector
 	// let locationStatsSelector
@@ -111,15 +119,20 @@ export const CopProvider = (props) => {
 					}
 				],
 				yearlyStatsSelector: 'allegations',
-				locationStatsSelector: 'allegations'
+				locationStatsSelector: 'allegations',
+				mapStatsSelector: 'allegations'
 			})
 		}
 	}, [viewConfigExists])
 
 	useEffect(() => {
-		if (viewConfig != undefined && viewConfig.yearlyStatsSelector != undefined && viewConfig.locationStatsSelector != undefined) {
+		if (viewConfig != undefined && 
+				viewConfig.yearlyStatsSelector != undefined && 
+				viewConfig.locationStatsSelector != undefined &&
+				viewConfig.mapStatsSelector != undefined) {
 			setYearlyStatsSelector(viewConfig.yearlyStatsSelector)
 			setLocationStatsSelector(viewConfig.locationStatsSelector)
+			setMapStatsSelector(viewConfig.mapStatsSelector)
 		}
 
 	}, [viewConfig])
@@ -146,9 +159,8 @@ export const CopProvider = (props) => {
 	const [cop, setCop] = useState(null)
 
 	const [complaintsLocations, setComplaintsLocations] = useState(null);
-
+	const [complaintsLocationsForMap, setComplaintsLocationsForMap] = useState(null);
 	const [complaintsDates, setComplaintsDates] = useState(null);
-
   const [complaintsWithAllegations, setComplaintsWithAllegations] = useState(null)
 
 	useEffect(() => {
@@ -176,6 +188,14 @@ export const CopProvider = (props) => {
 	}, [locationStatsSelector])
 
 	useEffect(() => {
+		if (mapStatsSelector != undefined) {
+    	fetch(`/cop/locations_stats/table=${mapStatsSelector}/id=${id}`)
+    	.then(result => result.json())
+    	.then(complaintsLocationsForMap => setComplaintsLocationsForMap(complaintsLocationsForMap))
+  	}
+	}, [mapStatsSelector])
+
+	useEffect(() => {
 		if (incompleteCop === undefined || 
 			complaintsLocations === null || 
 			complaintsDates === null || 
@@ -186,14 +206,17 @@ export const CopProvider = (props) => {
 			...incompleteCop, 
 			locationStats: complaintsLocations,
 			yearlyStats: complaintsDates,
-			complaintsWithAllegations: complaintsWithAllegations
+			complaintsWithAllegations: complaintsWithAllegations,
+			mapStats: complaintsLocationsForMap
 		}))
-	}, [complaintsLocations, complaintsDates, complaintsWithAllegations, incompleteCop])
+	}, [complaintsLocations, complaintsLocationsForMap, complaintsDates, complaintsWithAllegations, incompleteCop])
 
 	const copConfig = { cop, setCopViewConfig, getCopViewConfig }
 
 	return (
+
 		<CopContext.Provider value={copConfig}>
+			{console.log(cop)}
 			{ cop ? props.children : null}
 		</CopContext.Provider>
 		)

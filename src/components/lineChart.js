@@ -4,7 +4,7 @@ import { Line } from 'react-chartjs-2';
 import { keys, values } from 'lodash';
 
 export const LineChart = (props) => {
-	const {data, title} = props;
+	const {data, title, width, height} = props;
   //console.log('data: ' + data)
 	let dataKeys = keys(data)
 	let dataValues = values(data)
@@ -58,7 +58,12 @@ export const LineChart = (props) => {
         display: false,
         position: 'top'
       },
-      responsive: false,
+      layout: {
+        padding: {
+          right: 50
+        }
+      },
+      responsive: true,
       maintainAspectRatio: true
     }
   })
@@ -89,12 +94,12 @@ export const LineChart = (props) => {
   }, [data])
 
 	return (
-		<div className="LineChart">
+		<div className="lineChart">
 			<Line 
 				data={lineData} 
         options={lineOptions.options}
-        width={600}
-        height={400}
+        width={width}
+        height={height}
         />
 		</div>
 	)

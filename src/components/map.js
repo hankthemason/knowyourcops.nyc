@@ -4,6 +4,7 @@ import { useMaps } from '../context/mapsContext'
 import { useViewConfig } from '../context/viewConfigContext'
 import { makeStyles } from '@material-ui/core/styles';
 import { values } from 'lodash'
+import { MuiSelect } from './muiSelect'
 
 const useStyles = makeStyles(theme => ({
 	selected: {
@@ -20,12 +21,15 @@ export const PrecinctsMap = props => {
 	const { mapData, commandUnits } = useMaps()
 
 	//get the page-specific data
-	const { height, width, type, dataPoint, pageData, float } = props
+	const { height, width, type, dataPoint, pageData, float, select, selectHandler } = props
 	
+	console.log(pageData)
+	console.log(dataPoint)
+
 	let tooltipLabel
-	if (dataPoint === 'num_allegations') {
+	if (dataPoint === 'allegations' || dataPoint === 'num_allegations') {
 		tooltipLabel = 'Allegations'
-	} else if (dataPoint === 'num_complaints') {
+	} else if (dataPoint === 'complaints') {
 		tooltipLabel = 'Complaints'
 	}
 
@@ -50,8 +54,84 @@ export const PrecinctsMap = props => {
 	})
 
 	const containerRef = useRef()
-
 	const classes = useStyles()
+
+	useEffect(() => {
+		var tooltip = d3.select(".tooltip")
+
+		d3.selectAll("#precinctPath")
+				.each(function(d) {
+				d3.select(this)
+					.attr('fill', d => {
+						const match = pageData.find(e => {
+							if (d != undefined) {
+				        if (e.precinct === parseInt(d.properties.precinct)) {
+				          if (e.unit_id) {
+				          	return e.unit_id.endsWith('PCT') ? e : undefined
+				        	}
+				          return e
+				        }
+			      	}
+			      })
+		      	if (match != undefined) {
+	            return sequentialScale(match[dataPoint])
+	        	}
+	        	return 'transparent' 
+			    })
+			    .on("mouseover mousemove", function(event,d) {
+    		
+    				const match = pageData.find(e => {
+          		if (e.precinct === parseInt(d.properties.precinct)) {
+          			if (e.unit_id) {
+          				return e.unit_id.endsWith('PCT') ? e : undefined
+          			}
+          			return e
+          		}
+          	})
+
+    				tooltip
+    					//+18
+		    			.style("left", (event.pageX + tooltipLeft) + "px")
+		        	.style("top", (event.pageY - 28) + "px")
+		      		.transition()
+		         	.duration(200)
+		         	.style("opacity", .9);
+		        if (type === 'heat') {
+			        match ? 
+			       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
+			       								+ "<br>" + `${tooltipLabel}: ` + match[dataPoint]) : 
+			       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
+			       								+ "<br>" + `${tooltipLabel}: ` + 0)
+		       	} else if (type === 'commandUnit') {
+		       		tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>")
+		       	}
+		      })
+		    	.on("mouseout", function(event, d) {
+		       	tooltip.transition()
+		        	.duration(500)
+		         	.style("opacity", 0);
+		       });
+			})
+
+			// .each(function(d) {
+			// 	console.log(d)
+			// 	d3.select(this)
+			// 	.attr('fill', d => {
+			//     //for now, 'DET' command units aren't included
+			//     const match = pageData.find(e => {
+		 //        if (e.precinct === parseInt(d.properties.precinct)) {
+		 //          if (e.unit_id) {
+		 //          	return e.unit_id.endsWith('PCT') ? e : undefined
+		 //        	}
+		 //          return e
+		 //        }
+		 //      })
+	  //         if (match != undefined) {
+	  //           return sequentialScale(match[dataPoint])
+	  //         }
+			// 	})
+			// })
+	}, [pageData])
 
 	useEffect(() => {
 
@@ -72,6 +152,7 @@ export const PrecinctsMap = props => {
 			.append("svg")
 			.attr("height", `${height}`)
 			.attr("width", `${width}`)
+			.attr("z-index", -1)
 
 		svg.append("g")
 			.selectAll("g")
@@ -103,6 +184,7 @@ export const PrecinctsMap = props => {
           }
         })
     		.append("path")
+    			.attr('id', 'precinctPath')
         	.attr('d', pathGenerator)
         	.each((d, i, nodes) => {
         		if (type === 'heat') {
@@ -165,6 +247,8 @@ export const PrecinctsMap = props => {
 		       });
 	}, [])
 
+
+
 	let mapStyle = () => ({ 
 		position: "relative", 
 		float: `${float}`
@@ -172,6 +256,7 @@ export const PrecinctsMap = props => {
 
 return (
 	<div ref={containerRef} className="map-container" style={mapStyle()}>
+		{select ? <MuiSelect handler={selectHandler} style={{marginTop: '1rem', position: 'absolute'}}/> : null}
 	</div>
 		)
 }

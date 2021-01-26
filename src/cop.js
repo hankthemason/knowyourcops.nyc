@@ -19,6 +19,7 @@ export const CopPage = (props) => {
   const orderByOptions = viewConfig.orderByOptions
   const [yearlyStatsSelector, setYearlyStatsSelector] = useState(viewConfig.yearlyStatsSelector)
   const [locationStatsSelector, setLocationStatsSelector] = useState(viewConfig.locationStatsSelector)
+  const [mapStatsSelector, setMapStatsSelector] = useState(viewConfig.mapStatsSelector)
   
 	let name = cop.first_name + ' ' + cop.last_name;
 	let numAllegations = cop.num_allegations;
@@ -36,6 +37,21 @@ export const CopPage = (props) => {
   let rank = cop.rank_full
   let assignment_abbrev = cop.command_unit
   let assignment_full = cop.command_unit_full
+
+  useEffect(() => {
+    let ranks = []
+    let assignments = {}
+    cop.complaintsWithAllegations.forEach(e => {
+      if (!ranks.includes(e.cop_rank_full)) {
+        ranks.push(e.cop_rank_full)
+      }
+      if (e.cop_command_unit_full != 'undefined' && !allAssignments.hasOwnProperty(e.command_unit_id)) {
+        assignments[e.command_unit_id] = e.cop_command_unit_full
+      }
+    })
+    setAllRanksHeld(ranks)
+    setAllAssignments(assignments)
+  }, [])
 
   let raceData;
 
@@ -77,17 +93,8 @@ export const CopPage = (props) => {
   let allegationsByFado = {}
   let allegationsByDescription = {}
 
-  let allRanksHeld = []
-  let allAssignments = {}
-
-  cop.complaintsWithAllegations.forEach(e => {
-    if (!allRanksHeld.includes(e.cop_rank_full)) {
-      allRanksHeld.push(e.cop_rank_full)
-    }
-    if (e.cop_command_unit_full != 'undefined' && !allAssignments.hasOwnProperty(e.command_unit_id)) {
-      allAssignments[e.command_unit_id] = e.cop_command_unit_full
-    }
-  })
+  const [allRanksHeld, setAllRanksHeld] = useState([])
+  const [allAssignments, setAllAssignments] = useState({})
   
   allegations = cop.complaintsWithAllegations.reduce((acc, val) => acc.concat(val.allegations), [])
     allegations = allegations.reduce((acc, value) => {
@@ -135,8 +142,16 @@ export const CopPage = (props) => {
     }, [])
   }
 
+  let mapStatsArr
+  
+  if (cop.mapStats) {
+    mapStatsArr = reduce(cop.mapStats, function(acc, val, key) {
+      acc.push({precinct: parseInt(key), [mapStatsSelector]: val})
+      return acc
+    }, [])
+  }
+
   const mapType = 'heat'
-  const mapDataPoint = 'num_complaints'
   const mapFloat = 'right'
 
   const yearlyStatsHandler = (event) => {
@@ -155,6 +170,16 @@ export const CopPage = (props) => {
     })
   };
 
+  const mapStatsHandler = (event) => {
+    const v = event.target.value
+    setCopViewConfig({
+      ...viewConfig,
+      mapStatsSelector: v
+    })
+  };
+
+
+
   const [yearlyStats, setYearlyStats] = useState(cop.yearlyStats)
   
   useEffect(() => {
@@ -169,7 +194,20 @@ export const CopPage = (props) => {
     setLocationStatsSelector(viewConfig.locationStatsSelector)
   }, [cop.locationStats])
 
-  console.log(locationStatsSelector)
+  const [mapStats, setMapStats] = useState(cop.mapStats)
+  
+  useEffect(() => {
+    setMapStats(cop.mapStats)
+    setMapStatsSelector(viewConfig.mapStatsSelector)
+  }, [cop.mapStats])
+
+  const barChartStyles = {
+    width: '100%',
+    height: 'auto',
+    maxWidth: '600px'
+  }
+
+  
 
 	return (
 		<div className='page-container'>
@@ -211,10 +249,10 @@ export const CopPage = (props) => {
           <MuiSelect handler={locationStatsHandler} value={viewConfig.locationStatsSelector}/>
         </div>
         <div className='map-parent'>
-          <PrecinctsMap height={380} width={380} pageData={locationStatsArr} type={mapType} dataPoint={mapDataPoint} float={mapFloat} />
+          <PrecinctsMap height={380} width={380} pageData={mapStatsArr} type={mapType} dataPoint={mapStatsSelector} float={mapFloat} select={true} selectHandler={mapStatsHandler} />
         </div>
       </div>
-      <BarChart data={cop.locationStats} title={`${firstLetterCap(locationStatsSelector)} by precinct`}/>
+      <BarChart data={cop.locationStats} title={`${firstLetterCap(locationStatsSelector)} by precinct`} style={barChartStyles}/>
 			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
       <ul className="individual-page-stats">
         {Object.entries(cop.race_percentages).map((value, index) => (
@@ -231,7 +269,7 @@ export const CopPage = (props) => {
 			<LineChart data={yearlyStats} title={`${firstLetterCap(yearlyStatsSelector)} by year`}/>
       <div>
         <BarChart data={allegationsByFado} title='Allegations by FADO type' />
-        <BarChart data={allegationsByDescription} padding={true} title='Allegations by description' />
+        <BarChart height={'300px'} data={allegationsByDescription} padding={true} title='Allegations by description' />
         <h1>Complaints received: </h1>
         <CopComplaintsTable data={cop.complaintsWithAllegations} headCells={headCells} />              
       </div>

@@ -8,12 +8,12 @@ import NativeSelect from '@material-ui/core/NativeSelect';
 
 export const MuiSelect = props => {
 
-	const { handler, value } = props
+	const { handler, value, position, helperText, style } = props
 
 	const [state, setState] = useState('allegations')
 	
 	return (
-		<FormControl /*className={classes.formControl}*/>
+		<FormControl style={style}/*className={classes.formControl}*/>
     	<InputLabel htmlFor="show-native-helper">Show:</InputLabel>
       <NativeSelect
         value={value}
@@ -26,7 +26,7 @@ export const MuiSelect = props => {
         <option value={'allegations'}>Allegations</option>
         <option value={'complaints'}>Complaints</option>
       </NativeSelect>
-      <FormHelperText>Which data to visualize in this chart</FormHelperText>
+      <FormHelperText>{helperText}</FormHelperText>
     </FormControl>
   )
 }

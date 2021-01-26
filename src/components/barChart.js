@@ -4,7 +4,7 @@ import { Bar } from 'react-chartjs-2'
 import { keys, values } from 'lodash'
 
 export const BarChart = (props) => {
-  const {data, title, labels, width, height, padding} = props;
+  const {data, title, labels, width, height, padding, style} = props;
 
   const chartLabels = labels !== undefined ? labels : keys(data) 
 
@@ -19,8 +19,12 @@ export const BarChart = (props) => {
       layout: {
         padding: {
           bottom: (padding === true) ? 75 : 0,
-          left: (padding === true) ? 75 : 0
-        }
+          left: (padding === true) ? 75 : 0,
+          right: 50
+         }
+        // margin: {
+        //   right: 50
+        // }
       },
       scales: {
         yAxes: [
@@ -41,7 +45,7 @@ export const BarChart = (props) => {
         display: false,
         position: 'top'
       },
-      responsive: false,
+      responsive: true,
       maintainAspectRatio: true
     }
   });
@@ -73,11 +77,11 @@ export const BarChart = (props) => {
   }, [title])
 
   return (
-    <div className="BarChart">
+    <div className="barChart">
       <Bar 
         data={barData}
-        width={width != undefined ? width : 600}
-        height={height != undefined ? height : 400}
+        width={width}
+        height={height}
         options={ barOptions.options }
         />
     </div>
