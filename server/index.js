@@ -55,29 +55,9 @@ const models = new Models(DB_PATH);
 		res.json(await models.commandUnits.read(req.params.orderBy, req.params.order, req.params.page, req.params.pageSize));
 	})
 
-	//right now the only components using this point are the map components
-	app.get('/command_units', async (req, res) => {
-		res.json(await models.commandUnits.readAll());
-	})
-
+	//used by map component
 	app.get('/command_units_with_precincts', async (req, res) => {
 		res.json(await models.commandUnits.commandUnitsWithPrecincts());
-	})
-
-	app.get('/precincts', async (req, res) => {
-		res.json(await models.precincts.read())
-	})
-
-	app.get('/allegations', async (req, res) => {
-		res.json(await models.allegations.read());
-	})
-
-	app.get('/allegations_substantiated/id=:id', async (req, res) => {
-		res.json(await models.allegations.getSubstantiated(req.params.id));
-	})
-
-	app.get('/complaints', async(req, res) => {
-		res.json(await models.complaints.read())
 	})
 
 	app.get('/total_rows/table=:table', async (req, res) => {
@@ -89,32 +69,12 @@ const models = new Models(DB_PATH);
 		res.json(await models.cops.read(req.params.orderBy, req.params.order, req.params.page, req.params.pageSize));
 	})
 
-	app.get('/substantiated_percentage/id=:id', async (req, res) => {
-		res.json(await models.cops.getSubstantiatedPercentage(req.params.id))
-	})
-
-	app.get('/cop_at_time_of_complaint', async (req, res) => {
-		res.json(await models.copAtTimeOfComplaint.read())
-	})
-
-	app.get('/cop_complaints/id=:id', async (req, res) => {
-		res.json(await models.cops.getComplaints(req.params.id))
-	})
-
 	app.get('/cop/yearly_stats/table=:table/id=:id', async(req, res) => {
 		res.json(await models.cops.getYearlyStats(req.params.table, req.params.id))
 	})
 
 	app.get('/cop/locations_stats/table=:table/id=:id', async (req, res) => {
 		res.json(await models.cops.getLocationStats(req.params.table, req.params.id))
-	})
-
-	app.get('/cop_allegations/years/id=:id', async (req, res) => {
-		res.json(await models.cops.getAllegationsByYear(req.params.id))
-	})
-
-	app.get('/cop_complaints/years/id=:id', async (req, res) => {
-		res.json(await models.cops.getComplaintsByYear(req.params.id))
 	})
 
 	app.get('/command_unit_complaints/years/id=:id', async (req, res) => {
@@ -133,10 +93,6 @@ const models = new Models(DB_PATH);
 
 	app.get('/cop/id=:id', async (req, res) => {
 		res.json(await models.cops.readCop(req.params.id))
-	})
-
-	app.get('/cop_at_time_of_complaint/id=:id', async (req, res) => {
-		res.json(await models.cops.readCopAtTimeOfComplaint(req.params.id))
 	})
 
 	app.get('/command_unit/id=:id', async (req, res) => {
