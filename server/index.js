@@ -51,6 +51,10 @@ const models = new Models(DB_PATH);
     }
 	})
 
+	app.get('/cops/orderBy=:order/id=:id', async (req, res) => {
+		res.json(await models.cops.test(req.params.order, req.params.id))
+	})
+
 	app.get('/command_units/orderBy=:orderBy/order=:order/page=:page/pageSize=:pageSize', async (req, res) => {
 		res.json(await models.commandUnits.read(req.params.orderBy, req.params.order, req.params.page, req.params.pageSize));
 	})

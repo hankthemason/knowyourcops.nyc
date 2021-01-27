@@ -68,7 +68,24 @@ export class Cops {
 		}		
 	}
 
+	// async test(order, pageSize) {
+	// 	try {
+	// 		const result = this.db.all(`
+	// 			SELECT
+	// 				*
+	// 			FROM
+	// 				cops
+	// 			ORDER BY
+
+
+	// 			`, order)
+	// 	} catch (error) {
+	// 		console.error(error)
+	// 	}
+	// }
+
 	async read(orderBy, order, page, pageSize) {
+		const offset = pageSize * (page - 1)
 		try {
 		const result = await this.db.all(`
 			SELECT
@@ -163,10 +180,10 @@ export class Cops {
 			ORDER BY
 				${orderBy} ${order}
 			LIMIT 
-				${pageSize}
+				(?)
 			OFFSET
-				${pageSize} * (${page} - 1)
-		`)
+				(?)
+		`, pageSize, offset)
 			result.map(e => {
 				e.race_percentages = JSON.parse(e.race_percentages)[0]
 				e.gender_percentages = JSON.parse(e.gender_percentages)[0]
