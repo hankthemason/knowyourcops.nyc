@@ -1,7 +1,7 @@
 import React from 'react'
 
 export const NotFound = props => {
-	console.log('hi')
+
 	return (
 		<div style={{ textAlign: 'center', 
 									marginTop: '3rem'}}className='page-container'>

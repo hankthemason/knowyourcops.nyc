@@ -3,7 +3,7 @@ import React,
 				createContext, 
 				useState, 
 				useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { useCommandUnits } from './commandUnitsContext';
 import { map, range, reduce } from 'lodash'
 import { useViewConfig } from './viewConfigContext'
@@ -177,6 +177,12 @@ export const CommandUnitProvider = (props) => {
 
 	const [incompleteCommandUnit, setIncompleteCommandUnit] = useState(null)
 
+	const history = useHistory()
+
+	function handleErrors() {
+    history.push('/404')
+	}
+
 	//if commandUnit is in the already-fetched list of commandUnits, no need for another fetch
 	useEffect(() => {
 		const commandUnit = commandUnits.find(obj => {
@@ -185,6 +191,11 @@ export const CommandUnitProvider = (props) => {
 		if (commandUnit === undefined) {
 			fetch(`/command_unit?id=${id}`)
   		.then(result => result.json())
+  		.catch(error => {
+  			handleErrors()
+  			console.log(error)
+  		})
+  		//.then(response => handleErrors(response))
   		.then(incompleteCommandUnit => setIncompleteCommandUnit(incompleteCommandUnit))
 		} else {
 			setIncompleteCommandUnit(commandUnit)

@@ -310,8 +310,9 @@ export class CommandUnits {
 		try {
 			const result = await this.db.get(`
 				SELECT
-				*,
-				JSON_GROUP_ARRAY(JSON_OBJECT(
+					*,
+					ROUND(num_substantiated * 1.0/num_allegations * 100.0, 2) AS substantiated_percentage,
+				JSON_OBJECT(
 					'American Indian',
 					CASE WHEN num_allegations > 4 THEN
 					ROUND(american_indian * 1.0 / num_allegations * 100.0, 2) END,
@@ -333,8 +334,8 @@ export class CommandUnits {
 					'Ethnicity Unknown',
 					CASE WHEN num_allegations > 4 THEN
 					ROUND(ethnicity_unknown * 1.0 / num_allegations * 100.0, 2) END
-				)) AS race_percentages,
-				JSON_GROUP_ARRAY(JSON_OBJECT(
+				) AS race_percentages,
+				JSON_OBJECT(
 					'Female',
 					CASE WHEN num_allegations > 4 THEN
 					ROUND(female * 1.0 / num_allegations * 100.0, 2) END,
@@ -353,51 +354,131 @@ export class CommandUnits {
 					'Unknown/refused',
 					CASE WHEN num_allegations > 4 THEN
 					ROUND(gender_unknown * 1.0 / num_allegations * 100.0, 2) END
-				)) AS gender_percentages
-				FROM (
-				SELECT
-					command_units.*,
-					CASE 
-						WHEN COUNT(allegations.id) > 9
-						THEN (
-						ROUND(COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END)*1.0 / COUNT(allegations.id) * 100.0, 2))
-					END substantiated_percentage,
-					COUNT(allegations.id) AS num_allegations,
-					COUNT(CASE WHEN allegations.board_disposition LIKE 'Substantiated%' THEN 1 END) AS num_substantiated,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%american indian%' THEN allegations.id END) AS american_indian,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%asian%' THEN allegations.id END) AS asian,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%black%' THEN allegations.id END) AS black,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%hispanic%' THEN allegations.id END) AS hispanic,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%white%' THEN allegations.id END) AS white,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE 'Other Race' THEN allegations.id END) AS other_ethnicity,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '' THEN allegations.id END) AS ethnicity_unknown,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE 'male%' THEN allegations.id END) AS male,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%female%' THEN allegations.id END) AS female,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Gender non-conforming%' THEN allegations.id END) AS gender_non_conforming,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transman%' THEN allegations.id END) AS trans_male,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transwoman%' THEN allegations.id END) AS trans_female,
-					COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '' THEN allegations.id END) AS gender_unknown,
-					COUNT(DISTINCT complaints.id) AS num_complaints
-				FROM 
-					command_units
-				INNER JOIN 
-					allegations
-				ON 
-					command_units.unit_id = allegations.cop_command_unit
-					INNER JOIN
-						complaints
-					ON
-						complaints.id = allegations.complaint_id
-				WHERE
-					command_units.id = (?)
-				)
-			`, id)
-			if (result.id === null) {
-				const emptyUnit = await this.getEmptyCommandUnit(id)
-				return emptyUnit
+				) AS gender_percentages
+				FROM(
+					SELECT 
+						command_units.*,
+						(SELECT 
+							COUNT(*) 
+						FROM 
+							allegations 
+						WHERE 
+							command_units.unit_id = allegations.cop_command_unit) AS num_allegations,
+						(SELECT
+							COUNT(DISTINCT complaints.id)
+						FROM
+							allegations
+						INNER JOIN
+							complaints
+						ON 
+							allegations.complaint_id = complaints.id
+						WHERE 
+							command_units.unit_id = allegations.cop_command_unit AND allegations.complaint_id = complaints.id) AS num_complaints,
+						(SELECT
+							COUNT(
+								CASE WHEN 
+									allegations.board_disposition LIKE 'Substantiated%' 
+								AND 
+									allegations.cop_command_unit = command_units.unit_id THEN 1 END)
+						FROM
+							allegations) AS num_substantiated,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%indian%' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS american_indian,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%asian%' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS asian,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%black%' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS black,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%hispanic%' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS hispanic,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%white%' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS white,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '%Other Race%' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS other_ethnicity,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_ethnicity LIKE '' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS ethnicity_unknown,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE 'male%' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS male,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%female%' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS female,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Gender non-conforming%' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS gender_non_conforming,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transman%' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS trans_male,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '%Transwoman%' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS trans_female,
+						(SELECT
+							COUNT(DISTINCT CASE WHEN allegations.complainant_gender LIKE '' THEN allegations.id END)
+						FROM
+							allegations
+						WHERE
+							command_units.unit_id = allegations.cop_command_unit) AS gender_unknown
+					FROM
+						command_units
+					WHERE 
+						command_units.id = (?)
+					)
+				`, id)
+			
+			if (result) {
+				if (result.id && result.num_allegations === 0) {
+					const emptyUnit = await this.getEmptyCommandUnit(id)
+					return emptyUnit
+				}
 			}
-			result.race_percentages = JSON.parse(result.race_percentages)[0]
-			result.gender_percentages = JSON.parse(result.gender_percentages)[0]
+
+			if (result !== undefined) {
+				result.race_percentages = JSON.parse(result.race_percentages)
+				result.gender_percentages = JSON.parse(result.gender_percentages)  
+			}
+
 			return result
 		} catch(error) {
 			console.error(error);
