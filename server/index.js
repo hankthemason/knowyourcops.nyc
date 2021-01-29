@@ -71,11 +71,6 @@ const models = new Models(DB_PATH);
 		res.json(await models.cops.readCop(req.query.id))
 	})
 
-	//temp to access original cop thingy
-	app.get('/copp', async (req, res) => {
-		res.json(await models.cops.readCopp(req.query.id))
-	})
-
 	app.get('/cop/yearly_stats', async(req, res) => {
 		res.json(await models.cops.getYearlyStats(
 			req.query.column, 
