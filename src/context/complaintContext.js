@@ -28,7 +28,7 @@ export const ComplaintProvider = (props) => {
 	const [associatedCommandUnits, setAssociatedCommandUnits] = useState(null);
 
 	useEffect(() => {
-		fetch(`/complaint/id=${id}/command_units`)
+		fetch(`/complaint/command_units?id=${id}`)
 		.then(result => result.json())
 		.then(associatedCommandUnits => setAssociatedCommandUnits(associatedCommandUnits))
 	}, [])

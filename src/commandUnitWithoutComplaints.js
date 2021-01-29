@@ -38,15 +38,24 @@ export const CommandUnitWithoutComplaints = props => {
   })
 
   return (
-  <div>
-    <PrecinctsMap height={400} width={400} type={mapType} pageData={[c]} float={mapFloat}/>
-    <p> Command Unit: {c.command_unit_full != null ? c.command_unit_full : c.unit_id } </p>
-    {c.precinct != 'null' ? <p> Associated Precinct: {c.precinct}</p> : null }
-    <p> Note: this command unit is not directly associated with any complaints in the database.</p>
+  <div className='page-container'>
+    <div className='parent' style={{display: 'flex', flexFlow: 'wrap', justifyContent: 'space-between'}}>
+      <div className='text-parent'>
+        <h1 className='individual-header'> 
+          Command Unit: {c.command_unit_full != null ? 
+            c.command_unit_full : c.unit_id } 
+        </h1>
+        {c.precinct != 'null' ? 
+        <p> Associated Precinct: {c.precinct}</p> : null }
+        <p> Note: this command unit is not directly associated with any complaints in the database.</p>
     <SimpleTable title={tableTitle} headers={headers} data={data} />
+      </div>
+      <div className='map-parent'>
+        <PrecinctsMap height={380} width={380} type={mapType} pageData={[c]} float={mapFloat}/>
+      </div>
+    </div>
   </div>
   )
-
 }
 
 // 	const { commandUnit: c, 

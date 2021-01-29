@@ -74,7 +74,7 @@ export const CommandUnitsProvider = props => {
 	const [total, setTotal] = useState(0)
 
 	useEffect(() => {
-		fetch(`/total_rows/table=commandUnits`)
+		fetch(`/total_rows?table=commandUnits`)
 		.then(result => result.json())
 		.then(total => setTotal(total[0].rows))
 	}, [])
@@ -83,7 +83,7 @@ export const CommandUnitsProvider = props => {
 
 	useEffect(() => {
 		if (viewConfigExists && currentView === componentName) {
-			fetch(`/command_units/orderBy=${viewConfig.orderBy.value}/order=${viewConfig.order}/page=${viewConfig.page}/pageSize=${viewConfig.pageSize.value}`)
+			fetch(`/command_units?orderBy=${viewConfig.orderBy.value}&order=${viewConfig.order}&page=${viewConfig.page}&pageSize=${viewConfig.pageSize.value}`)
 			.then(result => result.json())
 			.then(commandUnits => {setCommandUnits(commandUnits)})
 		}		

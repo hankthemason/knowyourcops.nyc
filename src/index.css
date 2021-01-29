@@ -213,6 +213,10 @@ table {
   font-size: 1rem;
 }
 
+.individual-page-stats#command-unit {
+  margin-top: 4rem;
+}
+
 #stats-span {
   font-weight: bold;
   font-size: 1.3rem;
@@ -220,7 +224,7 @@ table {
   margin-right: .2rem;
 }
 
-@media(max-width: 1214px) {
+@media(max-width: 1027px) {
   .map-parent {
     order: 1;
     margin: 0 auto !important;
@@ -243,4 +247,11 @@ table {
   height: auto;
   width: 100%;
   max-width: 600px;
+}
+
+#associated-precinct {
+  margin-top: 0rem;
+  margin-bottom: .3rem;
+  font-weight: normal;
+  font-style: italic;
 }

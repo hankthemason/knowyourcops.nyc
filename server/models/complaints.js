@@ -1,6 +1,13 @@
+import { checkOrder, checkOrderBy } from '../scripts/validators'
+
 export class Complaints {
 	constructor(db) {
 		this.db = db;
+		this.defaults = {
+			order: 'DESC',
+			orderBy: 'num_allegations',
+			column: 'allegations'
+		}
 	}
 
 	async init() {
@@ -52,6 +59,16 @@ export class Complaints {
 	}
 
 	async read(orderBy, order, page, pageSize) {
+		if (!checkOrder(order)) {
+			order = this.defaults.order
+		}
+
+		if (!checkOrderBy(orderBy)) {
+			orderBy = this.defaults.orderBy
+		}
+
+		const offset = pageSize * (page - 1)
+		
 		try {
 			//limited for now to ease page loading
 			const result = await this.db.all(`
@@ -105,10 +122,10 @@ export class Complaints {
 				ORDER BY
 					${orderBy} ${order}
 				LIMIT 
-					${pageSize}
+					(?)
 				OFFSET
-					${pageSize} * (${page} - 1)
-			`)
+					(?)
+			`, pageSize, offset)
 			result.map(e => {
 				e.allegations = JSON.parse(e.allegations)
 			})

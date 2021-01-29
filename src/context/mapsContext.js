@@ -31,7 +31,7 @@ export const MapsProvider = props => {
 		.then(commandUnits => setCommandUnits(commandUnits))
 
 	}, [])
-
+	
 	return (
 		 
 		<MapsContext.Provider value ={{mapData, commandUnits}}>

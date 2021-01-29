@@ -26,7 +26,7 @@ export const SearchProvider = (props) => {
 	}
 
 	useEffect(() => {
-    fetch(`/search/model=${model}?searchquery=${keyword}`)
+    fetch(`/search?model=${model}&searchquery=${keyword}`)
     .then(result => result.json())
     .then(searchResults => setSearchResults(searchResults))
   }, [keyword])

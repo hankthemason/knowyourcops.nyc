@@ -7,6 +7,8 @@ import { CommandUnitComplaintsTable } from './commandUnitComplaints'
 import { PaginatedSortTable } from './components/paginatedSortTable'
 import { PrecinctsMap } from './components/map'
 import { CommandUnitWithoutComplaints } from './commandUnitWithoutComplaints.js'
+import { MuiSelect } from './components/muiSelect'
+import { firstLetterCap } from './scripts/firstLetterCap'
 
 export const CommandUnitPage = props => {
 
@@ -162,46 +164,61 @@ export const CommandUnitPage = props => {
   const mapDataPoint = ''
   const mapFloat = 'right'
 
-  console.log(c)
+  const yearlyStatsHandler = (event) => {
+    const v = event.target.value
+    setCommandUnitViewConfig({
+      ...viewConfig,
+      yearlyStatsSelector: v
+    })
+  };
 
 	return (
 		<div className='page-container'>
-      <PrecinctsMap height={400} width={400} type={mapType} pageData={[c]} float={mapFloat}/>
-			<h1 id='individual-header'>{c.command_unit_full != null ? c.command_unit_full : c.unit_id } </h1>
-      {c.precinct != 'null' && c.unit_id.endsWith('DET') ? <p> Associated Precinct: {c.precinct}</p> : null}
-      <ul class="individual-page-stats">
-			  <li><span id="stats-span">{c.num_allegations}</span> total allegations</li>
-        <li>
-          <span id='stats-span'>{c.num_substantiated}</span> allegations substantiated 
-          {c.substantiated_percentage ? <span> (<span id='stats-span'>{c.substantiated_percentage}%</span> substantiated)</span>: null}
-        </li>
-			  <li><span id="stats-span">{c.num_complaints}</span> total complaints</li>
-      </ul>
-			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
-      <ul className="individual-page-stats">
-        {Object.entries(c.race_percentages).map((value, index) => (
-          <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
-        ))}
-      </ul>
-			<BarChart data={genderData} labels={genderDataLabels} title='Allegations by complainant gender'/>
-      <ul className="individual-page-stats">
-        {Object.entries(c.gender_percentages).map((value, index) => (
-          <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
-        ))}
-      </ul>
-			<LineChart data={c.yearlyStats} title='Complaints by year'/>
-			<BarChart data={allegationsByFado} title='Allegations by FADO type' />
-      <BarChart data={allegationsByDescription} title='Allegations by description' padding={true} />
-      <h1>Complaints received: </h1>
-      <div>(click the arrow to show allegations on the complaint)</div>
-      <CommandUnitComplaintsTable data={c.complaintsWithAllegations} headCells={complaintsTableHeadCells} />
-      <h1>Officers Associated With This Unit: </h1>
-      <PaginatedSortTable 
-        data={c.cops} 
-        headCells={copsTableHeadCells} 
-        viewConfigGetter={getCopsTableViewConfig}
-        viewConfigSetter={setCopsTableViewConfig}
-        width='60%' />
+      <div className='parent' style={{display: 'flex', flexFlow: 'wrap', justifyContent: 'space-between'}}>
+        <div className='text-parent'>
+          <h1 id='individual-header'>{c.command_unit_full != null ? c.command_unit_full : c.unit_id } </h1>
+            {c.precinct != 'null' || c.unit_id.endsWith('DET') ? <h4 id='associated-precinct'> Associated Precinct: {c.precinct}</h4> : null}
+          
+          <ul id='command-unit' class="individual-page-stats">
+            <li><span id="stats-span">{c.num_allegations}</span> total allegations</li>
+            <li>
+              <span id='stats-span'>{c.num_substantiated}</span> allegations substantiated 
+              {c.substantiated_percentage ? <span> (<span id='stats-span'>{c.substantiated_percentage}%</span> substantiated)</span>: null}
+            </li>
+            <li><span id="stats-span">{c.num_complaints}</span> total complaints</li>
+          </ul>
+      
+        </div>
+        <div className='map-parent'>
+          <PrecinctsMap height={350} width={350} type={mapType} pageData={[c]} float={mapFloat}/>
+        </div>
+      </div>
+    		<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
+        <ul className="individual-page-stats">
+          {Object.entries(c.race_percentages).map((value, index) => (
+            <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
+          ))}
+        </ul>
+    		<BarChart data={genderData} labels={genderDataLabels} title='Allegations by complainant gender'/>
+        <ul className="individual-page-stats">
+          {Object.entries(c.gender_percentages).map((value, index) => (
+            <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
+          ))}
+        </ul>
+        <MuiSelect handler={yearlyStatsHandler} value={viewConfig.yearlyStatsSelector} />
+    		<LineChart data={c.yearlyStats} title={firstLetterCap(viewConfig.yearlyStatsSelector) + ' by year'}/>
+    		<BarChart data={allegationsByFado} title='Allegations by FADO type' />
+        <BarChart height={'300px'} data={allegationsByDescription} title='Allegations by description' padding={true} />
+        <h1>Complaints received: </h1>
+        <div>(click the arrow to show allegations on the complaint)</div>
+        <CommandUnitComplaintsTable data={c.complaintsWithAllegations} headCells={complaintsTableHeadCells} />
+        <h1>Officers Associated With This Unit: </h1>
+        <PaginatedSortTable 
+          data={c.cops} 
+          headCells={copsTableHeadCells} 
+          viewConfigGetter={getCopsTableViewConfig}
+          viewConfigSetter={setCopsTableViewConfig}
+          width='60%' />
 		</div>
 	)
 }

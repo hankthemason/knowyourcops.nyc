@@ -22,9 +22,6 @@ export const PrecinctsMap = props => {
 
 	//get the page-specific data
 	const { height, width, type, dataPoint, pageData, float, select, selectHandler } = props
-	
-	console.log(pageData)
-	console.log(dataPoint)
 
 	let tooltipLabel
 	if (dataPoint === 'allegations' || dataPoint === 'num_allegations') {
@@ -58,79 +55,61 @@ export const PrecinctsMap = props => {
 
 	useEffect(() => {
 		var tooltip = d3.select(".tooltip")
+		if (type === 'heat') {
+			d3.selectAll("#precinctPath")
+					.each(function(d) {
+					d3.select(this)
+						.attr('fill', d => {
+							const match = pageData.find(e => {
+								if (d != undefined) {
+					        if (e.precinct === parseInt(d.properties.precinct)) {
+					          if (e.unit_id) {
+					          	return e.unit_id.endsWith('PCT') ? e : undefined
+					        	}
+					          return e
+					        }
+				      	}
+				      })
+			      	if (match != undefined) {
+		            return sequentialScale(match[dataPoint])
+		        	}
+		        	return 'transparent' 
+				    })
+				    .on("mouseover mousemove", function(event,d) {
+	    		
+	    				const match = pageData.find(e => {
+	          		if (e.precinct === parseInt(d.properties.precinct)) {
+	          			if (e.unit_id) {
+	          				return e.unit_id.endsWith('PCT') ? e : undefined
+	          			}
+	          			return e
+	          		}
+	          	})
 
-		d3.selectAll("#precinctPath")
-				.each(function(d) {
-				d3.select(this)
-					.attr('fill', d => {
-						const match = pageData.find(e => {
-							if (d != undefined) {
-				        if (e.precinct === parseInt(d.properties.precinct)) {
-				          if (e.unit_id) {
-				          	return e.unit_id.endsWith('PCT') ? e : undefined
-				        	}
-				          return e
-				        }
-			      	}
+	    				tooltip
+	    					//+18
+			    			.style("left", (event.pageX + tooltipLeft) + "px")
+			        	.style("top", (event.pageY - 28) + "px")
+			      		.transition()
+			         	.duration(200)
+			         	.style("opacity", .9);
+			        if (type === 'heat') {
+				        match ? 
+				       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
+				       								+ "<br>" + `${tooltipLabel}: ` + match[dataPoint]) : 
+				       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
+				       								+ "<br>" + `${tooltipLabel}: ` + 0)
+			       	} else if (type === 'commandUnit') {
+			       		tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>")
+			       	}
 			      })
-		      	if (match != undefined) {
-	            return sequentialScale(match[dataPoint])
-	        	}
-	        	return 'transparent' 
-			    })
-			    .on("mouseover mousemove", function(event,d) {
-    		
-    				const match = pageData.find(e => {
-          		if (e.precinct === parseInt(d.properties.precinct)) {
-          			if (e.unit_id) {
-          				return e.unit_id.endsWith('PCT') ? e : undefined
-          			}
-          			return e
-          		}
-          	})
-
-    				tooltip
-    					//+18
-		    			.style("left", (event.pageX + tooltipLeft) + "px")
-		        	.style("top", (event.pageY - 28) + "px")
-		      		.transition()
-		         	.duration(200)
-		         	.style("opacity", .9);
-		        if (type === 'heat') {
-			        match ? 
-			       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-			       								+ "<br>" + `${tooltipLabel}: ` + match[dataPoint]) : 
-			       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-			       								+ "<br>" + `${tooltipLabel}: ` + 0)
-		       	} else if (type === 'commandUnit') {
-		       		tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>")
-		       	}
-		      })
-		    	.on("mouseout", function(event, d) {
-		       	tooltip.transition()
-		        	.duration(500)
-		         	.style("opacity", 0);
-		       });
-			})
-
-			// .each(function(d) {
-			// 	console.log(d)
-			// 	d3.select(this)
-			// 	.attr('fill', d => {
-			//     //for now, 'DET' command units aren't included
-			//     const match = pageData.find(e => {
-		 //        if (e.precinct === parseInt(d.properties.precinct)) {
-		 //          if (e.unit_id) {
-		 //          	return e.unit_id.endsWith('PCT') ? e : undefined
-		 //        	}
-		 //          return e
-		 //        }
-		 //      })
-	  //         if (match != undefined) {
-	  //           return sequentialScale(match[dataPoint])
-	  //         }
-			// 	})
-			// })
+			    	.on("mouseout", function(event, d) {
+			       	tooltip.transition()
+			        	.duration(500)
+			         	.style("opacity", 0);
+			       });
+				})
+		}
 	}, [pageData])
 
 	useEffect(() => {
@@ -207,7 +186,11 @@ export const PrecinctsMap = props => {
 		        } else if (type === 'commandUnit') {
 		        	d3.select(nodes[i])
 		        		.attr('class', d => {
-		        		return (d.properties.precinctString === pageData[0].unit_id || d.properties.precinctFull === pageData[0].unit_id.slice(0, 3)) ? `${classes.selected}` : `${classes.unselected}`
+		        		return (
+		        			d.properties.precinctString === pageData[0].unit_id || 
+		        			d.properties.precinctFull === pageData[0].unit_id.slice(0, 3)) ? 
+		        				`${classes.selected}` : 
+		        				`${classes.unselected}`
 		        	})
 		        }
 		      })

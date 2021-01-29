@@ -1,6 +1,13 @@
+import { checkOrder, checkOrderBy, checkSearchQuery } from '../scripts/validators'
+
 export class CommandUnits {
 	constructor(db) {
 		this.db = db;
+		this.defaults = {
+			order: 'DESC',
+			orderBy: 'num_allegations',
+			column: 'allegations'
+		}
 	}
 
 	async init() {
@@ -71,6 +78,15 @@ export class CommandUnits {
 	}
 
 	async read(orderBy, order, page, pageSize) {
+
+		if (checkOrder(order) === false) {
+			order = this.defaults.order
+		}
+
+		if (checkOrderBy(orderBy) === false) {
+			orderBy = this.defaults.orderBy
+		}
+
 		try {
 			let offset = pageSize * (page-1)
 			const result = await this.db.all(`
@@ -282,8 +298,8 @@ export class CommandUnits {
 				FROM
 					command_units
 				WHERE
-					command_units.id = ${id}
-				`)
+					command_units.id = (?)
+				`, id)
 			return result
 		} catch(error) {
 			console.error(error)
@@ -388,7 +404,12 @@ export class CommandUnits {
 		}
 	}
 
-	async getComplaintsByYear(id) {
+	async getYearlyStats(column, id) {
+
+		if (checkOrderBy(column) === false) {
+			column = this.defaults.orderBy
+		}
+		
 		try {
 			const result = await this.db.all(`
 				SELECT
@@ -412,7 +433,7 @@ export class CommandUnits {
 				WHERE 
 					command_units.id = (?)
 				GROUP BY
-					complaints.id
+					"${column}".id
 				)
 				GROUP BY
 					year
@@ -422,7 +443,7 @@ export class CommandUnits {
 			console.error(error)
 		}
 	}
-
+	
 	async getComplaints(id) {
 		try {
 			const result = await this.db.all(`
@@ -511,6 +532,9 @@ export class CommandUnits {
 	}
 
 	async search(searchQuery) {
+		if (!checkSearchQuery(searchQuery)) {
+			return 'error'
+		}
 		try {
 			const results = {
 				type: 'command_unit',

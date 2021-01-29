@@ -3,7 +3,7 @@ import React,
 				createContext, 
 				useState, 
 				useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { useCops } from './copsContext';
 import { useViewConfig } from './viewConfigContext'
 import { DefaultViewConfig } from '../types/default';
@@ -78,13 +78,6 @@ export const CopProvider = (props) => {
 	const [locationStatsSelector, setLocationStatsSelector] = useState('allegations')
 	const [mapStatsSelector, setMapStatsSelector] = useState('allegations')
 
-	// let yearlyStatsSelector
-	// let locationStatsSelector
-	// if (viewConfig != undefined) {
-	// 	yearlyStatsSelector = viewConfig.yearlyStatsSelector
-	// 	locationStatsSelector = viewConfig.locationStatsSelector
-	// }
-
 	const viewConfigExists = getCopViewConfig() != undefined
 
 	useEffect(() => {
@@ -136,17 +129,28 @@ export const CopProvider = (props) => {
 		}
 
 	}, [viewConfig])
+
+	let history = useHistory()
+
+	function handleErrors(response) {
+    if (response === undefined) {
+    	console.log(response)
+      history.push('/404')
+    }
+    return response;
+	}
 	
 	useEffect(() => {
 		const cop = cops.find(obj => {
 			return obj.id === parseInt(id)
 		})
 		if (cop === undefined) {
-			fetch(`/cop/id=${id}`)
+			fetch(`/cop?id=${id}`)
   		.then(result => result.json())
   		.catch(error => {
   			console.error(error)
   		})
+  		.then(response => handleErrors(response))
   		.then(incompleteCop => setIncompleteCop(incompleteCop))
   		.catch(error => {
   			console.error(error)
@@ -165,7 +169,7 @@ export const CopProvider = (props) => {
 
 	useEffect(() => {
    	
-   	fetch(`/cop_complaints/allegations/id=${id}`)
+   	fetch(`/cop_complaints/allegations?id=${id}`)
   	.then(result => result.json())
   	.then(complaintsWithAllegations => setComplaintsWithAllegations(complaintsWithAllegations))
 
@@ -173,7 +177,7 @@ export const CopProvider = (props) => {
 
 	useEffect(() => {
 		if (yearlyStatsSelector != undefined) {
-    	fetch(`/cop/yearly_stats/table=${yearlyStatsSelector}/id=${id}`)
+    	fetch(`/cop/yearly_stats?column=${yearlyStatsSelector}&id=${id}`)
     	.then(result => result.json())
     	.then(complaintsDates => setComplaintsDates(complaintsDates))
   	}
@@ -181,7 +185,7 @@ export const CopProvider = (props) => {
 
 	useEffect(() => {
 		if (locationStatsSelector != undefined) {
-    	fetch(`/cop/locations_stats/table=${locationStatsSelector}/id=${id}`)
+    	fetch(`/cop/location_stats?column=${locationStatsSelector}&id=${id}`)
     	.then(result => result.json())
     	.then(complaintsLocations => setComplaintsLocations(complaintsLocations))
   	}
@@ -189,7 +193,7 @@ export const CopProvider = (props) => {
 
 	useEffect(() => {
 		if (mapStatsSelector != undefined) {
-    	fetch(`/cop/locations_stats/table=${mapStatsSelector}/id=${id}`)
+    	fetch(`/cop/location_stats?column=${mapStatsSelector}&id=${id}`)
     	.then(result => result.json())
     	.then(complaintsLocationsForMap => setComplaintsLocationsForMap(complaintsLocationsForMap))
   	}
@@ -216,8 +220,7 @@ export const CopProvider = (props) => {
 	return (
 
 		<CopContext.Provider value={copConfig}>
-			{console.log(cop)}
-			{ cop ? props.children : null}
+			{ cop ? props.children : null }
 		</CopContext.Provider>
 		)
 }

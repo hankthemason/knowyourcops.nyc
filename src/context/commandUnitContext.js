@@ -79,6 +79,7 @@ export const CommandUnitProvider = (props) => {
 	const viewConfigExists = getCommandUnitViewConfig() != undefined
 
 	const viewConfig = getCommandUnitViewConfig()
+	const [yearlyStatsSelector, setYearlyStatsSelector] = useState('allegations')
 
 	const viewConfigPopulated = viewConfig != undefined
 
@@ -159,9 +160,18 @@ export const CommandUnitProvider = (props) => {
 						type: 'numeric'
 					}
 				]
-			}
+			},
+			yearlyStatsSelector: 'allegations'
 		})
 	}, [viewConfigExists])
+
+	useEffect(() => {
+		if (viewConfig != undefined && 
+				viewConfig.yearlyStatsSelector != undefined) {
+			setYearlyStatsSelector(viewConfig.yearlyStatsSelector)
+		}
+
+	}, [viewConfig])
 
 	const { commandUnits } = useCommandUnits();
 
@@ -173,7 +183,7 @@ export const CommandUnitProvider = (props) => {
 				return obj.id === parseInt(id)
 		}) 
 		if (commandUnit === undefined) {
-			fetch(`/command_unit/id=${id}`)
+			fetch(`/command_unit?id=${id}`)
   		.then(result => result.json())
   		.then(incompleteCommandUnit => setIncompleteCommandUnit(incompleteCommandUnit))
 		} else {
@@ -187,16 +197,19 @@ export const CommandUnitProvider = (props) => {
 	const [commandUnitWithoutComplaintsCops, setCommandUnitWithoutComplaintsCops] = useState(null)
 
 	useEffect(() => {
-    fetch(`/command_unit_complaints/years/id=${id}`)
-    .then(result => result.json())
-    .then(complaintsDates => setComplaintsDates(complaintsDates))
-     fetch(`/command_unit_complaints/allegations/id=${id}`)
+    fetch(`/command_unit_complaints/allegations?id=${id}`)
     .then(result => result.json())
     .then(complaintsWithAllegations => setComplaintsWithAllegations(complaintsWithAllegations))
-    fetch(`/command_unit/id=${id}/cops`)
+    fetch(`/command_unit/cops?id=${id}`)
     .then(result => result.json())
     .then(cops => setCops(cops))
 	}, [])
+
+	useEffect(() => {
+		fetch(`/command_unit/yearly_stats?column=${yearlyStatsSelector}&id=${id}`)
+    .then(result => result.json())
+    .then(complaintsDates => setComplaintsDates(complaintsDates))
+	}, [yearlyStatsSelector])
 
 	useEffect(() => {
 		if (complaintsDates === null || 
@@ -211,13 +224,13 @@ export const CommandUnitProvider = (props) => {
 			}))
 		}
 		if (incompleteCommandUnit && !complaintsDates.length && !complaintsWithAllegations.length && !cops.length) {
-			setCommandUnitWithoutComplaints(incompleteCommandUnit)	
+			setCommandUnitWithoutComplaints(incompleteCommandUnit[0])	
 		}
 	}, [incompleteCommandUnit, complaintsDates, complaintsWithAllegations, cops])
 
 	useEffect(() => {
 		if (commandUnitWithoutComplaints != undefined) {
-			fetch(`/command_unit/complaints=0/id=${id}/cops`)
+			fetch(`/command_unit/complaints=0/cops?id=${id}`)
 			.then(result => result.json())
 			.then(commandUnitWithoutComplaintsCops => setCommandUnitWithoutComplaintsCops(commandUnitWithoutComplaintsCops))
 		}

@@ -18,6 +18,7 @@ import { ComplaintPage } from './complaint'
 import { ComplaintProvider } from './context/complaintContext'
 import { MainMap } from './mainPrecinctsMap.js'
 import { MapsProvider } from './context/mapsContext'
+import { NotFound } from './notFound'
 import {
   BrowserRouter as Router,
   Switch,
@@ -84,6 +85,8 @@ function App() {
             </CommandUnitsProvider>
             </MapsProvider>
           </Route>
+          <Route path="/404" component={NotFound}/>
+          <Route component={NotFound} />
         </Switch>
       </Router>
     </ViewConfigProvider>

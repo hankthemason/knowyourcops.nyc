@@ -7,13 +7,11 @@ import { useCop } from './context/copContext';
 import { Link } from 'react-router-dom'
 import { PrecinctsMap } from './components/map'
 import { MuiSelect } from './components/muiSelect'
+import { firstLetterCap } from './scripts/firstLetterCap'
 
 export const CopPage = (props) => {
   const { cop, setCopViewConfig, getCopViewConfig } = useCop();
-
-  var firstLetterCap = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1)
-  }
+  //console.log(cop)
 
   const viewConfig = getCopViewConfig()
   const orderByOptions = viewConfig.orderByOptions
@@ -249,7 +247,7 @@ export const CopPage = (props) => {
           <MuiSelect handler={locationStatsHandler} value={viewConfig.locationStatsSelector}/>
         </div>
         <div className='map-parent'>
-          <PrecinctsMap height={380} width={380} pageData={mapStatsArr} type={mapType} dataPoint={mapStatsSelector} float={mapFloat} select={true} selectHandler={mapStatsHandler} />
+          <PrecinctsMap height={350} width={350} pageData={mapStatsArr} type={mapType} dataPoint={mapStatsSelector} float={mapFloat} select={true} selectHandler={mapStatsHandler} />
         </div>
       </div>
       <BarChart data={cop.locationStats} title={`${firstLetterCap(locationStatsSelector)} by precinct`} style={barChartStyles}/>
