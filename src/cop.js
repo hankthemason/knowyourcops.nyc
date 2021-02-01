@@ -176,8 +176,6 @@ export const CopPage = (props) => {
     })
   };
 
-
-
   const [yearlyStats, setYearlyStats] = useState(cop.yearlyStats)
   
   useEffect(() => {
@@ -204,8 +202,6 @@ export const CopPage = (props) => {
     height: 'auto',
     maxWidth: '600px'
   }
-
-  
 
 	return (
 		<div className='page-container'>

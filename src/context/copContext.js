@@ -218,9 +218,12 @@ export const CopProvider = (props) => {
 	const copConfig = { cop, setCopViewConfig, getCopViewConfig }
 
 	return (
-
 		<CopContext.Provider value={copConfig}>
-			{ cop ? props.children : null }
+			{ cop && 
+				complaintsLocations && 
+				complaintsDates && 
+				complaintsWithAllegations &&
+				complaintsLocationsForMap  ? props.children : null }
 		</CopContext.Provider>
 		)
 }

@@ -24,6 +24,7 @@ export const PrecinctsMap = props => {
 	const { height, width, type, dataPoint, pageData, float, select, selectHandler } = props
 
 	let tooltipLabel
+	
 	if (dataPoint === 'allegations' || dataPoint === 'num_allegations') {
 		tooltipLabel = 'Allegations'
 	} else if (dataPoint === 'complaints') {
@@ -53,18 +54,81 @@ export const PrecinctsMap = props => {
 	const containerRef = useRef()
 	const classes = useStyles()
 
-	const handleResize = () => {
-		console.log('hi')
-		console.log(window)
-	}
-	console.log(window)
-	window.addEventListener('resize', handleResize)
-	
+	const [rectSize, setRectSize] = useState({})
+	const [size, setSize] = useState(window.innerWidth)
+
+	useEffect(() => {
+		const handleResize = () => {
+			setSize(window.innerWidth)
+		}
+		window.addEventListener('resize', handleResize)
+		const rect = d3.select(".map-container").node().getBoundingClientRect()
+		const tooltip = d3.select(".tooltip")
+
+		setRectSize({
+			x: rect.x,
+			y: rect.y
+		})
+
+		if (type === 'heat') {
+			d3.selectAll("#precinctPath")
+				.each(function(d) {
+					d3.select(this)
+					.on("mouseover mousemove", function(event,d) {
+						const match = pageData.find(e => {
+	          		if (e.precinct === parseInt(d.properties.precinct)) {
+	          			if (e.unit_id) {
+	          				return e.unit_id.endsWith('PCT') ? e : undefined
+	          			}
+	          			return e
+	          		}
+	          	})
+	    				
+	    				tooltip
+	    					//+18
+			    			.style("left", (event.pageX - rectSize.x) + "px")
+			        	.style("top", (event.pageY - rectSize.y + 20) + "px")
+			      		.transition()
+			         	.duration(200)
+			         	.style("opacity", .9);
+			        if (type === 'heat') {
+				        match ? 
+				       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
+				       								+ "<br>" + `${tooltipLabel}: ` + match[dataPoint]) : 
+				       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
+				       								+ "<br>" + `${tooltipLabel}: ` + 0)
+			       	} else if (type === 'commandUnit') {
+			       		tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>")
+			       	}
+			    })
+				})
+		} else {
+			d3.selectAll("#precinctPath")
+				.each(function(d) {
+					d3.select(this)
+					.on("mouseover mousemove", function(event,d) {
+
+						tooltip
+		    			.style("left", (event.pageX - rectSize.x) + "px")
+		        	.style("top", (event.pageY - rectSize.y + 20) + "px")
+		      		.transition()
+		         	.duration(200)
+		         	.style("opacity", .9);
+		        if (type === 'commandUnit') {
+			       		tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>")
+			       	}	
+		      })
+		    })
+		}
+
+		return () => window.removeEventListener("resize", handleResize)
+	}, [size])
+
 	//update elements if the data changes
 	useEffect(() => {
+
 		var tooltip = d3.select(".tooltip")
 		let rect = containerRef.current.getBoundingClientRect()
-		
 		
 		if (type === 'heat') {
 			d3.selectAll("#precinctPath")
@@ -96,13 +160,10 @@ export const PrecinctsMap = props => {
 	          			return e
 	          		}
 	          	})
-	    				console.log(event.pageY - rect.y)
-	    				console.log(event.pageX - rect.x)
 
 	    				tooltip
-	    					//+18
 			    			.style("left", (event.pageX - rect.x) + "px")
-			        	.style("top", (event.pageY - rect.y) + "px")
+			        	.style("top", (event.pageY - rect.y + 20) + "px")
 			      		.transition()
 			         	.duration(200)
 			         	.style("opacity", .9);
@@ -132,8 +193,11 @@ export const PrecinctsMap = props => {
 		const pathGenerator = d3.geoPath().projection(projection)
 		
 		let rect = containerRef.current.getBoundingClientRect()
-		console.log(rect.x)
-		console.log(rect.y)
+
+		setRectSize({
+			x: rect.x,
+			y: rect.y
+		})
 
 		var tooltip = d3.select(containerRef.current)
 			.append("div")
@@ -224,8 +288,8 @@ export const PrecinctsMap = props => {
           	})
 
     				tooltip
-		    			.style("left", (event.pageX) + "px")
-		        	.style("top", (event.pageY) + "px")
+		    			.style("left", (event.pageX - rect.x) + "px")
+		        	.style("top", (event.pageY - rect.y + 20) + "px")
 		      		.transition()
 		         	.duration(200)
 		         	.style("opacity", .9);
