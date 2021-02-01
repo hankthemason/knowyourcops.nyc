@@ -21,8 +21,8 @@ export const PrecinctsMap = props => {
 	const { mapData, commandUnits } = useMaps()
 
 	//get the page-specific data
-	const { height, width, type, dataPoint, pageData, float, select, selectHandler } = props
-
+	const { height, width, type, dataPoint, pageData, select, selectHandler } = props
+	const w = width + 50
 	let tooltipLabel
 	
 	if (dataPoint === 'allegations' || dataPoint === 'num_allegations') {
@@ -33,8 +33,6 @@ export const PrecinctsMap = props => {
 
 	let sequentialScale
 	let max
-
-	const tooltipLeft = float === 'right' ? -1000 : 18
 
 	//get the max value if the map is heat style
 	if (type === 'heat') {
@@ -47,86 +45,69 @@ export const PrecinctsMap = props => {
 
 	mapData.features.map(e => {
 		const match = commandUnits.filter(unit => unit.unit_id === e.properties.precinctString)
-    
     match.length ? e.properties.id = match[0].id : e.properties.id = null
 	})
 
 	const containerRef = useRef()
 	const classes = useStyles()
 
-	const [rectSize, setRectSize] = useState({})
 	const [size, setSize] = useState(window.innerWidth)
 
+	const tooltipMouseOver = (event, d) => {
+		const match = getMatch(pageData, d)
+		const rect = d3.select(".map-container").node().getBoundingClientRect()
+		var tooltip = d3.select(".tooltip")
+		
+		tooltip
+		.style("left", (event.pageX - rect.x) + "px")
+  	.style("top", (event.pageY - rect.y + 20) + "px")
+		.transition()
+   	.duration(200)
+   	.style("opacity", .9)
+   	
+   	if (type === 'heat') {
+      match ? 
+     	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
+     								+ "<br>" + `${tooltipLabel}: ` + match[dataPoint]) : 
+     	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
+     								+ "<br>" + `${tooltipLabel}: ` + 0)
+   	} else if (type === 'commandUnit') {
+   		tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>")
+   	}
+  }
+
+	const getMatch = (pageData, mapDatum) => {
+		const match = pageData.find(e => {
+  		if (e.precinct === parseInt(mapDatum.properties.precinct)) {
+  			if (e.unit_id) {
+  				return e.unit_id.endsWith('PCT') ? e : undefined
+  			}
+  			return e
+  		}
+  	})
+  	return match
+	}
+
 	useEffect(() => {
+		
 		const handleResize = () => {
 			setSize(window.innerWidth)
 		}
+
 		window.addEventListener('resize', handleResize)
-		const rect = d3.select(".map-container").node().getBoundingClientRect()
-		const tooltip = d3.select(".tooltip")
 
-		setRectSize({
-			x: rect.x,
-			y: rect.y
+		d3.selectAll("#precinctPath")
+			.each(function(d) {
+				d3.select(this)
+				.on("mouseover mousemove", tooltipMouseOver)
 		})
-
-		if (type === 'heat') {
-			d3.selectAll("#precinctPath")
-				.each(function(d) {
-					d3.select(this)
-					.on("mouseover mousemove", function(event,d) {
-						const match = pageData.find(e => {
-	          		if (e.precinct === parseInt(d.properties.precinct)) {
-	          			if (e.unit_id) {
-	          				return e.unit_id.endsWith('PCT') ? e : undefined
-	          			}
-	          			return e
-	          		}
-	          	})
-	    				
-	    				tooltip
-	    					//+18
-			    			.style("left", (event.pageX - rectSize.x) + "px")
-			        	.style("top", (event.pageY - rectSize.y + 20) + "px")
-			      		.transition()
-			         	.duration(200)
-			         	.style("opacity", .9);
-			        if (type === 'heat') {
-				        match ? 
-				       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-				       								+ "<br>" + `${tooltipLabel}: ` + match[dataPoint]) : 
-				       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-				       								+ "<br>" + `${tooltipLabel}: ` + 0)
-			       	} else if (type === 'commandUnit') {
-			       		tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>")
-			       	}
-			    })
-				})
-		} else {
-			d3.selectAll("#precinctPath")
-				.each(function(d) {
-					d3.select(this)
-					.on("mouseover mousemove", function(event,d) {
-
-						tooltip
-		    			.style("left", (event.pageX - rectSize.x) + "px")
-		        	.style("top", (event.pageY - rectSize.y + 20) + "px")
-		      		.transition()
-		         	.duration(200)
-		         	.style("opacity", .9);
-		        if (type === 'commandUnit') {
-			       		tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>")
-			       	}	
-		      })
-		    })
-		}
 
 		return () => window.removeEventListener("resize", handleResize)
 	}, [size])
 
 	//update elements if the data changes
 	useEffect(() => {
-
+		
 		var tooltip = d3.select(".tooltip")
 		let rect = containerRef.current.getBoundingClientRect()
 		
@@ -135,53 +116,19 @@ export const PrecinctsMap = props => {
 					.each(function(d) {
 					d3.select(this)
 						.attr('fill', d => {
-							const match = pageData.find(e => {
-								if (d != undefined) {
-					        if (e.precinct === parseInt(d.properties.precinct)) {
-					          if (e.unit_id) {
-					          	return e.unit_id.endsWith('PCT') ? e : undefined
-					        	}
-					          return e
-					        }
-				      	}
-				      })
+							const match = getMatch(pageData, d)
 			      	if (match != undefined) {
 		            return sequentialScale(match[dataPoint])
 		        	}
 		        	return 'transparent' 
 				    })
-				    .on("mouseover mousemove", function(event,d) {
-				    	
-	    				const match = pageData.find(e => {
-	          		if (e.precinct === parseInt(d.properties.precinct)) {
-	          			if (e.unit_id) {
-	          				return e.unit_id.endsWith('PCT') ? e : undefined
-	          			}
-	          			return e
-	          		}
-	          	})
-
-	    				tooltip
-			    			.style("left", (event.pageX - rect.x) + "px")
-			        	.style("top", (event.pageY - rect.y + 20) + "px")
-			      		.transition()
-			         	.duration(200)
-			         	.style("opacity", .9);
-			        if (type === 'heat') {
-				        match ? 
-				       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-				       								+ "<br>" + `${tooltipLabel}: ` + match[dataPoint]) : 
-				       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-				       								+ "<br>" + `${tooltipLabel}: ` + 0)
-			       	} else if (type === 'commandUnit') {
-			       		tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>")
-			       	}
-			      })
-			    	.on("mouseout", function(event, d) {
-			       	tooltip.transition()
-			        	.duration(500)
-			         	.style("opacity", 0);
-			       });
+				    .on("mouseover mousemove", tooltipMouseOver)
+				})
+		} else {
+			d3.selectAll("#precinctPath")
+				.each(function(d) {
+					d3.select(this)
+					.on("mouseover mousemove", tooltipMouseOver)
 				})
 		}
 	}, [pageData])
@@ -194,11 +141,6 @@ export const PrecinctsMap = props => {
 		
 		let rect = containerRef.current.getBoundingClientRect()
 
-		setRectSize({
-			x: rect.x,
-			y: rect.y
-		})
-
 		var tooltip = d3.select(containerRef.current)
 			.append("div")
     	.attr("class", "tooltip")
@@ -208,10 +150,11 @@ export const PrecinctsMap = props => {
     	.style("border", "1px solid black")
     	.style("background", "white")
 
+    
     const svg = d3.select(containerRef.current)
 			.append("svg")
 			.attr("height", `${height}`)
-			.attr("width", `${width}`)
+			.attr("width", `${w}`)
 			.attr("z-index", -1)
 
 
@@ -276,34 +219,7 @@ export const PrecinctsMap = props => {
 		        	})
 		        }
 		      })
-    			.on("mouseover mousemove", function(event,d) {
-    				
-    				const match = pageData.find(e => {
-          		if (e.precinct === parseInt(d.properties.precinct)) {
-          			if (e.unit_id) {
-          				return e.unit_id.endsWith('PCT') ? e : undefined
-          			}
-          			return e
-          		}
-          	})
-
-    				tooltip
-		    			.style("left", (event.pageX - rect.x) + "px")
-		        	.style("top", (event.pageY - rect.y + 20) + "px")
-		      		.transition()
-		         	.duration(200)
-		         	.style("opacity", .9);
-		        if (type === 'heat') {
-			        match ? 
-			       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-			       								+ "<br>" + `${tooltipLabel}: ` + match[dataPoint]) : 
-			       	tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>"
-			       								+ "<br>" + `${tooltipLabel}: ` + 0)
-		       	} else if (type === 'commandUnit') {
-		       		tooltip.html("<strong> Precinct: " + d.properties.precinct + "</strong>")
-		       	}
-
-		      })
+    			.on("mouseover mousemove", tooltipMouseOver)
 		    	.on("mouseout", function(event, d) {
 		       	tooltip.transition()
 		        	.duration(500)
@@ -312,14 +228,8 @@ export const PrecinctsMap = props => {
 	}, [])
 
 
-
-	let mapStyle = () => ({ 
-		position: "relative", 
-		float: `${float}`
-	})
-
 return (
-	<div ref={containerRef} className="map-container" style={mapStyle()}>
+	<div ref={containerRef} className="map-container" style={{position: 'relative'}}>
 		{select ? <MuiSelect handler={selectHandler} style={{marginTop: '1rem', position: 'absolute'}}/> : null}
 	</div>
 		)

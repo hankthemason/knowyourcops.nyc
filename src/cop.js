@@ -150,7 +150,6 @@ export const CopPage = (props) => {
   }
 
   const mapType = 'heat'
-  const mapFloat = 'right'
 
   const yearlyStatsHandler = (event) => {
     const v = event.target.value
@@ -243,7 +242,7 @@ export const CopPage = (props) => {
           <MuiSelect handler={locationStatsHandler} value={viewConfig.locationStatsSelector}/>
         </div>
         <div className='map-parent'>
-          <PrecinctsMap height={350} width={350} pageData={mapStatsArr} type={mapType} dataPoint={mapStatsSelector} float={mapFloat} select={true} selectHandler={mapStatsHandler} />
+          <PrecinctsMap height={350} width={350} pageData={mapStatsArr} type={mapType} dataPoint={mapStatsSelector} select={true} selectHandler={mapStatsHandler} />
         </div>
       </div>
       <BarChart data={cop.locationStats} title={`${firstLetterCap(locationStatsSelector)} by precinct`} style={barChartStyles}/>

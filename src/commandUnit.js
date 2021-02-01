@@ -162,7 +162,6 @@ export const CommandUnitPage = props => {
 
   const mapType = 'commandUnit'
   const mapDataPoint = ''
-  const mapFloat = 'right'
 
   const yearlyStatsHandler = (event) => {
     const v = event.target.value
@@ -190,7 +189,7 @@ export const CommandUnitPage = props => {
       
         </div>
         <div className='map-parent'>
-          <PrecinctsMap height={350} width={350} type={mapType} pageData={[c]} float={mapFloat}/>
+          <PrecinctsMap height={350} width={350} type={mapType} pageData={[c]}/>
         </div>
       </div>
     		<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>

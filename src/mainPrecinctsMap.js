@@ -14,14 +14,13 @@ export const MainMap = props => {
   
   const {commandUnits} = useMaps()
 
-  const mapFloat = 'none'
   const pageData = commandUnits
   const mapType = 'heat'
   const dataPoint = 'num_allegations'
 
 	return (
 		<div>
-      <PrecinctsMap height={500} width={500} type={mapType} float={mapFloat} dataPoint={dataPoint} pageData={pageData}/>
+      <PrecinctsMap height={500} width={500} type={mapType} dataPoint={dataPoint} pageData={pageData}/>
     </div>
 	)
 }
