@@ -53,8 +53,19 @@ export const PrecinctsMap = props => {
 	const containerRef = useRef()
 	const classes = useStyles()
 
+	const handleResize = () => {
+		console.log('hi')
+		console.log(window)
+	}
+	console.log(window)
+	window.addEventListener('resize', handleResize)
+	
+	//update elements if the data changes
 	useEffect(() => {
 		var tooltip = d3.select(".tooltip")
+		let rect = containerRef.current.getBoundingClientRect()
+		
+		
 		if (type === 'heat') {
 			d3.selectAll("#precinctPath")
 					.each(function(d) {
@@ -76,7 +87,7 @@ export const PrecinctsMap = props => {
 		        	return 'transparent' 
 				    })
 				    .on("mouseover mousemove", function(event,d) {
-	    		
+				    	
 	    				const match = pageData.find(e => {
 	          		if (e.precinct === parseInt(d.properties.precinct)) {
 	          			if (e.unit_id) {
@@ -85,11 +96,13 @@ export const PrecinctsMap = props => {
 	          			return e
 	          		}
 	          	})
+	    				console.log(event.pageY - rect.y)
+	    				console.log(event.pageX - rect.x)
 
 	    				tooltip
 	    					//+18
-			    			.style("left", (event.pageX + tooltipLeft) + "px")
-			        	.style("top", (event.pageY - 28) + "px")
+			    			.style("left", (event.pageX - rect.x) + "px")
+			        	.style("top", (event.pageY - rect.y) + "px")
 			      		.transition()
 			         	.duration(200)
 			         	.style("opacity", .9);
@@ -117,6 +130,10 @@ export const PrecinctsMap = props => {
 		const projection = d3.geoAlbers().fitExtent([[0, 20], [height, width]], mapData)
 
 		const pathGenerator = d3.geoPath().projection(projection)
+		
+		let rect = containerRef.current.getBoundingClientRect()
+		console.log(rect.x)
+		console.log(rect.y)
 
 		var tooltip = d3.select(containerRef.current)
 			.append("div")
@@ -132,6 +149,7 @@ export const PrecinctsMap = props => {
 			.attr("height", `${height}`)
 			.attr("width", `${width}`)
 			.attr("z-index", -1)
+
 
 		svg.append("g")
 			.selectAll("g")
@@ -195,7 +213,7 @@ export const PrecinctsMap = props => {
 		        }
 		      })
     			.on("mouseover mousemove", function(event,d) {
-    		
+    				
     				const match = pageData.find(e => {
           		if (e.precinct === parseInt(d.properties.precinct)) {
           			if (e.unit_id) {
@@ -206,9 +224,8 @@ export const PrecinctsMap = props => {
           	})
 
     				tooltip
-    					//+18
-		    			.style("left", (event.pageX + tooltipLeft) + "px")
-		        	.style("top", (event.pageY - 28) + "px")
+		    			.style("left", (event.pageX) + "px")
+		        	.style("top", (event.pageY) + "px")
 		      		.transition()
 		         	.duration(200)
 		         	.style("opacity", .9);

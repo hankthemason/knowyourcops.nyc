@@ -28,7 +28,8 @@ const useStyles = makeStyles({
 const navLinks = [
   { title: `cops`, path: `/cops` },
   { title: `command units`, path: `/command_units` },
-  { title: `precincts map`, path: `/precinctsMap` }
+  { title: `precincts map`, path: `/precinctsMap` },
+  { title: `about the data`, path: `/about`}
 ]
 
 

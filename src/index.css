@@ -224,7 +224,11 @@ table {
   margin-right: .2rem;
 }
 
-@media(max-width: 1027px) {
+.text-parent {
+  width: 500px;
+}
+
+@media(max-width: 865px) {
   .map-parent {
     order: 1;
     margin: 0 auto !important;
@@ -255,3 +259,4 @@ table {
   font-weight: normal;
   font-style: italic;
 }
+
