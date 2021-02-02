@@ -22,7 +22,7 @@ export const PrecinctsMap = props => {
 
 	//get the page-specific data
 	const { height, width, type, dataPoint, pageData, select, selectHandler } = props
-	const w = width + 50
+	const svgWidth = width + 50
 	let tooltipLabel
 	
 	if (dataPoint === 'allegations' || dataPoint === 'num_allegations') {
@@ -62,7 +62,7 @@ export const PrecinctsMap = props => {
 		.style("left", (event.pageX - rect.x) + "px")
   	.style("top", (event.pageY - rect.y + 20) + "px")
 		.transition()
-   	.duration(200)
+   	.duration(100)
    	.style("opacity", .9)
    	
    	if (type === 'heat') {
@@ -154,7 +154,7 @@ export const PrecinctsMap = props => {
     const svg = d3.select(containerRef.current)
 			.append("svg")
 			.attr("height", `${height}`)
-			.attr("width", `${w}`)
+			.attr("width", `${svgWidth}`)
 			.attr("z-index", -1)
 
 
@@ -222,7 +222,7 @@ export const PrecinctsMap = props => {
     			.on("mouseover mousemove", tooltipMouseOver)
 		    	.on("mouseout", function(event, d) {
 		       	tooltip.transition()
-		        	.duration(500)
+		        	.duration(100)
 		         	.style("opacity", 0);
 		       });
 	}, [])

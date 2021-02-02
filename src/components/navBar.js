@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { AppBar, Toolbar, IconButton, Typography, makeStyles, Button, Link } from "@material-ui/core"
+import { AppBar, Toolbar, IconButton, Typography, makeStyles, Button, Link, Menu, MenuItem } from "@material-ui/core"
 import { Home } from "@material-ui/icons"
+import MenuIcon from "@material-ui/icons/Menu"
 
 
 const useStyles = makeStyles({
@@ -37,6 +38,24 @@ export const NavBar = (props) => {
 
 	const { header, menuButton, toolbar, menuButtons } = useStyles()
 
+	 const [state, setState] = useState({
+    mobileView: false,
+    anchorEl: null
+  })
+	const { mobileView } = state;
+
+	useEffect(() => {
+    const setResponsiveness = () => {
+    	
+      return window.innerWidth < 900
+        ? setState((prevState) => ({ ...prevState, mobileView: true }))
+        : setState((prevState) => ({ ...prevState, mobileView: false }));
+    };
+    
+    setResponsiveness();
+    window.addEventListener("resize", () => setResponsiveness());
+  }, []);
+
 	const getMenuButtons = () => {
 	  return navLinks.map(({ title, path }) => {
 	    return (
@@ -67,15 +86,62 @@ export const NavBar = (props) => {
 	    </Typography>
     )
   };
+  console.log(state)
+  const displayMobile = () => {
 
-	return (
-	  <AppBar className={header} position="static" elevation={0}>
-	    <Toolbar className={toolbar}  disableGutters={true}> 
+  	const openMenu = e => {
+    	setState((prevState) => ({ ...prevState, anchorEl: e.currentTarget }))
+  	};
+  	const closeMenu = () => {
+    	setState((prevState) => ({ ...prevState, anchorEl: null }));
+  	};
+  	
+  	return (
+  		<Toolbar>
+	  		<IconButton
+	  			{...{
+	  				edge: "start",
+	  				color: "inherit",
+	  				'aria-label': "menu",
+	  				'aria-haspopup': "true",
+	  				onClick: openMenu
+	  			}}
+	  		>
+	  			<MenuIcon />
+	  		</IconButton>
+	  		<Menu
+            anchorEl={state.anchorEl}
+            keepMounted
+            open={Boolean(state.anchorEl)}
+            onClose={closeMenu}
+        >
+        {navLinks.map(({ title, path }) => (
+        	
+        	<Link href={path}>
+        		<MenuItem>{title}</MenuItem>
+        	</Link>
+        	)
+        )}
+        </Menu>
+	  	<div>{kycLogo()}</div>
+	  </Toolbar>
+	  )
+	}
+
+	const displayDesktop = () => {
+		return (
+			<Toolbar className={toolbar}  disableGutters={true}> 
 	    	{kycLogo()}
 	    	<div className={menuButtons} padding-left="100px">
 	    		{getMenuButtons()}
 	    	</div>
 	    </Toolbar>
+	  )
+	}
+
+	return (
+	  <AppBar className={header} position="static" elevation={0}>
+	    {mobileView ? displayMobile() : displayDesktop()}
 	  </AppBar>
   )
 }

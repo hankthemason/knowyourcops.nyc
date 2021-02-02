@@ -82,11 +82,11 @@ export const CopsTable = props => {
 	const headers = [
 			{label: 'name',
 				type: 'text'},
-			{label: 'command unit',
+			{label: 'cmd unit',
 				type: 'text'},
-			{label: 'badge no.',
+			{label: 'badge#',
 				type: 'numeric'},
-			{label: 'no. allegations',
+			{label: 'allegations',
 				type: 'numeric'},
 			{label: 'allegations substantiated',
 				type: 'numeric'},
@@ -123,7 +123,7 @@ export const CopsTable = props => {
 								<Link to={`/cop/${entry.id}`}>{`${entry.first_name} ${entry.last_name}`}</Link>
 							</td>
 							<td>
-								{`${entry.command_unit_full ? entry.command_unit_full : entry.command_unit }`}
+								{`${entry.command_unit}`}
 							</td>
 							<td style={{textAlign: "center"}}>
 								{entry.shield_no > 0 ? entry.shield_no : null}
