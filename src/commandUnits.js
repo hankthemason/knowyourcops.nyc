@@ -6,6 +6,8 @@ import { DropDown } from './components/dropdown';
 import { SearchBar } from './components/searchBar';
 import { Pagination } from './components/pagination';
 import { useCommandUnits } from './context/commandUnitsContext';
+import { useViewport } from './customHooks/useViewport'
+import { CommandUnitsTableComponent } from './components/commandUnitsTableComponent'
 
 export const CommandUnitsTable = props => {
 
@@ -24,6 +26,8 @@ export const CommandUnitsTable = props => {
 		orderByOptions,
 		pageSizeOptions
 	} = viewConfig
+
+	const { width } = useViewport()
 
 	function orderByHandler(v) {
 		setCommandUnitsViewConfig({
@@ -63,7 +67,7 @@ export const CommandUnitsTable = props => {
 
 	const placeHolder = 'search for unit by name or precinct number'
 
-	const headers = [
+	const desktopHeaders = [
 			{label: 'name',
 				type: 'text'},
 			{label: 'abbreviation',
@@ -73,6 +77,17 @@ export const CommandUnitsTable = props => {
 			{label: 'no. allegations',
 				type: 'numeric'},
 			{label: 'allegations substantiated',
+				type: 'numeric'}
+	]
+
+	const mobileHeaders = [
+			{label: 'name',
+				type: 'text'},
+			{label: 'abbreviation',
+				type: 'text'},
+			{label: 'associated precinct',
+				type: 'numeric'},
+			{label: 'no. allegations',
 				type: 'numeric'}
 	]
 
@@ -88,40 +103,12 @@ export const CommandUnitsTable = props => {
 			<div className='sort-div'>Sort by: </div>
 			<DropDown options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>
 			<Button display={order === 'ASC' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
-			<table id='main-table'>
-				<thead>
-					<tr>
-						{headers.map(e => (
-							<th className={headerClasses[e.type]}>{e.label}</th>
-						))}
-					</tr>		
-				</thead>
-				<tbody>
-					{commandUnits.map(entry => (
-						entry.command_unit_full || entry.unit_id ? (
-							<tr>
-								<td>
-									<Link to={`/command_unit/${entry.id}`}>
-										{entry.command_unit_full != null ? entry.command_unit_full : entry.unit_id }
-									</Link>
-								</td>
-								<td>
-									{entry.unit_id ? entry.unit_id : null}
-								</td>
-								<td style={{textAlign: "center"}}>
-									{entry.precinct != 'null' ? entry.precinct : ''}
-								</td>
-								<td style={{textAlign: "center"}}>
-									{entry.num_allegations}
-								</td>
-								<td style={{textAlign: "center"}}>
-									{entry.num_substantiated}
-								</td>
-							</tr>
-						) : null
-					))}
-				</tbody>
-			</table>
+			<CommandUnitsTableComponent 
+				headers={width < 760 ? mobileHeaders : desktopHeaders}  
+				headerClasses={headerClasses}
+				data={commandUnits}
+				view={width < 760 ? 'mobile' : 'desktop'}
+			/>
 		<div className="pagination-text">
         {"Items per Page: "}
         <DropDown 

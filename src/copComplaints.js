@@ -53,6 +53,7 @@ export const CopComplaintsTable = props => {
 
 	const useStyles = makeStyles({
 		table: {
+			width: '100%',
 		  maxWidth: 800,
 		},
 	});

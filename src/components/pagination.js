@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import ReactPaginate from 'react-paginate';
 import { useCops } from '../context/copsContext';
 import { useViewConfig } from '../context/viewConfigContext'
+import { useViewport } from '../customHooks/useViewport'
 
 export const Pagination = props => {
 
@@ -9,6 +10,8 @@ export const Pagination = props => {
 	const { viewConfig } = useViewConfig();
 
 	const { forcePage } = props
+
+	const { width } = useViewport()
 
 	//let currPage = viewConfig.page
 
@@ -35,7 +38,7 @@ export const Pagination = props => {
         breakClassName={"break-me"}
         pageCount={numPages}
         marginPagesDisplayed={2}
-        pageRangeDisplayed={5}
+        pageRangeDisplayed={width > 760 ? 5 : 2}
         onPageChange={handleChange}
         containerClassName={"pagination"}
         subContainerClassName={"pages pagination"}

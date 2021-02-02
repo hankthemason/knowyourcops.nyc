@@ -264,7 +264,9 @@ export const CopPage = (props) => {
         <BarChart data={allegationsByFado} title='Allegations by FADO type' />
         <BarChart height={'300px'} data={allegationsByDescription} padding={true} title='Allegations by description' />
         <h1>Complaints received: </h1>
-        <CopComplaintsTable data={cop.complaintsWithAllegations} headCells={headCells} />              
+        <div style={{maxWidth: '100%', overflow: 'scroll'}}>
+          <CopComplaintsTable id='cop-complaints-table' data={cop.complaintsWithAllegations} headCells={headCells} />     
+        </div>         
       </div>
 		</div>
 	)

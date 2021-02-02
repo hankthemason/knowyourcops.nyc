@@ -7,6 +7,8 @@ import { DropDown } from './components/dropdown';
 import { useCops } from './context/copsContext';
 import { SearchBar } from './components/searchBar';
 import { Pagination } from './components/pagination';
+import { useViewport } from './customHooks/useViewport'
+import { CopsTableComponent } from './components/copsTableComponent'
 
 const useStyles = makeStyles(theme => ({
 	mainTable: {
@@ -36,6 +38,9 @@ export const CopsTable = props => {
 		pageSizeOptions
 	} = viewConfig
 	
+	const { width } = useViewport()
+	
+
 	//cops is an object of 'cop' objects with their id's as keys
 	const { setSearchResults } = props
 	
@@ -79,7 +84,7 @@ export const CopsTable = props => {
 
 	const placeHolder = 'search by first or last name, full name, or badge #'
 
-	const headers = [
+	const desktopHeaders = [
 			{label: 'name',
 				type: 'text'},
 			{label: 'cmd unit',
@@ -94,6 +99,16 @@ export const CopsTable = props => {
 				type: 'text'},
 	]
 
+	const mobileHeaders = [
+			{label: 'name',
+				type: 'text'},
+			{label: 'cmd unit',
+				type: 'text'},
+			{label: 'badge#',
+				type: 'numeric'},
+			{label: 'allegations'}
+	]
+
 	const headerClasses = {
 		text: 'text-header',
 		numeric: 'num-header'
@@ -106,42 +121,15 @@ export const CopsTable = props => {
 			<div className='sort-div'>Sort by: </div>
 			<DropDown style={{display: 'inline-block'}} options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>
 			<Button style={{display: 'inline-block'}} display={order === 'asc' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
-			<table className={classes.mainTable} id='main-table'>
-				<thead className={classes.thead}>
-					<tr>
-						{headers.map(e => (
-						<th className={headerClasses[e.type]}>
-							{e.label}
-						</th>
-						))}
-					</tr>
-				</thead>
-				<tbody>
-					{values(copsTableSorted).map(entry => (
-						<tr>
-							<td>
-								<Link to={`/cop/${entry.id}`}>{`${entry.first_name} ${entry.last_name}`}</Link>
-							</td>
-							<td>
-								{`${entry.command_unit}`}
-							</td>
-							<td style={{textAlign: "center"}}>
-								{entry.shield_no > 0 ? entry.shield_no : null}
-							</td>
-							<td style={{textAlign: "center"}}>
-								{`${entry.num_allegations}`}
-							</td>
-							<td style={{textAlign: "center"}}>
-								{`${entry.num_substantiated}`}
-							</td>
-							<td>
-								{`${entry.ethnicity}`}
-							</td>
-						</tr>
-						)
-					)}
-				</tbody>
-			</table>
+			<div style={{maxWidth: '100%', overflow: 'scroll'}}>
+				<CopsTableComponent
+					classes={classes} 
+					headers={width < 760 ? mobileHeaders : desktopHeaders} 
+					headerClasses={headerClasses}
+					data={copsTableSorted}
+					view={width < 760 ? 'mobile' : 'desktop'}
+				/>
+			</div>
 			<div className="pagination-text">
         {"Items per Page: "}
         <DropDown 

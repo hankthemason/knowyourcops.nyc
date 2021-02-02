@@ -3,6 +3,8 @@ import { Link as RouterLink } from 'react-router-dom';
 import { AppBar, Toolbar, IconButton, Typography, makeStyles, Button, Link, Menu, MenuItem } from "@material-ui/core"
 import { Home } from "@material-ui/icons"
 import MenuIcon from "@material-ui/icons/Menu"
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+
 
 
 const useStyles = makeStyles({
@@ -38,11 +40,11 @@ export const NavBar = (props) => {
 
 	const { header, menuButton, toolbar, menuButtons } = useStyles()
 
-	 const [state, setState] = useState({
+	const [state, setState] = useState({
     mobileView: false,
     anchorEl: null
   })
-	const { mobileView } = state;
+	const mobileView = useMediaQuery('(max-width:900px)')
 
 	useEffect(() => {
     const setResponsiveness = () => {
@@ -54,6 +56,8 @@ export const NavBar = (props) => {
     
     setResponsiveness();
     window.addEventListener("resize", () => setResponsiveness());
+
+    return () => window.removeEventListener("resize", () => setResponsiveness());
   }, []);
 
 	const getMenuButtons = () => {
@@ -86,7 +90,7 @@ export const NavBar = (props) => {
 	    </Typography>
     )
   };
-  console.log(state)
+ 
   const displayMobile = () => {
 
   	const openMenu = e => {
