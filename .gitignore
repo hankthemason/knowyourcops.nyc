@@ -23,7 +23,4 @@ yarn-debug.log*
 yarn-error.log*
 
 #this is the data 
-/db
-/ccrb_data
-/dist
-/files
+

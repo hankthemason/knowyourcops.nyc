@@ -14,7 +14,10 @@ const rankAbbrevsCsv = 'ccrb_data/Rank Abbrevs-Table 1.csv'
 const nypdGeo = 'map_data/nypd_geo.geojson'
 const mapPath = './files/nypd_geo.geojson'
 
-const port = 3001
+const port = process.env.PORT || 3001
+
+const ip_address = process.env.HOST || '127.0.0.1'
+
 
 let db;
 
@@ -156,8 +159,8 @@ const models = new Models(DB_PATH);
 		res.json(await jsonGetter(nypdGeo))
 	})
 
-	app.listen(port, () => {
-		console.log(`Example app listening at http://localhost:${port}`)
+	app.listen(port, ip_address, () => {
+		console.log(`Example app listening at http://${ip_address}:${port}`)
 	})
 })();
 

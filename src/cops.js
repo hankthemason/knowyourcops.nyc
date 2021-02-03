@@ -121,15 +121,13 @@ export const CopsTable = props => {
 			<div className='sort-div'>Sort by: </div>
 			<DropDown style={{display: 'inline-block'}} options={orderByOptions} handler={orderByHandler} value={orderBy.id}/>
 			<Button style={{display: 'inline-block'}} display={order === 'asc' ? 'DESC' : 'ASC'} handler={toggleOrder}/>
-			<div style={{maxWidth: '100%', overflow: 'scroll'}}>
-				<CopsTableComponent
-					classes={classes} 
-					headers={width < 760 ? mobileHeaders : desktopHeaders} 
-					headerClasses={headerClasses}
-					data={copsTableSorted}
-					view={width < 760 ? 'mobile' : 'desktop'}
-				/>
-			</div>
+			<CopsTableComponent
+				classes={classes} 
+				headers={width < 760 ? mobileHeaders : desktopHeaders} 
+				headerClasses={headerClasses}
+				data={copsTableSorted}
+				view={width < 760 ? 'mobile' : 'desktop'}
+			/>
 			<div className="pagination-text">
         {"Items per Page: "}
         <DropDown 
