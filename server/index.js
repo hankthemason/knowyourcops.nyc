@@ -15,8 +15,9 @@ const nypdGeo = 'map_data/nypd_geo.geojson'
 const mapPath = './files/nypd_geo.geojson'
 
 const port = process.env.PORT || 3001
-
 const ip_address = process.env.HOST || '127.0.0.1'
+console.log(port)
+console.log(ip_address)
 
 
 let db;
