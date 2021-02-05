@@ -29,6 +29,8 @@ var nypdGeo = 'map_data/nypd_geo.geojson';
 var mapPath = './files/nypd_geo.geojson';
 var port = process.env.PORT || 3001;
 var ip_address = process.env.HOST || '127.0.0.1';
+console.log(port);
+console.log(ip_address);
 var db;
 var models = new _models.Models(DB_PATH);
 (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee22() {
