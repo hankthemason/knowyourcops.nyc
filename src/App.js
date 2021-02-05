@@ -34,6 +34,11 @@ function App() {
       <Router>
         <NavBar />
         <Switch>
+          <Route exact path="/">
+          <CopsProvider>
+            <CopsTable />
+          </CopsProvider>
+          </Route>
           <Route exact path="/cop/:id">
           <CopsProvider>
             <CopProvider>
@@ -43,7 +48,7 @@ function App() {
             </CopProvider>
           </CopsProvider>
           </Route>
-          <Route path={["/", "/cops"]}>
+          <Route path="/cops">
           <CopsProvider>
             <CopsTable />
           </CopsProvider>
