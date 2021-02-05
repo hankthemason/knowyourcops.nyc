@@ -43,7 +43,7 @@ function App() {
             </CopProvider>
           </CopsProvider>
           </Route>
-          <Route path="/cops">
+          <Route path={["/", "/cops"]}>
           <CopsProvider>
             <CopsTable />
           </CopsProvider>
