@@ -64,7 +64,7 @@ export const ComplaintsProvider = (props) => {
 	const [total, setTotal] = useState(0)
 
 	useEffect(() => {
-		fetch(`/total_rows?table=complaints`)
+		fetch(`/api/total_rows?table=complaints`)
 		.then(result => result.json())
 		.then(total => setTotal(total[0].rows))
 	}, [])
@@ -73,7 +73,7 @@ export const ComplaintsProvider = (props) => {
 
 	useEffect(() => {
 		if (viewConfigExists) {
-		  fetch(`/complaints?orderBy=${viewConfig.orderBy.value}&order=${viewConfig.order}&page=${viewConfig.page}&pageSize=${viewConfig.pageSize.value}`)
+		  fetch(`/api/complaints?orderBy=${viewConfig.orderBy.value}&order=${viewConfig.order}&page=${viewConfig.page}&pageSize=${viewConfig.pageSize.value}`)
 		  .then(result => result.json())
 		  .then(complaints => setComplaints(complaints))
 		}		 

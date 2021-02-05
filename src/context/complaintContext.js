@@ -28,7 +28,7 @@ export const ComplaintProvider = (props) => {
 	const [associatedCommandUnits, setAssociatedCommandUnits] = useState(null);
 
 	useEffect(() => {
-		fetch(`/complaint/command_units?id=${id}`)
+		fetch(`/api/complaint/command_units?id=${id}`)
 		.then(result => result.json())
 		.then(associatedCommandUnits => setAssociatedCommandUnits(associatedCommandUnits))
 	}, [])
@@ -38,7 +38,7 @@ export const ComplaintProvider = (props) => {
 			return obj.id === parseInt(id)
 		})
 		if (c === undefined) {
-			fetch(`/complaint/id=${id}`)
+			fetch(`/api/complaint/id=${id}`)
 			.then(result => result.json())
 			.then(complaint => setComplaint(complaint[0]))
 		} else {

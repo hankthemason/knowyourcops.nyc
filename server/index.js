@@ -5,6 +5,8 @@ import { Search } from './search'
 import { jsonGetter } from './jsonGetter'
 import { fileWriter } from './fileWriter'
 import { augmentGeoJson } from './scripts/augmentGeoJson'
+//production
+const path = require('path')
 
 const csv = 'ccrb_data/data.csv';
 const DB_PATH = './db/ccrb.db';
@@ -44,7 +46,7 @@ const models = new Models(DB_PATH);
 	})
 
 	//END POINTS
-	app.get('/search', async (req, res) => {
+	app.get('/api/search', async (req, res) => {
 		const model = req.query.model
     const searchQuery = req.query.searchquery;
     
@@ -53,7 +55,7 @@ const models = new Models(DB_PATH);
     }
 	})
 
-	app.get('/total_rows', async (req, res) => {
+	app.get('/api/total_rows', async (req, res) => {
 		let table = req.query.table
 		let regex = /^[A-Za-z_]+$/
 		if (!table.match(regex)) {
@@ -62,7 +64,7 @@ const models = new Models(DB_PATH);
 		res.json(await models.[table].total());
 	})
 
-	app.get('/cops', async (req, res) => {
+	app.get('/api/cops', async (req, res) => {
 		res.json(await models.cops.read(
 				req.query.orderBy,
 				req.query.order,
@@ -70,23 +72,23 @@ const models = new Models(DB_PATH);
 				req.query.pageSize));
 	})
 
-	app.get('/cop', async (req, res) => {
+	app.get('/api/cop', async (req, res) => {
 		res.json(await models.cops.readCop(req.query.id))
 	})
 
-	app.get('/cop/yearly_stats', async(req, res) => {
+	app.get('/api/cop/yearly_stats', async(req, res) => {
 		res.json(await models.cops.getYearlyStats(
 			req.query.column, 
 			req.query.id))
 	})
 
-	app.get('/cop/location_stats', async (req, res) => {
+	app.get('/api/cop/location_stats', async (req, res) => {
 		res.json(await models.cops.getLocationStats(
 			req.query.column, 
 			req.query.id))
 	})
 
-	app.get('/cop/getSubstantiated', async (req, res) => {
+	app.get('/api/cop/getSubstantiated', async (req, res) => {
 		res.json(await models.cops.getSubstantiatedPercentage( 
 			req.query.id))
 	})
@@ -95,11 +97,11 @@ const models = new Models(DB_PATH);
 
 	//this returns all complaints with their associated allegations
 	//nested inside of JSON objects
-	app.get('/cop_complaints/allegations', async (req, res) => {
+	app.get('/api/cop_complaints/allegations', async (req, res) => {
 		res.json(await models.cops.getComplaints(req.query.id))
 	})
 
-	app.get('/command_units', async (req, res) => {
+	app.get('/api/command_units', async (req, res) => {
 		res.json(await models.commandUnits.read(
 			req.query.orderBy, 
 			req.query.order, 
@@ -107,39 +109,39 @@ const models = new Models(DB_PATH);
 			req.query.pageSize));
 	})
 
-	app.get('/command_unit', async (req, res) => {
+	app.get('/api/command_unit', async (req, res) => {
 		res.json(await models.commandUnits.readCommandUnit(req.query.id))
 	})
 
 	//used by map component
-	app.get('/command_units_with_precincts', async (req, res) => {
+	app.get('/api/command_units_with_precincts', async (req, res) => {
 		res.json(await models.commandUnits.commandUnitsWithPrecincts());
 	})
 
-	app.get('/command_unit/yearly_stats', async(req, res) => {
+	app.get('/api/command_unit/yearly_stats', async(req, res) => {
 		res.json(await models.commandUnits.getYearlyStats(
 			req.query.column, 
 			req.query.id))
 	})
 
-	app.get('/command_unit_complaints/allegations', async (req, res) => {
+	app.get('/api/command_unit_complaints/allegations', async (req, res) => {
 		res.json(await models.commandUnits.getComplaints(req.query.id))
 	})
 
-	app.get('/command_unit/cops', async (req, res) => {
+	app.get('/api/command_unit/cops', async (req, res) => {
 		res.json(await models.commandUnits.getCops(req.query.id))
 	})
 
 	//this is to get all the cops associated with a command unit that has now complaints directly associated with it
-	app.get('/command_unit/complaints=0', async (req, res) => {
+	app.get('/api/command_unit/complaints=0', async (req, res) => {
 		res.json(await models.commandUnits.getCopsForCommandUnitWithoutComplaints(req.query.id))
 	})
 
-	app.get('/command_unit/complaints=0/cops', async (req, res) => {
+	app.get('/api/command_unit/complaints=0/cops', async (req, res) => {
 		res.json(await models.commandUnits.getCopsForCommandUnitWithoutComplaints(req.query.id))
 	})
 
-	app.get('/complaints', async (req, res) => {
+	app.get('/api/complaints', async (req, res) => {
 		res.json(await models.complaints.read(
 			req.query.orderBy, 
 			req.query.order, 
@@ -147,15 +149,15 @@ const models = new Models(DB_PATH);
 			req.query.pageSize));
 	})
 
-	app.get('/complaint', async (req, res) => {
+	app.get('/api/complaint', async (req, res) => {
 		res.json(await models.complaints.readComplaint(req.query.id))
 	})
 
-	app.get('/complaint/command_units', async (req, res) => {
+	app.get('/api/complaint/command_units', async (req, res) => {
 		res.json(await models.complaints.getCommandUnits(req.query.id))
 	})
 
-	app.get('/map', async (req, res) => {
+	app.get('/api/map', async (req, res) => {
 		res.json(await jsonGetter(nypdGeo))
 	})
 

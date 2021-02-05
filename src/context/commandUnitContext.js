@@ -189,7 +189,7 @@ export const CommandUnitProvider = (props) => {
 				return obj.id === parseInt(id)
 		}) 
 		if (commandUnit === undefined) {
-			fetch(`/command_unit?id=${id}`)
+			fetch(`/api/command_unit?id=${id}`)
   		.then(result => result.json())
   		.catch(error => {
   			handleErrors()
@@ -208,16 +208,16 @@ export const CommandUnitProvider = (props) => {
 	const [commandUnitWithoutComplaintsCops, setCommandUnitWithoutComplaintsCops] = useState(null)
 
 	useEffect(() => {
-    fetch(`/command_unit_complaints/allegations?id=${id}`)
+    fetch(`/api/command_unit_complaints/allegations?id=${id}`)
     .then(result => result.json())
     .then(complaintsWithAllegations => setComplaintsWithAllegations(complaintsWithAllegations))
-    fetch(`/command_unit/cops?id=${id}`)
+    fetch(`/api/command_unit/cops?id=${id}`)
     .then(result => result.json())
     .then(cops => setCops(cops))
 	}, [])
 
 	useEffect(() => {
-		fetch(`/command_unit/yearly_stats?column=${yearlyStatsSelector}&id=${id}`)
+		fetch(`/api/command_unit/yearly_stats?column=${yearlyStatsSelector}&id=${id}`)
     .then(result => result.json())
     .then(complaintsDates => setComplaintsDates(complaintsDates))
 	}, [yearlyStatsSelector])
@@ -241,7 +241,7 @@ export const CommandUnitProvider = (props) => {
 
 	useEffect(() => {
 		if (commandUnitWithoutComplaints != undefined) {
-			fetch(`/command_unit/complaints=0/cops?id=${id}`)
+			fetch(`/api/command_unit/complaints=0/cops?id=${id}`)
 			.then(result => result.json())
 			.then(commandUnitWithoutComplaintsCops => setCommandUnitWithoutComplaintsCops(commandUnitWithoutComplaintsCops))
 		}

@@ -20,6 +20,9 @@ var _fileWriter = require("./fileWriter");
 
 var _augmentGeoJson = require("./scripts/augmentGeoJson");
 
+//production
+var path = require('path');
+
 var csv = 'ccrb_data/data.csv';
 var DB_PATH = './db/ccrb.db';
 var commandCsv = 'ccrb_data/command_abrevs_cleaned.csv';
@@ -86,7 +89,7 @@ var models = new _models.Models(DB_PATH);
             };
           }()); //END POINTS
 
-          app.get('/search', /*#__PURE__*/function () {
+          app.get('/api/search', /*#__PURE__*/function () {
             var _ref3 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2(req, res) {
               var model, searchQuery;
               return _regenerator.default.wrap(function _callee2$(_context2) {
@@ -122,7 +125,7 @@ var models = new _models.Models(DB_PATH);
               return _ref3.apply(this, arguments);
             };
           }());
-          app.get('/total_rows', /*#__PURE__*/function () {
+          app.get('/api/total_rows', /*#__PURE__*/function () {
             var _ref4 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3(req, res) {
               var table, regex;
               return _regenerator.default.wrap(function _callee3$(_context3) {
@@ -157,7 +160,7 @@ var models = new _models.Models(DB_PATH);
               return _ref4.apply(this, arguments);
             };
           }());
-          app.get('/cops', /*#__PURE__*/function () {
+          app.get('/api/cops', /*#__PURE__*/function () {
             var _ref5 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee4(req, res) {
               return _regenerator.default.wrap(function _callee4$(_context4) {
                 while (1) {
@@ -184,7 +187,7 @@ var models = new _models.Models(DB_PATH);
               return _ref5.apply(this, arguments);
             };
           }());
-          app.get('/cop', /*#__PURE__*/function () {
+          app.get('/api/cop', /*#__PURE__*/function () {
             var _ref6 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee5(req, res) {
               return _regenerator.default.wrap(function _callee5$(_context5) {
                 while (1) {
@@ -211,7 +214,7 @@ var models = new _models.Models(DB_PATH);
               return _ref6.apply(this, arguments);
             };
           }());
-          app.get('/cop/yearly_stats', /*#__PURE__*/function () {
+          app.get('/api/cop/yearly_stats', /*#__PURE__*/function () {
             var _ref7 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee6(req, res) {
               return _regenerator.default.wrap(function _callee6$(_context6) {
                 while (1) {
@@ -238,7 +241,7 @@ var models = new _models.Models(DB_PATH);
               return _ref7.apply(this, arguments);
             };
           }());
-          app.get('/cop/location_stats', /*#__PURE__*/function () {
+          app.get('/api/cop/location_stats', /*#__PURE__*/function () {
             var _ref8 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee7(req, res) {
               return _regenerator.default.wrap(function _callee7$(_context7) {
                 while (1) {
@@ -265,7 +268,7 @@ var models = new _models.Models(DB_PATH);
               return _ref8.apply(this, arguments);
             };
           }());
-          app.get('/cop/getSubstantiated', /*#__PURE__*/function () {
+          app.get('/api/cop/getSubstantiated', /*#__PURE__*/function () {
             var _ref9 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee8(req, res) {
               return _regenerator.default.wrap(function _callee8$(_context8) {
                 while (1) {
@@ -294,7 +297,7 @@ var models = new _models.Models(DB_PATH);
           }()); //this returns all complaints with their associated allegations
           //nested inside of JSON objects
 
-          app.get('/cop_complaints/allegations', /*#__PURE__*/function () {
+          app.get('/api/cop_complaints/allegations', /*#__PURE__*/function () {
             var _ref10 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee9(req, res) {
               return _regenerator.default.wrap(function _callee9$(_context9) {
                 while (1) {
@@ -321,7 +324,7 @@ var models = new _models.Models(DB_PATH);
               return _ref10.apply(this, arguments);
             };
           }());
-          app.get('/command_units', /*#__PURE__*/function () {
+          app.get('/api/command_units', /*#__PURE__*/function () {
             var _ref11 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee10(req, res) {
               return _regenerator.default.wrap(function _callee10$(_context10) {
                 while (1) {
@@ -348,7 +351,7 @@ var models = new _models.Models(DB_PATH);
               return _ref11.apply(this, arguments);
             };
           }());
-          app.get('/command_unit', /*#__PURE__*/function () {
+          app.get('/api/command_unit', /*#__PURE__*/function () {
             var _ref12 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee11(req, res) {
               return _regenerator.default.wrap(function _callee11$(_context11) {
                 while (1) {
@@ -376,7 +379,7 @@ var models = new _models.Models(DB_PATH);
             };
           }()); //used by map component
 
-          app.get('/command_units_with_precincts', /*#__PURE__*/function () {
+          app.get('/api/command_units_with_precincts', /*#__PURE__*/function () {
             var _ref13 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee12(req, res) {
               return _regenerator.default.wrap(function _callee12$(_context12) {
                 while (1) {
@@ -403,7 +406,7 @@ var models = new _models.Models(DB_PATH);
               return _ref13.apply(this, arguments);
             };
           }());
-          app.get('/command_unit/yearly_stats', /*#__PURE__*/function () {
+          app.get('/api/command_unit/yearly_stats', /*#__PURE__*/function () {
             var _ref14 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee13(req, res) {
               return _regenerator.default.wrap(function _callee13$(_context13) {
                 while (1) {
@@ -430,7 +433,7 @@ var models = new _models.Models(DB_PATH);
               return _ref14.apply(this, arguments);
             };
           }());
-          app.get('/command_unit_complaints/allegations', /*#__PURE__*/function () {
+          app.get('/api/command_unit_complaints/allegations', /*#__PURE__*/function () {
             var _ref15 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee14(req, res) {
               return _regenerator.default.wrap(function _callee14$(_context14) {
                 while (1) {
@@ -457,7 +460,7 @@ var models = new _models.Models(DB_PATH);
               return _ref15.apply(this, arguments);
             };
           }());
-          app.get('/command_unit/cops', /*#__PURE__*/function () {
+          app.get('/api/command_unit/cops', /*#__PURE__*/function () {
             var _ref16 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee15(req, res) {
               return _regenerator.default.wrap(function _callee15$(_context15) {
                 while (1) {
@@ -485,7 +488,7 @@ var models = new _models.Models(DB_PATH);
             };
           }()); //this is to get all the cops associated with a command unit that has now complaints directly associated with it
 
-          app.get('/command_unit/complaints=0', /*#__PURE__*/function () {
+          app.get('/api/command_unit/complaints=0', /*#__PURE__*/function () {
             var _ref17 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee16(req, res) {
               return _regenerator.default.wrap(function _callee16$(_context16) {
                 while (1) {
@@ -512,7 +515,7 @@ var models = new _models.Models(DB_PATH);
               return _ref17.apply(this, arguments);
             };
           }());
-          app.get('/command_unit/complaints=0/cops', /*#__PURE__*/function () {
+          app.get('/api/command_unit/complaints=0/cops', /*#__PURE__*/function () {
             var _ref18 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee17(req, res) {
               return _regenerator.default.wrap(function _callee17$(_context17) {
                 while (1) {
@@ -539,7 +542,7 @@ var models = new _models.Models(DB_PATH);
               return _ref18.apply(this, arguments);
             };
           }());
-          app.get('/complaints', /*#__PURE__*/function () {
+          app.get('/api/complaints', /*#__PURE__*/function () {
             var _ref19 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee18(req, res) {
               return _regenerator.default.wrap(function _callee18$(_context18) {
                 while (1) {
@@ -566,7 +569,7 @@ var models = new _models.Models(DB_PATH);
               return _ref19.apply(this, arguments);
             };
           }());
-          app.get('/complaint', /*#__PURE__*/function () {
+          app.get('/api/complaint', /*#__PURE__*/function () {
             var _ref20 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee19(req, res) {
               return _regenerator.default.wrap(function _callee19$(_context19) {
                 while (1) {
@@ -593,7 +596,7 @@ var models = new _models.Models(DB_PATH);
               return _ref20.apply(this, arguments);
             };
           }());
-          app.get('/complaint/command_units', /*#__PURE__*/function () {
+          app.get('/api/complaint/command_units', /*#__PURE__*/function () {
             var _ref21 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee20(req, res) {
               return _regenerator.default.wrap(function _callee20$(_context20) {
                 while (1) {
@@ -620,7 +623,7 @@ var models = new _models.Models(DB_PATH);
               return _ref21.apply(this, arguments);
             };
           }());
-          app.get('/map', /*#__PURE__*/function () {
+          app.get('/api/map', /*#__PURE__*/function () {
             var _ref22 = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee21(req, res) {
               return _regenerator.default.wrap(function _callee21$(_context21) {
                 while (1) {

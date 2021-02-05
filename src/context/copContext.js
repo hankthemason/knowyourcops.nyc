@@ -145,7 +145,7 @@ export const CopProvider = (props) => {
 			return obj.id === parseInt(id)
 		})
 		if (cop === undefined) {
-			fetch(`/cop?id=${id}`)
+			fetch(`/api/cop?id=${id}`)
   		.then(result => result.json())
   		.catch(error => {
   			console.error(error)
@@ -169,7 +169,7 @@ export const CopProvider = (props) => {
 
 	useEffect(() => {
    	
-   	fetch(`/cop_complaints/allegations?id=${id}`)
+   	fetch(`/api/cop_complaints/allegations?id=${id}`)
   	.then(result => result.json())
   	.then(complaintsWithAllegations => setComplaintsWithAllegations(complaintsWithAllegations))
 
@@ -177,7 +177,7 @@ export const CopProvider = (props) => {
 
 	useEffect(() => {
 		if (yearlyStatsSelector != undefined) {
-    	fetch(`/cop/yearly_stats?column=${yearlyStatsSelector}&id=${id}`)
+    	fetch(`/api/cop/yearly_stats?column=${yearlyStatsSelector}&id=${id}`)
     	.then(result => result.json())
     	.then(complaintsDates => setComplaintsDates(complaintsDates))
   	}
@@ -185,7 +185,7 @@ export const CopProvider = (props) => {
 
 	useEffect(() => {
 		if (locationStatsSelector != undefined) {
-    	fetch(`/cop/location_stats?column=${locationStatsSelector}&id=${id}`)
+    	fetch(`/api/cop/location_stats?column=${locationStatsSelector}&id=${id}`)
     	.then(result => result.json())
     	.then(complaintsLocations => setComplaintsLocations(complaintsLocations))
   	}
@@ -193,7 +193,7 @@ export const CopProvider = (props) => {
 
 	useEffect(() => {
 		if (mapStatsSelector != undefined) {
-    	fetch(`/cop/location_stats?column=${mapStatsSelector}&id=${id}`)
+    	fetch(`/api/cop/location_stats?column=${mapStatsSelector}&id=${id}`)
     	.then(result => result.json())
     	.then(complaintsLocationsForMap => setComplaintsLocationsForMap(complaintsLocationsForMap))
   	}

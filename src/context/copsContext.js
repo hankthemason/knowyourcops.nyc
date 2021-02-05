@@ -75,7 +75,7 @@ export const CopsProvider = (props) => {
 
 	// maybe don't do a fetch every time to get the total number of rows?
 	useEffect(() => {
-		fetch(`/total_rows?table=cops`)
+		fetch(`/api/total_rows?table=cops`)
 		.then(result => result.json())
 		.then(total => setTotal(total[0].rows))
 	}, [])
@@ -84,7 +84,7 @@ export const CopsProvider = (props) => {
 	
 	useEffect(() => {
 		if (viewConfigExists && currentView === componentName) {
-		  fetch(`/cops?orderBy=${viewConfig.orderBy.value}&order=${viewConfig.order}&page=${viewConfig.page}&pageSize=${viewConfig.pageSize.value}`)
+		  fetch(`/api/cops?orderBy=${viewConfig.orderBy.value}&order=${viewConfig.order}&page=${viewConfig.page}&pageSize=${viewConfig.pageSize.value}`)
 		  .then(result => result.json())
 		  .then(cops => setCops(cops))
 		}		 

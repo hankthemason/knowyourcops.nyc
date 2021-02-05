@@ -22,11 +22,11 @@ export const MapsProvider = props => {
 	const [ commandUnits, setCommandUnits ] = useState(null)
 
 	useEffect(() => {
-		fetch('/map')
+		fetch('/api/map')
 		.then(result => result.json())
 		.then(mapData => setMapData(mapData))
 
-		fetch('/command_units_with_precincts')
+		fetch('/api/command_units_with_precincts')
 		.then(result => result.json())
 		.then(commandUnits => setCommandUnits(commandUnits))
 
