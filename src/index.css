@@ -267,3 +267,9 @@ table {
   font-style: italic;
 }
 
+@media only screen and (max-width: 400) {
+  .precinct-map {
+    max-width: 350px;
+  }
+}
+

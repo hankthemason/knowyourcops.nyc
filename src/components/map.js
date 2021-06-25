@@ -21,7 +21,7 @@ export const PrecinctsMap = props => {
 	const { mapData, commandUnits } = useMaps()
 
 	//get the page-specific data
-	const { height, width, type, dataPoint, pageData, select, selectHandler } = props
+	const { height, width, type, dataPoint, pageData, select, selectHandler, screen } = props
 	const svgWidth = width + 50
 	let tooltipLabel
 	
@@ -140,7 +140,7 @@ export const PrecinctsMap = props => {
 		const pathGenerator = d3.geoPath().projection(projection)
 		
 		let rect = containerRef.current.getBoundingClientRect()
-
+		
 		var tooltip = d3.select(containerRef.current)
 			.append("div")
     	.attr("class", "tooltip")
@@ -154,9 +154,10 @@ export const PrecinctsMap = props => {
     const svg = d3.select(containerRef.current)
 			.append("svg")
 			.attr("height", `${height}`)
-			.attr("width", `${svgWidth}`)
+			.attr("width", function() {
+				return screen < 500 ? screen - 50 : `${svgWidth}`
+			})
 			.attr("z-index", -1)
-
 
 		svg.append("g")
 			.selectAll("g")

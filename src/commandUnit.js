@@ -9,6 +9,9 @@ import { PrecinctsMap } from './components/map'
 import { CommandUnitWithoutComplaints } from './commandUnitWithoutComplaints.js'
 import { MuiSelect } from './components/muiSelect'
 import { firstLetterCap } from './scripts/firstLetterCap'
+import { useViewport } from './customHooks/useViewport'
+
+const barHeight = 300
 
 export const CommandUnitPage = props => {
 
@@ -17,6 +20,8 @@ export const CommandUnitPage = props => {
           getCommandUnitViewConfig, 
           commandUnitWithoutComplaints,
           commandUnitWithoutComplaintsCops } = useCommandUnit()
+
+  const { width } = useViewport()
   
   if (commandUnitWithoutComplaints != undefined) {
     return (
@@ -189,25 +194,25 @@ export const CommandUnitPage = props => {
       
         </div>
         <div className='map-parent'>
-          <PrecinctsMap height={350} width={350} type={mapType} pageData={[c]}/>
+          <PrecinctsMap screen={width} height={350} width={350} type={mapType} pageData={[c]}/>
         </div>
       </div>
-    		<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
+    		<BarChart height={barHeight} data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
         <ul className="individual-page-stats">
           {Object.entries(c.race_percentages).map((value, index) => (
             <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
           ))}
         </ul>
-    		<BarChart data={genderData} labels={genderDataLabels} title='Allegations by complainant gender'/>
+    		<BarChart height={barHeight} data={genderData} labels={genderDataLabels} title='Allegations by complainant gender'/>
         <ul className="individual-page-stats">
           {Object.entries(c.gender_percentages).map((value, index) => (
             <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
           ))}
         </ul>
         <MuiSelect handler={yearlyStatsHandler} value={viewConfig.yearlyStatsSelector} />
-    		<LineChart data={c.yearlyStats} title={firstLetterCap(viewConfig.yearlyStatsSelector) + ' by year'}/>
-    		<BarChart data={allegationsByFado} title='Allegations by FADO type' />
-        <BarChart height={'300px'} data={allegationsByDescription} title='Allegations by description' padding={true} />
+    		<LineChart height={barHeight} data={c.yearlyStats} title={firstLetterCap(viewConfig.yearlyStatsSelector) + ' by year'}/>
+    		<BarChart height={barHeight} data={allegationsByFado} title='Allegations by FADO type' />
+        <BarChart height={barHeight} data={allegationsByDescription} title='Allegations by description' padding={true} />
         <h1>Complaints received: </h1>
         <div>(click the arrow to show allegations on the complaint)</div>
         <CommandUnitComplaintsTable data={c.complaintsWithAllegations} headCells={complaintsTableHeadCells} />

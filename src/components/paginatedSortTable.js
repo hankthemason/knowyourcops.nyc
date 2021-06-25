@@ -116,7 +116,7 @@ export const PaginatedSortTable = props => {
   };
 
 	return (
-		<div>
+		<div style={{overflow: "scroll"}}>
       <Table
         //className={classes.table}
         aria-labelledby="tableTitle"

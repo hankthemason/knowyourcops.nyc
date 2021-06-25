@@ -8,10 +8,14 @@ import { Link } from 'react-router-dom'
 import { PrecinctsMap } from './components/map'
 import { MuiSelect } from './components/muiSelect'
 import { firstLetterCap } from './scripts/firstLetterCap'
+import { useViewport } from './customHooks/useViewport'
+
+const barHeight = 300
 
 export const CopPage = (props) => {
   const { cop, setCopViewConfig, getCopViewConfig } = useCop();
-  //console.log(cop)
+
+  const { width } = useViewport()
 
   const viewConfig = getCopViewConfig()
   const orderByOptions = viewConfig.orderByOptions
@@ -242,17 +246,17 @@ export const CopPage = (props) => {
           <MuiSelect handler={locationStatsHandler} value={viewConfig.locationStatsSelector}/>
         </div>
         <div className='map-parent'>
-          <PrecinctsMap height={350} width={350} pageData={mapStatsArr} type={mapType} dataPoint={mapStatsSelector} select={true} selectHandler={mapStatsHandler} />
+          <PrecinctsMap screen={width} height={350} width={350} pageData={mapStatsArr} type={mapType} dataPoint={mapStatsSelector} select={true} selectHandler={mapStatsHandler} />
         </div>
       </div>
-      <BarChart data={cop.locationStats} title={`${firstLetterCap(locationStatsSelector)} by precinct`} style={barChartStyles}/>
-			<BarChart data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
+      <BarChart height={barHeight} data={cop.locationStats} title={`${firstLetterCap(locationStatsSelector)} by precinct`} style={barChartStyles}/>
+			<BarChart height={barHeight} data={raceData} labels={raceDataLabels} title='Allegations by complainant ethnicity'/>
       <ul className="individual-page-stats">
         {Object.entries(cop.race_percentages).map((value, index) => (
           <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
         ))}
       </ul>
-			<BarChart data={genderData} labels={genderDataLabels} title='Allegations by complainant gender'/> 
+			<BarChart height={barHeight} data={genderData} labels={genderDataLabels} title='Allegations by complainant gender'/> 
       <ul className="individual-page-stats">
         {Object.entries(cop.gender_percentages).map((value, index) => (
           <li><span id='stats-span'>{value[1]}%</span> {value[0]}</li>
@@ -261,8 +265,8 @@ export const CopPage = (props) => {
       <MuiSelect handler={yearlyStatsHandler} value={viewConfig.yearlyStatsSelector}/>
 			<LineChart data={yearlyStats} title={`${firstLetterCap(yearlyStatsSelector)} by year`}/>
       <div>
-        <BarChart data={allegationsByFado} title='Allegations by FADO type' />
-        <BarChart height={'300px'} data={allegationsByDescription} padding={true} title='Allegations by description' />
+        <BarChart height={barHeight} data={allegationsByFado} title='Allegations by FADO type' />
+        <BarChart height={barHeight} data={allegationsByDescription} padding={true} title='Allegations by description' />
         <h1>Complaints received: </h1>
         <div style={{maxWidth: '100%', overflow: 'scroll'}}>
           <CopComplaintsTable id='cop-complaints-table' data={cop.complaintsWithAllegations} headCells={headCells} />     

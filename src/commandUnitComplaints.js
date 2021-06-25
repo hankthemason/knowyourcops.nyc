@@ -244,7 +244,7 @@ export const CommandUnitComplaintsTable = props => {
  	// }
 
   return (
-  	<div>
+  	<div style={{overflow: "scroll"}}>
       <Table className={classes.table} stylesaria-label="collapsible table">
         <TableHead rowcount={rows.length}>
           <TableRow>
