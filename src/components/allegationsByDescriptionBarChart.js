@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Bar } from 'react-chartjs-2'
 import { keys, values } from 'lodash'
 
-export const BarChart = (props) => {
-  const {data, title, labels, width, height, padding, style} = props;
+export const AllegationsByDescriptionBarChart = (props) => {
+  const {data, title, labels, width, height, padding, style, screenWidth} = props;
 
   const chartLabels = labels !== undefined ? labels : keys(data) 
 
@@ -17,7 +17,7 @@ export const BarChart = (props) => {
     options: {
       layout: {
         padding: {
-          bottom: (padding === true) ? 75 : 0,
+          bottom: 75,
           left: (padding === true) ? 75 : 0,
           right: 50
          }
@@ -33,7 +33,21 @@ export const BarChart = (props) => {
               suggestedMax: 25
             }
           }
-        ]
+        ],
+        xAxes: [{
+          ticks: {
+            autoSkip: screenWidth < 500 ? true : false,
+            maxRotation: 90,
+            minRotation: 90
+          }
+        }],
+        x: {
+          ticks: {
+            callback: function(value, index, values) {
+              return "<%= '  ' + value%>"
+            }
+          }
+        }
       },
       title: {
         display: true,

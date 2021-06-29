@@ -1,6 +1,7 @@
 import React, {useState, useEffect } from 'react'; 
 import { CopComplaintsTable } from './copComplaints'
 import { BarChart } from './components/barChart'
+import { AllegationsByDescriptionBarChart } from './components/allegationsByDescriptionBarChart';
 import { LineChart } from './components/lineChart'
 import { pick, reduce, keys } from 'lodash';
 import { useCop } from './context/copContext';
@@ -10,12 +11,11 @@ import { MuiSelect } from './components/muiSelect'
 import { firstLetterCap } from './scripts/firstLetterCap'
 import { useViewport } from './customHooks/useViewport'
 
-const barHeight = 300
-
 export const CopPage = (props) => {
   const { cop, setCopViewConfig, getCopViewConfig } = useCop();
 
   const { width } = useViewport()
+  const barHeight = width < 500 ? 350 : null
 
   const viewConfig = getCopViewConfig()
   const orderByOptions = viewConfig.orderByOptions
@@ -266,7 +266,7 @@ export const CopPage = (props) => {
 			<LineChart data={yearlyStats} title={`${firstLetterCap(yearlyStatsSelector)} by year`}/>
       <div>
         <BarChart height={barHeight} data={allegationsByFado} title='Allegations by FADO type' />
-        <BarChart height={barHeight} data={allegationsByDescription} padding={true} title='Allegations by description' />
+        <AllegationsByDescriptionBarChart height={375} data={allegationsByDescription} title='Allegations by description' />
         <h1>Complaints received: </h1>
         <div style={{maxWidth: '100%', overflow: 'scroll'}}>
           <CopComplaintsTable id='cop-complaints-table' data={cop.complaintsWithAllegations} headCells={headCells} />     

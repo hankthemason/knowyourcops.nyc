@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCommandUnit } from './context/commandUnitContext'; 
 import { BarChart } from './components/barChart'
+import { AllegationsByDescriptionBarChart } from './components/allegationsByDescriptionBarChart';
 import { LineChart } from './components/lineChart'
 import { pick, values, reduce, keys } from 'lodash';
 import { CommandUnitComplaintsTable } from './commandUnitComplaints'
@@ -11,8 +12,6 @@ import { MuiSelect } from './components/muiSelect'
 import { firstLetterCap } from './scripts/firstLetterCap'
 import { useViewport } from './customHooks/useViewport'
 
-const barHeight = 300
-
 export const CommandUnitPage = props => {
 
 	const { commandUnit: c, 
@@ -22,6 +21,8 @@ export const CommandUnitPage = props => {
           commandUnitWithoutComplaintsCops } = useCommandUnit()
 
   const { width } = useViewport()
+
+  const barHeight = width < 500 ? 300 : null
   
   if (commandUnitWithoutComplaints != undefined) {
     return (
@@ -212,7 +213,7 @@ export const CommandUnitPage = props => {
         <MuiSelect handler={yearlyStatsHandler} value={viewConfig.yearlyStatsSelector} />
     		<LineChart height={barHeight} data={c.yearlyStats} title={firstLetterCap(viewConfig.yearlyStatsSelector) + ' by year'}/>
     		<BarChart height={barHeight} data={allegationsByFado} title='Allegations by FADO type' />
-        <BarChart height={barHeight} data={allegationsByDescription} title='Allegations by description' padding={true} />
+        <AllegationsByDescriptionBarChart height={350} data={allegationsByDescription} title='Allegations by description' screenWidth={width} />
         <h1>Complaints received: </h1>
         <div>(click the arrow to show allegations on the complaint)</div>
         <CommandUnitComplaintsTable data={c.complaintsWithAllegations} headCells={complaintsTableHeadCells} />
