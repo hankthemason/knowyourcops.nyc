@@ -4,9 +4,10 @@
 
 ## Getting Started
 
-1. Fork or clone the repo
-2. Run ```npm run start```
-3. Navigate to http://localhost:3000 in your browser
+1. Clone the repo and navigate to the directory
+2. Install the dependencies: `npm install`
+3. Run `npm run start`
+4. Navigate to http://localhost:3000 in your browser
 
 ## Built With
 
@@ -16,6 +17,25 @@
 * [Node.js](https://nodejs.org/en/)
 * [SQLite](https://www.sqlite.org/index.html)
 
+## Contributing
+
+Although this project was built primary for personal and educational purposes, suggestions, issues, and contributions are welcome!
+
+```
+1. Create an issue
+2. Fork the repo
+3. Create a branch
+4. Make your changes
+5. Commit changes
+6. Make a pull request
+```
+
+## Data source
+
+All relevant data was downloaded from [Pro Publica's data store](https://www.propublica.org/datastore/dataset/civilian-complaints-against-new-york-city-police-officers).  You can read about how the data was retrieved and and some historical context about its release [here](https://projects.propublica.org/nypd-ccrb/#about).
+
 ## License
 
-MIT (see LICENSE)
+This project is licensed under the MIT License Copyright (c) 2021.
+
+See LICENSE for more info.
