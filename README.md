@@ -1,4 +1,5 @@
 # Know Your Cops
+![Screen Shot 2021-10-07 at 3 23 44 PM](https://user-images.githubusercontent.com/42900752/136449704-4286ede6-88e1-4ff9-9a1f-bbe387ed3139.png)
 
 [knowyourcops.com](https://knowyourcops.com) is a full-stack web app that utilizes publically-available data on civilian complaints against the NYPD to display interactive maps, charts, graphs and tables that visualize the records of individual officers and precincts.
 
