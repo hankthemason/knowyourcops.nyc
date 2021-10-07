@@ -33,7 +33,7 @@ Although this project was built primary for personal and educational purposes, s
 
 ## Data source
 
-All relevant data was downloaded from [Pro Publica's data store](https://www.propublica.org/datastore/dataset/civilian-complaints-against-new-york-city-police-officers).  You can read about how the data was retrieved and and some historical context about its release [here](https://projects.propublica.org/nypd-ccrb/#about).
+All relevant data was downloaded from [Pro Publica's data store](https://www.propublica.org/datastore/dataset/civilian-complaints-against-new-york-city-police-officers).  You can read about how the data was retrieved and read some historical context about its release [here](https://projects.propublica.org/nypd-ccrb/#about).
 
 ## License
 
