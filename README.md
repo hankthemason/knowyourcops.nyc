@@ -1,10 +1,10 @@
-# know-your-cops
+# Know Your Cops
 
-An interactive database of thousands of civilian complaints filed against the NYPD from 1985 - 2019, featuring interactive maps, charts, and graphs that visualize the data and break it down by individual officers and precincts. Uses React, D3, Node.js, and SQlite.
+[knowyourcops.com](https://knowyourcops.com) is a full-stack web app that utilizes publically-available data on civilian complaints against the NYPD to display interactive maps, charts, graphs and tables that visualize the records of individual officers and precincts.
 
 ## Getting Started
 
-1. Fork the repo
+1. Fork or clone the repo
 2. Run ```npm run start```
 3. Navigate to http://localhost:3000 in your browser
 
@@ -15,3 +15,7 @@ An interactive database of thousands of civilian complaints filed against the NY
 * [D3](https://d3js.org/)
 * [Node.js](https://nodejs.org/en/)
 * [SQLite](https://www.sqlite.org/index.html)
+
+## License
+
+MIT (see LICENSE)
